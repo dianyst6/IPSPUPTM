@@ -57,7 +57,7 @@ include_once 'C:/xampp/htdocs/IPSPUPTM/config/estadistica.php';
                         <i class="fa-solid fa-house fa-3x me-3"></i>
                         <div class="text-center">
                             <h5 class="card-title"><strong>Comu.UPTM</strong></h5>
-                            <span class="card-text display-4">10</span>
+                            <span class="card-text display-4"><?php echo $total_citas_uptm; ?></span>
                         </div>
                     </div>
                 </div>
@@ -126,7 +126,7 @@ include_once 'C:/xampp/htdocs/IPSPUPTM/config/estadistica.php';
     // Pasamos la variable de PHP a JavaScript
     const totalAfiliados = <?php echo $total_afiliados; ?>;
     const totalBeneficiarios = <?php echo $total_beneficiarios; ?>;
-    const totalcomunidaduptm = 10; // Ejemplo de valor fijo para Comunidad UPTM
+    const totalcomunidaduptm = <?php echo $total_citas_uptm; ?>;
 
 
     const myChart = new Chart(ctx, {
@@ -158,8 +158,16 @@ include_once 'C:/xampp/htdocs/IPSPUPTM/config/estadistica.php';
 document.addEventListener("DOMContentLoaded", function() {
     const ctxBar = document.getElementById('chartEspecialidades').getContext('2d');
 
-    const etiquetasEspecialidades = ['Odontología', 'Ginecología', 'Laboratorio', 'Gastroenterología', 'Medicina Interna', 'Urologia'];
-    const datosVisitas = [25, 40, 15, 30,10,20]; 
+    // Pasar las variables PHP a variables JavaScript
+    const ginecologia = <?php echo $citas_ginecologia; ?>;
+    const medicinaInterna = <?php echo $citas_medicina_interna; ?>;
+    const odontologia = <?php echo $citas_odontologia; ?>;
+    const oftalmologia = <?php echo $citas_oftalmologia; ?>;
+    const gastroenterologia = <?php echo $citas_gastroenterologia; ?>;
+    const imagenologia = <?php echo $citas_imagenologia; ?>;
+
+    const etiquetasEspecialidades = ['Odontología', 'Ginecología', 'Imagenología', 'Gastroenterología', 'Medicina Interna', 'Oftalmología'];
+    const datosVisitas = [odontologia, ginecologia, imagenologia, gastroenterologia, medicinaInterna, oftalmologia]; 
 
     new Chart(ctxBar, {
         type: 'bar',

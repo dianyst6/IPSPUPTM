@@ -2,6 +2,9 @@
 include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
 ?>
 
+<!-- Agregar CSS de Select2 -->
+<link href="/IPSPUPTM/assets/select2/css/select2.min.css" rel="stylesheet" />
+
 <div class="modal fade" id="modalPago" tabindex="-1" aria-labelledby="labelPago" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -84,6 +87,35 @@ include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
 </div>
 
 <script>
+// Inicializar Select2 en el modal, asegúrate que jQuery esté cargado primero
+document.addEventListener("DOMContentLoaded", function() {
+    // Cargar dinámicamente el script de Select2 SOLO después de que el DOM esté listo
+    // Esto asegura que jQuery, que se carga al final de layout.php, ya esté disponible.
+    var script = document.createElement('script');
+    script.src = '/IPSPUPTM/assets/select2/js/select2.min.js';
+    script.onload = function() {
+        $('#modalPago').on('shown.bs.modal', function () {
+            $('#id_contrato_select').select2({
+                dropdownParent: $('#modalPago'), // Crucial para modales Bootstrap
+                placeholder: "Seleccione un contrato...",
+                width: '100%',
+                language: {
+                    noResults: function() {
+                        return "No se encontraron resultados";
+                    }
+                }
+            });
+        });
+
+        // Reemplazar el onchange HTML con evento de Select2
+        $('#id_contrato_select').on('select2:select', function (e) {
+            var idSeleccionado = e.params.data.id;
+            consultarSaldo(idSeleccionado);
+        });
+    };
+    document.head.appendChild(script);
+});
+
 function consultarSaldo(idContrato) {
     const contenedor = document.getElementById('info_saldo');
     const spanMonto = document.getElementById('monto_pendiente');
