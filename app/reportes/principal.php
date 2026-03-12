@@ -97,6 +97,23 @@
                     </div>
                 </div>
             </div>
+
+            <div class="mb-3 w-50 text-center">
+                <button class="btn btn-primary btn-lg w-100" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#pagosOptionsPDF" aria-expanded="false" aria-controls="pagosOptions">
+                    Descargar reporte de Pagos (PDF)
+                </button>
+                <div class="collapse mt-2 w-100" id="pagosOptionsPDF">
+                    <div class="d-flex justify-content-center flex-column align-items-center">
+                        <a href="/IPSPUPTM/app/reportes/pdf/reporte_pagos.php?tipo_pago=contrato"
+                            class="btn btn-outline-primary btn-lg mb-2"
+                            onclick="mostrarAlertaDescarga('PDF', 'Pagos de Contratos')">Pagos de Contratos</a>
+                        <a href="/IPSPUPTM/app/reportes/pdf/reporte_pagos.php?tipo_pago=externo"
+                            class="btn btn-outline-primary btn-lg"
+                            onclick="mostrarAlertaDescarga('PDF', 'Pagos Externos')">Pagos Externos</a>
+                    </div>
+                </div>
+            </div>
         </div>
 
 
