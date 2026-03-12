@@ -20,7 +20,8 @@
             <label for="role_idModal" class="form-label">Rol</label>  
             <select class="form-select" id="role_idModal" name="role_id" required>  
               <option value="1">Admin</option>  
-              <option value="2">Usuario</option>  
+              <option value="2">Usuario</option>
+              <option value="3">Médico</option>  
             </select>  
           </div>  
         </div>  
