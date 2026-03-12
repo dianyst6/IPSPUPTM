@@ -38,6 +38,7 @@
                         <div class="mb-3 col-md-6">
                             <label for="cedula" class="form-label">Cédula</label>
                             <input type="text" name="cedula" id="cedula" class="form-control" required>
+                            <div id="cedulaFeedback" class="text-danger mt-1" style="display:none; font-size: 0.875em;"></div>
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="nombre" class="form-label">Nombre</label>
@@ -73,7 +74,7 @@
                         </div>
                         <div class="col-12">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <button type="submit" id="btnRegistrar" class="btn btn-primary">Guardar</button>
                         </div>
                     </div>
                 </form>
@@ -81,3 +82,50 @@
         </div>
     </div>
 </div>
+
+<script>
+// Usar delegación de eventos para asegurar que funcione incluso si el modal se carga dinámicamente
+document.body.addEventListener('input', function(event) {
+    if (event.target && event.target.id === 'cedula') {
+        let cedulaInput = event.target;
+        let cedula = cedulaInput.value.trim();
+        const feedback = document.getElementById('cedulaFeedback');
+        const btnRegistrar = document.getElementById('btnRegistrar');
+
+        if (cedula.length > 0) {
+            fetch('/IPSPUPTM/app/beneficiarios/modales/formulario/check_cedula.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'cedula=' + encodeURIComponent(cedula)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.existe_beneficiario) {
+                    feedback.textContent = 'La cédula ya está registrada como beneficiario.';
+                    feedback.style.display = 'block';
+                    btnRegistrar.disabled = true;
+                    cedulaInput.classList.add('is-invalid');
+                } else if (data.existe_afiliado) {
+                    feedback.textContent = 'La cédula ya está registrada como afiliado.';
+                    feedback.style.display = 'block';
+                    btnRegistrar.disabled = true;
+                    cedulaInput.classList.add('is-invalid');
+                } else {
+                    feedback.style.display = 'none';
+                    btnRegistrar.disabled = false;
+                    cedulaInput.classList.remove('is-invalid');
+                }
+            })
+            .catch(error => {
+                console.error('Error verificando la cédula:', error);
+            });
+        } else {
+            feedback.style.display = 'none';
+            btnRegistrar.disabled = false;
+            cedulaInput.classList.remove('is-invalid');
+        }
+    }
+});
+</script>
