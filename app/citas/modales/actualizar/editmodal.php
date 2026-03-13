@@ -1,11 +1,11 @@
 <div class="modal fade" id="editmodal" tabindex="-1" aria-labelledby="editmodallabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<div class="modal-dialog modal-lg modal-dialog-scrollable">    <div class="modal-content">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="FormularioModalLabel">Editar Cita</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+        <div class="modal-body" style="max-height: 70vh;">
                 <form action="/IPSPUPTM/app/citas/modales/actualizar/actualizar.php" method="post" id="formularioEditarCita">
                     <input type="hidden" name="id_cita" id="id_cita_editar">
                     

@@ -28,18 +28,6 @@ $totalPages = ceil($totalRows / $rowsPerPage);
         <h1 class="fw-bold text-center" style="color: #062974;">Comunidad UPTM (Externos)</h1>
         <hr class="mx-auto" style="width: 50px; height: 3px; background-color: #062974;">
 
-        <div class="row mt-4 align-items-center">
-            <div class="col-auto">
-                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#formulariomodal">
-                    <i class="fas fa-plus-circle"></i> Agregar a Comunidad
-                </a>
-            </div>
-            <div class="col text-end mt-2">
-                <input type="text" id="search" class="form-control w-auto d-inline-block"
-                    placeholder="Buscar por cédula o nombre...">
-            </div>
-        </div>
-
         <div id="alert-container"></div>
 
         <div class="table-responsive">
@@ -81,6 +69,5 @@ $totalPages = ceil($totalRows / $rowsPerPage);
     </div>
 </div>
 
-<?php include 'C:/xampp/htdocs/IPSPUPTM/app/comunidaduptm/eliminar/eliminamodal.php'; ?>
 <?php include 'C:/xampp/htdocs/IPSPUPTM/app/comunidaduptm/actualizar/editmodal.php'; ?>
 <script src="/IPSPUPTM/assets/js/accionescomunidaduptm.js"></script>
