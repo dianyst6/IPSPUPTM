@@ -1,42 +1,91 @@
 <?php
 include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
 
+// Detectar si el médico logueado es ginecólogo
+$es_ginecologo = false;
+$ci_medico_logueado = '';
+if (isset($_SESSION['user_id'])) {
+    $sqlEsp = "
+        SELECT m.ci_medico, e.nombre_especialidad
+        FROM medicos m
+        LEFT JOIN especialidades e ON m.especialidad = e.id_especialidad
+        WHERE m.id_usuario = ?
+    ";
+    $stmtEsp = $conn->prepare($sqlEsp);
+    if ($stmtEsp) {
+        $stmtEsp->bind_param('i', $_SESSION['user_id']);
+        $stmtEsp->execute();
+        $rowEsp = $stmtEsp->get_result()->fetch_assoc();
+        if ($rowEsp) {
+            $ci_medico_logueado = $rowEsp['ci_medico'];
+            $es_ginecologo = (strtolower($rowEsp['nombre_especialidad']) === 'ginecología'
+                           || strtolower($rowEsp['nombre_especialidad']) === 'ginecologia');
+        }
+        $stmtEsp->close();
+    }
+}
+
 $rowsPerPage = 15;
 $currentPage = isset($_GET['page']) ? intval($_GET['page']) : 1;
 $offset = ($currentPage - 1) * $rowsPerPage;
 
 try {
-    // CONSULTA SQL CON TODOS LOS JOINS CORREGIDOS
-    $sqlHistorias = "
-        SELECT 
-            h.id_historia, 
-            h.fecha AS fecha_historia, 
-            h.tipo_paciente,
-            h.ci_paciente,
-            COALESCE(
-                CONCAT(p_a.nombre, ' ', p_a.apellido), 
-                CONCAT(p_b.nombre, ' ', p_b.apellido), 
-                CONCAT(ext.nombre, ' ', ext.apellido),
-                'Desconocido'
-            ) AS nombre_paciente,
-            -- Aquí buscamos el nombre de la especialidad usando el ID que tiene el médico
-            COALESCE(esp.nombre_especialidad, 'General') AS nombre_especialidad
-        FROM historias_medicas h
-        LEFT JOIN afiliados a ON h.ci_paciente = a.cedula
-        LEFT JOIN persona p_a ON a.cedula = p_a.cedula
-        LEFT JOIN beneficiarios b ON h.ci_paciente = b.cedula
-        LEFT JOIN persona p_b ON b.cedula = p_b.cedula
-        LEFT JOIN comunidad_uptm ext ON h.ci_paciente = ext.cedula
-        LEFT JOIN medicos m ON h.ci_medico = m.ci_medico
-        -- Ajusta 'id_especialidad' si en tu tabla 'medicos' la columna se llama diferente
-        LEFT JOIN especialidades esp ON m.especialidad = esp.id_especialidad 
-        ORDER BY h.fecha DESC
-        LIMIT $rowsPerPage OFFSET $offset
-    ";
+    // La consulta cambia según la especialidad del médico
+    if ($es_ginecologo) {
+        // Ginecólogo: solo ve sus propias historias de ginecología
+        $sqlHistorias = "
+            SELECT
+                g.id_historia_g AS id_historia,
+                g.fecha AS fecha_historia,
+                g.tipo_paciente,
+                g.ci_paciente,
+                COALESCE(
+                    CONCAT(p_a.nombre, ' ', p_a.apellido),
+                    CONCAT(p_b.nombre, ' ', p_b.apellido),
+                    CONCAT(ext.nombre, ' ', ext.apellido),
+                    'Desconocido'
+                ) AS nombre_paciente,
+                'Ginecología' AS nombre_especialidad
+            FROM historias_medicas_gine g
+            LEFT JOIN afiliados a ON g.ci_paciente = a.cedula
+            LEFT JOIN persona p_a ON a.cedula = p_a.cedula
+            LEFT JOIN beneficiarios b ON g.ci_paciente = b.cedula
+            LEFT JOIN persona p_b ON b.cedula = p_b.cedula
+            LEFT JOIN comunidad_uptm ext ON g.ci_paciente = ext.cedula
+            ORDER BY g.fecha DESC
+            LIMIT $rowsPerPage OFFSET $offset
+        ";
+        $totalRowsResult = $conn->query("SELECT COUNT(*) AS total FROM historias_medicas_gine");
+    } else {
+        // Otros médicos: solo ven las historias generales
+        $sqlHistorias = "
+            SELECT
+                h.id_historia,
+                h.fecha AS fecha_historia,
+                h.tipo_paciente,
+                h.ci_paciente,
+                COALESCE(
+                    CONCAT(p_a.nombre, ' ', p_a.apellido),
+                    CONCAT(p_b.nombre, ' ', p_b.apellido),
+                    CONCAT(ext.nombre, ' ', ext.apellido),
+                    'Desconocido'
+                ) AS nombre_paciente,
+                COALESCE(esp.nombre_especialidad, 'General') AS nombre_especialidad
+            FROM historias_medicas h
+            LEFT JOIN afiliados a ON h.ci_paciente = a.cedula
+            LEFT JOIN persona p_a ON a.cedula = p_a.cedula
+            LEFT JOIN beneficiarios b ON h.ci_paciente = b.cedula
+            LEFT JOIN persona p_b ON b.cedula = p_b.cedula
+            LEFT JOIN comunidad_uptm ext ON h.ci_paciente = ext.cedula
+            LEFT JOIN medicos m ON h.ci_medico = m.ci_medico
+            LEFT JOIN especialidades esp ON m.especialidad = esp.id_especialidad
+            ORDER BY h.fecha DESC
+            LIMIT $rowsPerPage OFFSET $offset
+        ";
+        $totalRowsResult = $conn->query("SELECT COUNT(*) AS total FROM historias_medicas");
+    }
 
     $historias = $conn->query($sqlHistorias);
-
-    $totalRowsResult = $conn->query("SELECT COUNT(*) AS total FROM historias_medicas");
     $totalRows = $totalRowsResult->fetch_assoc()['total'];
     $totalPages = ceil($totalRows / $rowsPerPage);
 
@@ -52,7 +101,10 @@ try {
     
     <div class="row mt-4 mb-3">
         <div class="col-auto">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#formulariomodal">
+            <?php
+            $modalTarget = $es_ginecologo ? '#formulariomodal_ginecologia' : '#formulariomodal';
+            ?>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="<?= $modalTarget ?>">
                 <i class="fas fa-plus-circle"></i> Crear historia médica
             </button>
         </div>
@@ -98,10 +150,22 @@ try {
                             <td class="text-center"><?= date('d-m-Y', strtotime($row['fecha_historia'])); ?></td>
                             <td class="text-center">
                                 <div class="btn-group">
-                                    <button class="btn btn-sm btn-outline-primary" title="Ver Historia">
+                                    <button
+                                        class="btn btn-sm btn-outline-primary btn-ver-historia"
+                                        title="Ver Historia"
+                                        data-id="<?= $row['id_historia'] ?>"
+                                        data-tabla="<?= $es_ginecologo ? 'ginecologia' : 'general' ?>"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#vermodal">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                    <button
+                                        class="btn btn-sm btn-outline-danger btn-eliminar-historia"
+                                        title="Eliminar"
+                                        data-id="<?= $row['id_historia'] ?>"
+                                        data-tabla="<?= $es_ginecologo ? 'ginecologia' : 'general' ?>"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#eliminamodal">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -116,7 +180,13 @@ try {
     </div>
 </div>
 
-<?php include 'C:/xampp/htdocs/IPSPUPTM/app/historias_medicas/modales/formulario/formulariomodal.php'; ?>
+<?php
+if ($es_ginecologo) {
+    include 'C:/xampp/htdocs/IPSPUPTM/app/historias_medicas/modales/formulario/formulariomodal_ginecologia.php';
+} else {
+    include 'C:/xampp/htdocs/IPSPUPTM/app/historias_medicas/modales/formulario/formulariomodal.php';
+}
+?>
 
 <script>
 // Filtros y Buscador
@@ -136,4 +206,15 @@ document.getElementById('search').addEventListener('keyup', function() {
         f.style.display = f.innerText.toLowerCase().includes(term) ? '' : 'none';
     });
 });
+
+// Pasar id e indicador de tabla al modal de confirmación de eliminación
+document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.btn-eliminar-historia');
+    if (!btn) return;
+    document.getElementById('elim_id_historia').value = btn.getAttribute('data-id');
+    document.getElementById('elim_tipo_tabla').value  = btn.getAttribute('data-tabla');
+});
 </script>
+
+<?php include 'C:/xampp/htdocs/IPSPUPTM/app/historias_medicas/modales/eliminar/eliminarmodal.php'; ?>
+<?php include 'C:/xampp/htdocs/IPSPUPTM/app/historias_medicas/modales/ver/vermodal.php'; ?>

@@ -1,24 +1,25 @@
 <?php
-session_start(); 
+session_start();
+
 require 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
 include 'C:/xampp/htdocs/IPSPUPTM/app/configuracion/bitacora/bitacora.php'; // Incluye la bitácora
 
 header('Content-Type: application/json'); // Indica que la respuesta será en formato JSON
 
 // Verifica si todos los datos necesarios fueron proporcionados
-if (isset($_POST['cedula'], $_POST['nombre'], $_POST['apellido'], 
-          $_POST['fechanacimiento'], $_POST['genero'], 
-          $_POST['telefono'], $_POST['correo'], $_POST['ocupacion'])) {
+if (isset($_POST['cedula'], $_POST['nombre'], $_POST['apellido'],
+$_POST['fechanacimiento'], $_POST['genero'],
+$_POST['telefono'], $_POST['correo'], $_POST['ocupacion'])) {
 
     // Limpia los datos para prevenir inyección SQL
-    $cedula = htmlspecialchars($_POST['cedula']); 
-    $nombre = htmlspecialchars($_POST['nombre']); 
-    $apellido = htmlspecialchars($_POST['apellido']); 
-    $fechanacimiento = htmlspecialchars($_POST['fechanacimiento']); 
-    $genero = htmlspecialchars($_POST['genero']); 
-    $telefono = htmlspecialchars($_POST['telefono']); 
-    $correo = htmlspecialchars($_POST['correo']); 
-    $ocupacion = htmlspecialchars($_POST['ocupacion']); 
+    $cedula = htmlspecialchars($_POST['cedula']);
+    $nombre = htmlspecialchars($_POST['nombre']);
+    $apellido = htmlspecialchars($_POST['apellido']);
+    $fechanacimiento = htmlspecialchars($_POST['fechanacimiento']);
+    $genero = htmlspecialchars($_POST['genero']);
+    $telefono = htmlspecialchars($_POST['telefono']);
+    $correo = htmlspecialchars($_POST['correo']);
+    $ocupacion = htmlspecialchars($_POST['ocupacion']);
 
     try {
         // Inicia una transacción para asegurar consistencia
@@ -36,12 +37,14 @@ if (isset($_POST['cedula'], $_POST['nombre'], $_POST['apellido'],
 
             if ($result_actual->num_rows > 0) {
                 $datos_antes = $result_actual->fetch_assoc(); // Guarda los datos previos para el registro en bitácora
-            } else {
+            }
+            else {
                 throw new Exception("La cédula no se encuentra en los registros.");
             }
 
             $stmt_actual->close();
-        } else {
+        }
+        else {
             throw new Exception("Error al preparar consulta para obtener datos actuales: " . $conn->error);
         }
 
@@ -60,7 +63,8 @@ if (isset($_POST['cedula'], $_POST['nombre'], $_POST['apellido'],
             }
 
             $stmt_persona->close();
-        } else {
+        }
+        else {
             throw new Exception("Error al preparar consulta para persona: " . $conn->error);
         }
 
@@ -78,7 +82,8 @@ if (isset($_POST['cedula'], $_POST['nombre'], $_POST['apellido'],
             }
 
             $stmt_beneficiarios->close();
-        } else {
+        }
+        else {
             throw new Exception("Error al preparar consulta para beneficiarios: " . $conn->error);
         }
 
@@ -95,13 +100,15 @@ if (isset($_POST['cedula'], $_POST['nombre'], $_POST['apellido'],
         echo json_encode(['success' => true, 'message' => 'Beneficiario actualizado correctamente']);
         exit();
 
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
         // Cancela la transacción si algo falla
         $conn->rollback();
         echo json_encode(['success' => false, 'message' => 'Ocurrió un error: ' . $e->getMessage()]);
         exit();
     }
-} else {
+}
+else {
     echo json_encode(['success' => false, 'message' => 'Error: Todos los campos obligatorios no fueron proporcionados.']);
     exit();
 }
