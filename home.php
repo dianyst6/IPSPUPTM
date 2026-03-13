@@ -3,7 +3,7 @@
 include 'C:/xampp/htdocs/IPSPUPTM/config/actions.php';
 
 // Determinar la vista a cargar
-$vista = isset($_GET['vista']) ? $_GET['vista'] : 'inicial';
+$vista = isset($_GET['vista']) ? $_GET['vista'] : (($_SESSION['role_id'] == 3) ? 'historiasmedicas' : 'inicial');
 
 // Asignar el archivo de contenido correspondiente a la vista
 switch ($vista) {

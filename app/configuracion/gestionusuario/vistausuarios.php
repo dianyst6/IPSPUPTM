@@ -200,8 +200,8 @@ $totalPages = ceil($totalRows / $rowsPerPage);
         const roleSelector = document.getElementById('role_id');
         const camposMedico = document.getElementById('campos-medico');
 
-        // Seleccionamos los inputs internos para controlar el "required"
-        const inputsMedico = camposMedico.querySelectorAll('input');
+        // Seleccionamos los inputs y selects internos para controlar el "required"
+        const inputsMedico = camposMedico.querySelectorAll('input, select');
 
         roleSelector.addEventListener('change', function() {
             if (this.value === '3') { // "3" es el ID de Médico
