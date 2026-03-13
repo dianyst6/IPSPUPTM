@@ -1,9 +1,13 @@
-<?php 
-include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
-include 'C:/xampp/htdocs/IPSPUPTM/config/alertify.php'; 
+<?php
 
-$rowsPerPage = 15; 
-$currentPage = isset($_GET['page']) ? intval($_GET['page']) : 1; 
+include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
+include 'C:/xampp/htdocs/IPSPUPTM/config/alertify.php';
+
+
+$rowsPerPage = 15;
+
+$currentPage = isset($_GET['page']) ? intval($_GET['page']) : 1;
+
 $offset = ($currentPage - 1) * $rowsPerPage;
 
 // 1. CAMBIO: Consulta enfocada en la tabla comunidad_uptm
@@ -53,7 +57,8 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                             </a>
                         </td>
                     </tr>
-                    <?php } ?>
+                    <?php
+}?>
                 </tbody>
             </table>
         </div>
@@ -61,18 +66,16 @@ $totalPages = ceil($totalRows / $rowsPerPage);
         <div class="d-flex justify-content-center mt-3">
             <?php for ($i = 1; $i <= $totalPages; $i++) { ?>
             <a href="?page=<?php echo $i; ?>"
-                class="btn btn-sm <?php echo ($i == $currentPage) ? 'btn-secondary' : 'btn-primary'; ?> mx-1">
+                class="btn btn-sm <?php echo($i == $currentPage) ? 'btn-secondary' : 'btn-primary'; ?> mx-1">
                 <?php echo $i; ?>
             </a>
-            <?php } ?>
+            <?php
+}?>
         </div>
     </div>
 </div>
 
-<<<<<<< correcciones-gabi
-=======
 <?php include 'C:/xampp/htdocs/IPSPUPTM/app/comunidaduptm/eliminar/eliminamodal.php'; ?>
 <?php include 'C:/xampp/htdocs/IPSPUPTM/app/comunidaduptm/formulario/formulariomodal.php'; ?>
->>>>>>> main
 <?php include 'C:/xampp/htdocs/IPSPUPTM/app/comunidaduptm/actualizar/editmodal.php'; ?>
 <script src="/IPSPUPTM/assets/js/accionescomunidaduptm.js"></script>

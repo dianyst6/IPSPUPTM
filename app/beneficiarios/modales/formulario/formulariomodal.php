@@ -15,22 +15,22 @@
                        <select name="cedula_afil" id="cedula_afil" class="form-select" required>
                        <option value=""></option> 
                       <?php
-                     $sql_afiliados = "
+$sql_afiliados = "
                         SELECT a.id AS id_afil, a.cedula, CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo
                         FROM afiliados a
                         JOIN persona p ON a.cedula = p.cedula
                                             ORDER BY p.nombre ASC";
-                            $result_afiliados = $conn->query($sql_afiliados);
+$result_afiliados = $conn->query($sql_afiliados);
 
-                            if ($result_afiliados && $result_afiliados->num_rows > 0) {
-                                while ($row_afiliado = $result_afiliados->fetch_assoc()) {
-                                    // Formato exacto para la búsqueda: Cédula | Nombre
-                                    echo '<option value="' . $row_afiliado['id_afil'] . '">' 
-                                        . $row_afiliado['cedula'] . ' | ' . $row_afiliado['nombre_completo'] . 
-                                        '</option>';
-                                }
-                            }
-                            ?>
+if ($result_afiliados && $result_afiliados->num_rows > 0) {
+    while ($row_afiliado = $result_afiliados->fetch_assoc()) {
+        // Formato exacto para la búsqueda: Cédula | Nombre
+        echo '<option value="' . $row_afiliado['id_afil'] . '">'
+            . $row_afiliado['cedula'] . ' | ' . $row_afiliado['nombre_completo'] .
+            '</option>';
+    }
+}
+?>
                         </select>
                         </div>
                         <div class="mb-3 col-md-6">
@@ -81,7 +81,6 @@
     </div>
 </div>
 
-<<<<<<< correcciones-gabi
  <script>
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -103,7 +102,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-=======
 <script>
 // Usar delegación de eventos para asegurar que funcione incluso si el modal se carga dinámicamente
 document.body.addEventListener('input', function(event) {
@@ -150,4 +148,3 @@ document.body.addEventListener('input', function(event) {
     }
 });
 </script>
->>>>>>> main
