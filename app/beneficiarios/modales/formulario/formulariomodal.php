@@ -1,3 +1,5 @@
+<link href="/IPSPUPTM/assets/select2/css/select2.min.css" rel="stylesheet" />
+
 <div class="modal fade" id="formulariomodal" tabindex="-1" aria-labelledby="formulariomodallabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -8,32 +10,28 @@
             <div class="modal-body">
                 <form action="/IPSPUPTM/app/beneficiarios/modales/formulario/guardar.php" method="post">
                     <div class="row">
-                        <div class="mb-3 col-12">
-                            <label for="cedula_afil" class="form-label">Afiliado relacionado</label>
-                            <select name="cedula_afil" id="cedula_afil" class="form-select" required>
-                                <option value="" selected disabled>Seleccionar afiliado...</option>
-                                <?php
-                                // Consulta para cargar afiliados existentes
-                                $sql_afiliados = "
-                                SELECT a.id AS cedula_afil, CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo
-                                FROM afiliados a
-                                JOIN persona p ON a.cedula = p.cedula
-                                ORDER BY p.nombre ASC";
-                                $result_afiliados = $conn->query($sql_afiliados);
+                    <div class="mb-3 col-12">
+                     <label for="cedula_afil" class="form-label">Afiliado relacionado</label>
+                       <select name="cedula_afil" id="cedula_afil" class="form-select" required>
+                       <option value=""></option> 
+                      <?php
+                     $sql_afiliados = "
+                        SELECT a.id AS id_afil, a.cedula, CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo
+                        FROM afiliados a
+                        JOIN persona p ON a.cedula = p.cedula
+                                            ORDER BY p.nombre ASC";
+                            $result_afiliados = $conn->query($sql_afiliados);
 
-                                if ($result_afiliados) {
-                                    if ($result_afiliados->num_rows > 0) {
-                                        while ($row_afiliado = $result_afiliados->fetch_assoc()) {
-                                            echo '<option value="' . $row_afiliado['cedula_afil'] . '">' . $row_afiliado['nombre_completo'] . '</option>';
-                                        }
-                                    } else {
-                                        echo '<option value="">No hay afiliados disponibles</option>';
-                                    }
-                                } else {
-                                    echo '<option value="">Error al cargar afiliados</option>';
+                            if ($result_afiliados && $result_afiliados->num_rows > 0) {
+                                while ($row_afiliado = $result_afiliados->fetch_assoc()) {
+                                    // Formato exacto para la búsqueda: Cédula | Nombre
+                                    echo '<option value="' . $row_afiliado['id_afil'] . '">' 
+                                        . $row_afiliado['cedula'] . ' | ' . $row_afiliado['nombre_completo'] . 
+                                        '</option>';
                                 }
-                                ?>
-                            </select>
+                            }
+                            ?>
+                        </select>
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="cedula" class="form-label">Cédula</label>
@@ -83,6 +81,29 @@
     </div>
 </div>
 
+<<<<<<< correcciones-gabi
+ <script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // === CARGA DINÁMICA DE SELECT2 ===
+    var script = document.createElement('script');
+    script.src = '/IPSPUPTM/assets/select2/js/select2.min.js';
+    script.onload = function() {
+        // Se activa cuando el modal de registro se termina de mostrar
+        $('#formulariomodal').on('shown.bs.modal', function () {
+            $('#cedula_afil').select2({
+                dropdownParent: $('#formulariomodal'), // Esto permite que se vea y se pueda escribir
+                placeholder: "Busque por cédula o nombre...",
+                width: '100%',
+                allowClear: true
+            });
+        });
+    };
+    document.head.appendChild(script);
+});
+</script>
+
+=======
 <script>
 // Usar delegación de eventos para asegurar que funcione incluso si el modal se carga dinámicamente
 document.body.addEventListener('input', function(event) {
@@ -129,3 +150,4 @@ document.body.addEventListener('input', function(event) {
     }
 });
 </script>
+>>>>>>> main

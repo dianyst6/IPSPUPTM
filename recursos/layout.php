@@ -67,7 +67,6 @@
         </aside>
         <div class="cont-general mt-1 pt-1 " width: 100%; flex-grow: 1;>
             <div class="main p-3">
-                <div class="card shadow-lg">
                     <div>
 
                         <?php
@@ -79,7 +78,7 @@
                     }
                     ?>
                     </div>
-                </div>
+                
             </div>
         </div>
     </div>
