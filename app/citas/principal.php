@@ -6,8 +6,8 @@ $currentPage = isset($_GET['page']) ? intval($_GET['page']) : 1; // Página actu
 $offset = ($currentPage - 1) * $rowsPerPage;
 
 try {
-    // Consulta SQL combinada
-$sqlCitas = "
+    // Consulta SQL combinada    
+    $sqlCitas = "
     SELECT 
         c.id_cita, 
         c.fecha_cita, 
@@ -44,7 +44,7 @@ $sqlCitas = "
     -- 4. Especialidad
     LEFT JOIN especialidades e ON c.id_especialidad = e.id_especialidad
     
-    ORDER BY c.fecha_cita DESC
+    ORDER BY c.id_cita DESC
     LIMIT $rowsPerPage OFFSET $offset
 ";
 
@@ -63,7 +63,8 @@ $sqlCitas = "
     $totalRows = $totalRowsResult->fetch_assoc()['total'];
     $totalPages = ceil($totalRows / $rowsPerPage);
 
-} catch (Exception $e) {
+}
+catch (Exception $e) {
     // Manejo de errores
     echo "Ocurrió un error: " . $e->getMessage();
     exit();
@@ -139,12 +140,16 @@ $sqlCitas = "
                     </a>
                 </td>
             </tr>
-        <?php } ?>
-    <?php } else { ?>
+        <?php
+    }?>
+    <?php
+}
+else { ?>
         <tr>
             <td colspan="6" class="text-center">No se encontraron citas registradas.</td>
         </tr>
-             <?php } ?>
+             <?php
+}?>
            </tbody>
                     </table>
                 </div>
@@ -152,10 +157,11 @@ $sqlCitas = "
                 <div class="d-flex justify-content-center mt-3">
                     <?php for ($i = 1; $i <= $totalPages; $i++) { ?>
                     <a href="?page=<?php echo $i; ?>"
-                        class="btn btn-sm <?php echo ($i == $currentPage) ? 'btn-secondary' : 'btn-primary'; ?> mx-1">
+                        class="btn btn-sm <?php echo($i == $currentPage) ? 'btn-secondary' : 'btn-primary'; ?> mx-1">
                         <?php echo $i; ?>
                     </a>
-                    <?php } ?>
+                    <?php
+}?>
                 </div>
             </div>
         </div>

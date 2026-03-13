@@ -6,24 +6,17 @@
             PDF, Word o Excel. Dale click al ícono del formato en que deseas descargar el reporte</h2>
         <br>
         <div class="row text-center" id="initialIcons">
-            <div class="col-md-4 mb-4">
+            <div class="col-md-6 mb-4">
                 <button class="btn btn-danger btn-lg" onclick="showPDFOptions()">
                     <i class="fas fa-file-pdf fa-5x"></i>
                     <p class="mt-3">Descargar PDF</p>
                 </button>
             </div>
 
-            <div class="col-md-4 mb-4">
+            <div class="col-md-6 mb-4">
                 <button class="btn btn-success btn-lg" onclick="showExcelOptions()">
                     <i class="fas fa-file-excel fa-5x"></i>
                     <p class="mt-3">Descargar Excel</p>
-                </button>
-            </div>
-
-            <div class="col-md-4 mb-4">
-                <button class="btn btn-primary btn-lg" onclick="showWordOptions()">
-                    <i class="fas fa-file-word fa-5x"></i>
-                    <p class="mt-3">Descargar Word</p>
                 </button>
             </div>
         </div>
@@ -188,75 +181,6 @@
             </div>
         </div>
     </div>
-</div>
-
-<div id="wordOptions" class="d-none d-flex flex-column align-items-center">
-    <div class="mb-3 w-50 text-center">
-        <button class="btn btn-primary btn-lg w-100" type="button" data-bs-toggle="collapse"
-            data-bs-target="#afiliadosOptionsWord" aria-expanded="false" aria-controls="afiliadosOptions">
-            Descargar reporte de Afiliados (WORD)
-        </button>
-        <div class="collapse mt-2" id="afiliadosOptionsWord">
-            <div class="d-grid gap-2">
-                <a href="/IPSPUPTM/app/reportes/word/reporte_afiliados.php" class="btn btn-outline-primary btn-lg"
-                    onclick="mostrarAlertaDescarga('Word', 'Afiliados')">Ver Reporte</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="mb-3 w-50 text-center">
-        <button class="btn btn-primary btn-lg w-100" type="button" data-bs-toggle="collapse"
-            data-bs-target="#beneficiariosOptionsWord" aria-expanded="false" aria-controls="beneficiariosOptions">
-            Descargar reporte de Beneficiarios por Afiliado (WORD)
-        </button>
-        <div class="collapse mt-2" id="beneficiariosOptionsWord">
-            <div class="d-grid gap-2">
-                <a href="/IPSPUPTM/app/reportes/word/reporte_beneficiarios.php" class="btn btn-outline-primary btn-lg"
-                    onclick="mostrarAlertaDescarga('Word', 'Beneficiarios')">Ver Reporte</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="mb-3 w-50 text-center">
-        <button class="btn btn-primary btn-lg w-100" type="button" data-bs-toggle="collapse"
-            data-bs-target="#citasOptionsWord" aria-expanded="false" aria-controls="citasOptions">
-            Descargar reporte de Citas (WORD)
-        </button>
-        <div class="collapse mt-2" id="citasOptionsWord">
-            <div class="d-grid gap-2">
-                <a href="/IPSPUPTM/app/reportes/word/reporte_citas.php?tipo_reporte=semanal"
-                    class="btn btn-outline-primary btn-lg"
-                    onclick="mostrarAlertaDescarga('Word', 'Citas Semanal')">Semanal</a>
-                <a href="/IPSPUPTM/app/reportes/word/reporte_citas.php?tipo_reporte=quincenal"
-                    class="btn btn-outline-primary btn-lg"
-                    onclick="mostrarAlertaDescarga('Word', 'Citas Quincenal')">Quincenal</a>
-                <a href="/IPSPUPTM/app/reportes/word/reporte_citas.php?tipo_reporte=mensual"
-                    class="btn btn-outline-primary btn-lg"
-                    onclick="mostrarAlertaDescarga('Word', 'Citas Mensual')">Mensual</a>
-            </div>
-        </div>
-    </div>
-
-    <div class="mb-3 w-50 text-center">
-        <button class="btn btn-primary btn-lg w-100" type="button" data-bs-toggle="collapse"
-            data-bs-target="#especialidadesOptionsWord" aria-expanded="false" aria-controls="especialidadesOptions">
-            Descargar reporte de Especialidades (WORD)
-        </button>
-        <div class="collapse mt-2" id="especialidadesOptionsWord">
-            <div class="d-grid gap-2">
-                <a href="/IPSPUPTM/app/reportes/word/reporte_especialidades.php?tipo_reporte=semanal"
-                    class="btn btn-outline-primary btn-lg"
-                    onclick="mostrarAlertaDescarga('Word', 'Especialidades Semanal')">Semanal</a>
-                <a href="/IPSPUPTM/app/reportes/word/reporte_especialidades.php?tipo_reporte=quincenal"
-                    class="btn btn-outline-primary btn-lg"
-                    onclick="mostrarAlertaDescarga('Word', 'Especialidades Quincenal')">Quincenal</a>
-                <a href="/IPSPUPTM/app/reportes/word/reporte_especialidades.php?tipo_reporte=mensual"
-                    class="btn btn-outline-primary btn-lg"
-                    onclick="mostrarAlertaDescarga('Word', 'Especialidades Mensual')">Mensual</a>
-            </div>
-        </div>
-    </div>
-</div>
 </div>
 </div>
 <script src="/IPSPUPTM/assets/js/reportes.js"></script>

@@ -41,7 +41,7 @@ $mes_actual = date('F'); // Esto da el mes en inglés, podrías traducirlo o dej
                             </div>
                         </div>
                         <div class="ms-auto">
-                            <a href="/IPSPUPTM/home.php?vista=gestionpagosexternos" class="btn btn-success btn-lg rounded-pill px-4 shadow-sm fw-bold">
+                            <a href="/IPSPUPTM/home.php?vista=gestionpagosexternos" class="btn btn-success btn-lg rounded-pill px-4 shadow-sm fw-bold text-nowrap">
                                 Gestionar <i class="fas fa-arrow-right ms-2"></i>
                             </a>
                         </div>
@@ -67,7 +67,7 @@ $mes_actual = date('F'); // Esto da el mes en inglés, podrías traducirlo o dej
                             </div>
                         </div>
                         <div class="ms-auto">
-                            <a href="/IPSPUPTM/home.php?vista=gestionpagoscontrato" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm fw-bold">
+                            <a href="/IPSPUPTM/home.php?vista=gestionpagoscontrato" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm fw-bold text-nowrap">
                                 Gestionar <i class="fas fa-arrow-right ms-2"></i>
                             </a>
                         </div>
