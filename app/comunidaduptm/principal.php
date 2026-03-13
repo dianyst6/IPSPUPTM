@@ -82,5 +82,6 @@ $totalPages = ceil($totalRows / $rowsPerPage);
 </div>
 
 <?php include 'C:/xampp/htdocs/IPSPUPTM/app/comunidaduptm/eliminar/eliminamodal.php'; ?>
+<?php include 'C:/xampp/htdocs/IPSPUPTM/app/comunidaduptm/formulario/formulariomodal.php'; ?>
 <?php include 'C:/xampp/htdocs/IPSPUPTM/app/comunidaduptm/actualizar/editmodal.php'; ?>
 <script src="/IPSPUPTM/assets/js/accionescomunidaduptm.js"></script>

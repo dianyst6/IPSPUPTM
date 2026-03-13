@@ -86,7 +86,7 @@ if (eliminamodal) {
             const formData = new FormData(this);
 
             // CAMBIO: Ruta hacia tu procesador de eliminación de externos
-            fetch('/IPSPUPTM/app/comunidad/eliminar.php', {
+            fetch('/IPSPUPTM/app/comunidaduptm/eliminar/eliminar.php', {
                 method: 'POST',
                 body: formData
             })
@@ -101,6 +101,34 @@ if (eliminamodal) {
                 bootstrap.Modal.getInstance(eliminamodal).hide();
             })
             .catch(error => alertify.error("Error al eliminar."));
+        });
+    }
+}
+
+// Evento para el Formulario de Agregar
+const formulariomodal = document.getElementById('formulariomodal');
+if (formulariomodal) {
+    const formAgregar = formulariomodal.querySelector('form');
+    if (formAgregar) {
+        formAgregar.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('/IPSPUPTM/app/comunidaduptm/formulario/guardar.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alertify.success(data.message);
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    alertify.error(data.message);
+                }
+                bootstrap.Modal.getInstance(formulariomodal).hide();
+            })
+            .catch(error => alertify.error("Error al guardar."));
         });
     }
 }

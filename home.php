@@ -15,6 +15,7 @@ switch ($vista) {
     case 'beneficiarios':
         $contenido = $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/app/beneficiarios/principal.php';
         include $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/recursos/layout.php';
+        break;
     case 'comunidaduptm':
         $contenido = $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/app/comunidaduptm/principal.php';
         include $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/recursos/layout.php';
