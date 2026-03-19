@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-03-2026 a las 18:20:38
+-- Tiempo de generación: 19-03-2026 a las 20:46:21
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -43,7 +43,9 @@ INSERT INTO `afiliados` (`ID`, `cedula`, `created_at`, `updated_at`) VALUES
 (43, 30270492, '2026-02-19 04:31:30', '2026-02-19 04:31:30'),
 (46, 8012649, '2026-02-24 02:34:01', '2026-03-03 01:14:16'),
 (47, 30960254, '2026-03-12 17:11:53', '2026-03-12 17:11:53'),
-(48, 11955376, '2026-03-12 20:08:18', '2026-03-12 20:08:18');
+(48, 11955376, '2026-03-12 20:08:18', '2026-03-12 20:08:18'),
+(49, 32032832, '2026-03-13 21:18:39', '2026-03-13 21:18:39'),
+(50, 12387654, '2026-03-19 18:49:39', '2026-03-19 18:49:39');
 
 -- --------------------------------------------------------
 
@@ -65,7 +67,8 @@ CREATE TABLE `beneficiarios` (
 
 INSERT INTO `beneficiarios` (`ID`, `cedula`, `cedula_afil`, `created_at`, `updated_at`) VALUES
 (13, 8012649, 38, '2025-05-13 05:16:57', '2025-05-13 05:22:12'),
-(16, 14107471, 48, '2026-03-12 20:10:03', '2026-03-12 20:10:03');
+(16, 14107471, 48, '2026-03-12 20:10:03', '2026-03-12 20:10:03'),
+(18, 23456786, 43, '2026-03-19 16:22:58', '2026-03-19 16:22:58');
 
 -- --------------------------------------------------------
 
@@ -169,7 +172,21 @@ INSERT INTO `bitacora` (`idbitacora`, `usuario`, `accion`, `descripcion`, `fecha
 (214, 'admin', 'Edición de Comunidad UPTM', 'Se actualizaron los datos del externo C.I: 8765345 (Melanie Martinez)', '2026-03-13 03:31:31'),
 (215, 'medico2', 'Historia Ginecología', 'Paciente CI: 14107471 (beneficiario)', '2026-03-13 06:41:08'),
 (216, 'medico2', 'Eliminación de Historia Médica', 'Historia Ginecología ID: 1 — Paciente CI: 14107471', '2026-03-13 07:04:57'),
-(217, 'medico2', 'Historia Ginecología', 'Paciente CI: 14107471 (beneficiario)', '2026-03-13 07:18:14');
+(217, 'medico2', 'Historia Ginecología', 'Paciente CI: 14107471 (beneficiario)', '2026-03-13 07:18:14'),
+(218, 'medico', 'Registro de Historia', 'Paciente CI: 11955376 (afiliado)', '2026-03-13 18:00:47'),
+(219, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 32032832', '2026-03-13 21:18:39'),
+(220, NULL, 'Registro de Beneficiario', 'Cédula: si, Nombre: Estefania, Apellido: Garcia3232', '2026-03-13 21:23:40'),
+(221, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: sdagath (ID Cita: 35), Paciente: Juan Rojas (Afiliado), Fecha: 2026-04-30 09:30:00, Especialidad: Medicina interna', '2026-03-14 02:17:04'),
+(222, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: asd (ID Cita: 17), Paciente: gregory perez (Afiliado), Fecha: 2026-02-19 11:03:00, Especialidad: Oftamología', '2026-03-14 02:27:58'),
+(223, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: dfsdfs (ID Cita: 27), Paciente: gregory perez (Afiliado), Fecha: 2026-02-11 20:46:00, Especialidad: Gastroenterología', '2026-03-14 02:29:44'),
+(224, 'medico2', 'Eliminación de Historia Médica', 'Historia Ginecología ID: 2 — Paciente CI: 14107471', '2026-03-14 02:51:42'),
+(225, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-13T05:13', '2026-03-14 03:08:00'),
+(226, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: cita (ID Cita: 36), Paciente: gregory perez (Afiliado), Fecha: 2026-03-13 05:13:00, Especialidad: Medicina interna', '2026-03-14 03:26:04'),
+(227, 'admin', 'Eliminación de Beneficiario y Citas', 'Se eliminó al beneficiario: Estefania Garcia3232 (Cédula: 0) y todas las citas relacionadas.', '2026-03-19 16:20:54'),
+(228, NULL, 'Registro de Beneficiario', 'Cédula: 23456786, Nombre: Pepe, Apellido: Rojas', '2026-03-19 16:22:58'),
+(229, 'secretaria', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-04-09T10:50', '2026-03-19 17:54:31'),
+(230, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: cita (ID Cita: 37), Paciente: gregory perez (Afiliado), Fecha: 2026-04-09 10:50:00, Especialidad: Oftamología', '2026-03-19 18:35:27'),
+(231, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 12387654', '2026-03-19 18:49:39');
 
 -- --------------------------------------------------------
 
@@ -186,20 +203,6 @@ CREATE TABLE `citas` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `citas`
---
-
-INSERT INTO `citas` (`id_cita`, `id_especialidad`, `fecha_cita`, `descripcion`, `created_at`, `updated_at`) VALUES
-(17, 4, '2026-02-19 11:03:00', 'asd', '2026-02-19 15:03:28', '2026-02-19 15:03:28'),
-(27, 5, '2026-02-11 20:46:00', 'dfsdfs', '2026-02-25 00:46:40', '2026-02-25 00:46:40'),
-(30, 5, '2026-03-18 20:50:00', 'skasjad', '2026-03-03 00:50:45', '2026-03-03 00:50:45'),
-(31, 1, '2026-03-26 21:06:00', 'sdssdds', '2026-03-03 01:06:56', '2026-03-03 01:06:56'),
-(32, 1, '2026-03-19 21:24:00', 'gfddg', '2026-03-03 01:24:52', '2026-03-03 01:24:52'),
-(33, 5, '2026-03-04 22:19:00', 'ghhhg', '2026-03-03 02:19:21', '2026-03-03 02:19:21'),
-(34, 5, '2026-03-12 16:10:00', 'asdgg', '2026-03-12 20:11:09', '2026-03-12 20:11:09'),
-(35, 2, '2026-04-30 09:30:00', 'sdagath', '2026-03-12 20:20:51', '2026-03-12 20:20:51');
-
 -- --------------------------------------------------------
 
 --
@@ -213,15 +216,6 @@ CREATE TABLE `citas_afil` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `citas_afil`
---
-
-INSERT INTO `citas_afil` (`id_citas_afil`, `idcita`, `id_afiliado`, `updated_at`, `created_at`) VALUES
-(11, 17, 43, '2026-02-19 15:03:28', '2026-02-19 15:03:28'),
-(16, 27, 43, '2026-02-25 00:46:40', '2026-02-25 00:46:40'),
-(17, 35, 47, '2026-03-12 20:20:51', '2026-03-12 20:20:51');
 
 -- --------------------------------------------------------
 
@@ -237,13 +231,6 @@ CREATE TABLE `citas_benef` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `citas_benef`
---
-
-INSERT INTO `citas_benef` (`id_citas_benef`, `idcita`, `id_beneficiario`, `updated_at`, `created_at`) VALUES
-(7, 34, 16, '2026-03-12 20:11:09', '2026-03-12 20:11:09');
-
 -- --------------------------------------------------------
 
 --
@@ -257,16 +244,6 @@ CREATE TABLE `citas_uptm` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `citas_uptm`
---
-
-INSERT INTO `citas_uptm` (`id_citas_uptm`, `idcita`, `id_externo`, `created_at`, `updated_at`) VALUES
-(6, 30, 1, '2026-03-03 00:50:45', '2026-03-03 00:50:45'),
-(7, 31, 2, '2026-03-03 01:07:00', '2026-03-03 01:07:00'),
-(8, 32, 1, '2026-03-03 01:24:52', '2026-03-03 01:24:52'),
-(9, 33, 1, '2026-03-03 02:19:23', '2026-03-03 02:19:23');
 
 -- --------------------------------------------------------
 
@@ -359,7 +336,9 @@ INSERT INTO `contrato_plan` (`ID_contrato`, `ID_planes_contrato`, `ID_afiliado_c
 (4, 1, 30270492, '2026-02-19', '2026-12-31', 120.00, 'Mensual', 29, 'Activo'),
 (7, 2, 8012649, '2026-02-24', '2026-02-25', 450.00, 'Mensual', 12, 'Activo'),
 (8, 1, 30960254, '2026-03-12', '2027-12-30', 120.00, 'Mensual', 31, 'Activo'),
-(9, 1, 11955376, '2026-03-12', '2026-12-12', 120.00, 'Mensual', 30, 'Activo');
+(9, 1, 11955376, '2026-03-12', '2026-12-12', 120.00, 'Mensual', 30, 'Activo'),
+(10, 1, 32032832, '2026-03-13', '2026-03-26', 120.00, 'Mensual', 23, 'Activo'),
+(11, 1, 12387654, '2026-03-19', '2027-03-20', 120.00, 'Trimestral', 20, 'Activo');
 
 -- --------------------------------------------------------
 
@@ -418,13 +397,20 @@ CREATE TABLE `historias_medicas` (
   `fecha` date NOT NULL,
   `fecha_nacimiento` date NOT NULL,
   `edad` int(3) NOT NULL,
-  `dirección` varchar(200) NOT NULL,
+  `direccion` varchar(200) NOT NULL,
   `motivo_consulta` text NOT NULL,
   `enfermedad_actual` text NOT NULL,
   `antecedentes_familiares` text NOT NULL,
   `antecedentes_personales` text NOT NULL,
   `info_adicional` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `historias_medicas`
+--
+
+INSERT INTO `historias_medicas` (`id_historia`, `ci_paciente`, `tipo_paciente`, `ci_medico`, `fecha`, `fecha_nacimiento`, `edad`, `direccion`, `motivo_consulta`, `enfermedad_actual`, `antecedentes_familiares`, `antecedentes_personales`, `info_adicional`) VALUES
+(1, 11955376, 'afiliado', 14107471, '2026-03-13', '0000-00-00', 53, 'Ejido', 'Dolor de rodilla', 'diabetes', 'Mama diabetes', 'hipertenso', '');
 
 -- --------------------------------------------------------
 
@@ -473,13 +459,6 @@ CREATE TABLE `historias_medicas_gine` (
   `diagnostico` varchar(100) NOT NULL,
   `conducta` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `historias_medicas_gine`
---
-
-INSERT INTO `historias_medicas_gine` (`id_historia_g`, `ci_paciente`, `tipo_paciente`, `ci_medico`, `fecha`, `fecha_nacimiento`, `edad`, `direccion`, `motivo_consulta`, `enfermedad_actual`, `antecedentes_familiares`, `antecedentes_personales`, `gs`, `fuma`, `ant_gineco_obstetrico`, `c.m`, `prs`, `cs`, `mac`, `fuc`, `fum`, `gestaciones`, `rc`, `año`, `otros`, `ex.fisico.t.a`, `f.c`, `peso`, `talla`, `cabeza`, `o.r.l`, `c.v`, `tiroides`, `mamas`, `abdomen`, `ginecologico`, `ultrasonido`, `diagnostico`, `conducta`) VALUES
-(2, 14107471, 'beneficiario', 11955376, '2026-03-13', '1980-10-15', 45, 'san juan', 'sgherhe', 'fhergsdfh', 'dfgetjg', 'sgjryj', 'AB+', 'No', 'dfgeth', 'regular', '3', '2', '45', '13546', '25734', '3', '4', '0000', 'dfsh', '120/80', '80', '65', '170', '40', '35', '436', '34', '346', '40', 'jwrj', 'sfgjry', 'sgherb', 'thbry');
 
 -- --------------------------------------------------------
 
@@ -551,19 +530,6 @@ CREATE TABLE `pagos_externos` (
   `fecha_pago` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `pagos_externos`
---
-
-INSERT INTO `pagos_externos` (`id_pago_ext`, `id_cita`, `monto_base`, `monto_final`, `metodo_pago`, `fecha_pago`) VALUES
-(13, 30, 0.00, 0.00, 'Efectivo', '2026-03-03 00:58:25'),
-(14, 30, 0.00, 0.00, 'Efectivo', '2026-03-03 00:58:33'),
-(15, 30, 0.00, 0.00, 'Efectivo', '2026-03-03 00:58:36'),
-(16, 30, 0.00, 0.00, 'Efectivo', '2026-03-03 00:58:38'),
-(17, 31, 0.00, 2000.00, 'Efectivo', '2026-03-03 01:07:31'),
-(18, 32, 0.00, 500.00, 'Efectivo', '2026-03-03 01:26:03'),
-(19, 33, 20.00, 18.00, 'Pago Móvil', '2026-03-03 02:45:29');
-
 -- --------------------------------------------------------
 
 --
@@ -590,10 +556,13 @@ INSERT INTO `persona` (`cedula`, `nombre`, `apellido`, `fechanacimiento`, `gener
 (1, 'JUAN', 'NUÑEZ ', '2025-04-07', 'Masculino', 2147483647, 'WDRIIWEM@GMAIL.COM', 'SI ', ''),
 (8012649, 'ZULEYMA', 'NUÑEZ', '2025-05-21', 'Femenino', 2147483647, 'zuleyma_nunez@gmail.com', 'Odontologo', ''),
 (11955376, 'Miguel', 'Sosa', '1972-10-15', 'Masculino', 2147483647, 'miguel@gmail.com', 'mecanico', ''),
+(12387654, 'Mercedez', 'Marquez', '1982-04-15', 'Femenino', 2147483647, 'mercedez@gmail.com', 'jubilada', ''),
 (14107471, 'Maria', 'Marquez', '1980-10-15', 'Femenino', 2147483647, 'maria@gmail.com', 'enfermera', ''),
+(23456786, 'Pepe', 'Rojas', '1977-05-12', 'Masculino', 2147483647, 'pepe@gmail.com', 'obrero', ''),
 (30270492, 'gregory', 'perez', '2002-08-31', 'Masculino', 46564654, 'gps.3108@gmail.com', 'profesor', ''),
 (30960254, 'Juan', 'Rojas', '1999-08-13', 'Masculino', 2147483647, 'juan@gmail.com', 'Estudiante', ''),
-(31253521, 'GABRIELA ', 'GARCÍA NUÑEZ', '2005-05-19', 'Femenino', 2147483647, 'GABRIELAVAL.GN31@GMAIL.COM', 'Estudiante', '');
+(31253521, 'GABRIELA ', 'GARCÍA NUÑEZ', '2005-05-19', 'Femenino', 2147483647, 'GABRIELAVAL.GN31@GMAIL.COM', 'Estudiante', ''),
+(32032832, 'Rosa', 'Garcia', '2026-03-10', 'Femenino', 2383280, 'rosaa@gmail.com', 'Profesora', '');
 
 -- --------------------------------------------------------
 
@@ -928,31 +897,31 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `afiliados`
 --
 ALTER TABLE `afiliados`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT de la tabla `beneficiarios`
 --
 ALTER TABLE `beneficiarios`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `bitacora`
 --
 ALTER TABLE `bitacora`
-  MODIFY `idbitacora` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=218;
+  MODIFY `idbitacora` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=232;
 
 --
 -- AUTO_INCREMENT de la tabla `citas`
 --
 ALTER TABLE `citas`
-  MODIFY `id_cita` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id_cita` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT de la tabla `citas_afil`
 --
 ALTER TABLE `citas_afil`
-  MODIFY `id_citas_afil` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id_citas_afil` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `citas_benef`
@@ -988,7 +957,7 @@ ALTER TABLE `consumo_plan`
 -- AUTO_INCREMENT de la tabla `contrato_plan`
 --
 ALTER TABLE `contrato_plan`
-  MODIFY `ID_contrato` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `ID_contrato` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `especialidades`
@@ -1006,7 +975,7 @@ ALTER TABLE `examenes`
 -- AUTO_INCREMENT de la tabla `historias_medicas`
 --
 ALTER TABLE `historias_medicas`
-  MODIFY `id_historia` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_historia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `historias_medicas_gine`
