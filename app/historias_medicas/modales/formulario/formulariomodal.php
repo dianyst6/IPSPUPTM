@@ -1,13 +1,12 @@
-<link href="/IPSPUPTM/assets/select2/css/select2.min.css" rel="stylesheet" />
-
 <div class="modal fade" id="formulariomodal" tabindex="-1" aria-labelledby="formulariomodallabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-scrollable"> 
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5">Registrar Historia Médica</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body" style="max-height: 70vh;"> <form id="form-registro-historia" action="/IPSPUPTM/app/historias_medicas/modales/formulario/guardar.php" method="POST">
+      <div class="modal-body">
+        <form id="form-registro-historia" action="/IPSPUPTM/app/historias_medicas/modales/formulario/guardar.php" method="POST">
           
           <input type="hidden" name="ci_medico" id="ci_medico_input" value="14107471">
 
@@ -23,18 +22,18 @@
           <div id="campos-interno" style="display: none;">
             <div class="mb-3">
               <label class="form-label">Cédula o Nombre (Afiliado/Beneficiario)</label>
-              <select name="ci_paciente" id="id_paciente_select2" class="form-select">
-                <option value=""></option>
+              <input class="form-control" list="lista-pacientes" id="paciente_search" placeholder="Buscar por CI o Nombre...">
+              <input type="hidden" name="ci_paciente" id="ci_paciente_hidden">
+              <datalist id="lista-pacientes">
                 <?php
-                // Consulta optimizada para Select2
-                $sql = "SELECT cedula, fechanacimiento, nombre, apellido FROM persona";
+                // Consulta a la tabla 'persona'
+                $sql = "SELECT cedula, fechanacimiento, CONCAT(nombre, ' ', apellido) as nombre_completo FROM persona";
                 $res = $conn->query($sql);
                 while($r = $res->fetch_assoc()){
-                  // Guardamos la fecha en un atributo data para usarla luego
-                  echo '<option value="'.$r['cedula'].'" data-fecha="'.$r['fechanacimiento'].'">'.$r['cedula'].' | '.$r['nombre'].' '.$r['apellido'].'</option>';
+                  echo '<option data-ci="'.$r['cedula'].'" data-fecha="'.$r['fechanacimiento'].'" value="'.$r['cedula'].' | '.$r['nombre_completo'].'"></option>';
                 }
                 ?>
-              </select>
+              </datalist>
             </div>
           </div>
 
@@ -59,7 +58,7 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Edad</label>
-                    <input type="number" name="edad" id="edad_input" class="form-control" required readonly>
+                    <input type="number" name="edad" id="edad_input" class="form-control" required>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Fecha Consulta</label>
@@ -112,94 +111,102 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     
-    // === CARGA DINÁMICA DE SELECT2 ===
-    var script = document.createElement('script');
-    script.src = '/IPSPUPTM/assets/select2/js/select2.min.js';
-    script.onload = function() {
-        $('#formulariomodal').on('shown.bs.modal', function () {
-            $('#id_paciente_select2').select2({
-                dropdownParent: $('#formulariomodal'),
-                placeholder: "Buscar por CI o Nombre...",
-                width: '100%'
-            });
-        });
-
-        // Evento cuando se selecciona un paciente interno
-        $('#id_paciente_select2').on('select2:select', function (e) {
-            const fecha = e.params.data.element.dataset.fecha;
-            const iFechaNac = document.getElementById('fecha_nacimiento_input');
-            
-            if (fecha) {
-                iFechaNac.value = fecha;
-                calcularEdad(fecha);
-            }
-        });
-    };
-    document.head.appendChild(script);
-
-    // === LÓGICA DE INTERFAZ ===
     const selector = document.getElementById('tipo_paciente_selector');
     const dInterno = document.getElementById('campos-interno');
     const dExterno = document.getElementById('campos-externo');
     const dComunes = document.getElementById('campos-comunes');
     const bGuardar = document.getElementById('btn_guardar_historia');
+    
     const iFechaNac = document.getElementById('fecha_nacimiento_input');
     const iEdad = document.getElementById('edad_input');
+    const form = document.getElementById('form-registro-historia');
 
+    // 1. Lógica para mostrar/ocultar secciones según tipo de paciente
     selector.addEventListener('change', function() {
+        const opcion = this.value;
         dComunes.style.display = 'block';
         bGuardar.style.display = 'block';
 
-        if (this.value === 'interno') {
+        if (opcion === 'interno') {
             dInterno.style.display = 'block';
             dExterno.style.display = 'none';
             iFechaNac.setAttribute('readonly', 'readonly');
         } else {
             dInterno.style.display = 'none';
             dExterno.style.display = 'block';
-            iFechaNac.removeAttribute('readonly');
             iFechaNac.value = "";
             iEdad.value = "";
+            iFechaNac.removeAttribute('readonly');
         }
     });
 
-    // Función para calcular edad
-    function calcularEdad(fecha) {
-        if (!fecha) return;
-        const hoy = new Date();
-        const cumple = new Date(fecha);
-        let edad = hoy.getFullYear() - cumple.getFullYear();
-        const m = hoy.getMonth() - cumple.getMonth();
-        if (m < 0 || (m === 0 && hoy.getDate() < cumple.getDate())) {
-            edad--;
-        }
-        iEdad.value = edad;
-    }
+    // 2. Buscador de Pacientes Internos (Datalist)
+    document.getElementById('paciente_search').addEventListener('input', function() {
+        const datalist = document.getElementById('lista-pacientes');
+        const options = datalist.options;
+        const hiddenCi = document.getElementById('ci_paciente_hidden');
 
-    // Escuchar cambio manual de fecha para externos
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].value === this.value) {
+                const cedula = options[i].getAttribute('data-ci');
+                const fecha = options[i].getAttribute('data-fecha');
+                
+                hiddenCi.value = cedula;
+                iFechaNac.value = fecha;
+                
+                if (fecha) {
+                    const hoy = new Date();
+                    const cumple = new Date(fecha);
+                    let edad = hoy.getFullYear() - cumple.getFullYear();
+                    const m = hoy.getMonth() - cumple.getMonth();
+                    if (m < 0 || (m === 0 && hoy.getDate() < cumple.getDate())) {
+                        edad--;
+                    }
+                    iEdad.value = edad;
+                }
+                break;
+            }
+        }
+    });
+
+    // 3. Cálculo de edad para externos
     iFechaNac.addEventListener('change', function() {
-        calcularEdad(this.value);
+        if (this.value && !this.readOnly) {
+            const hoy = new Date();
+            const cumple = new Date(this.value);
+            let edad = hoy.getFullYear() - cumple.getFullYear();
+            const m = hoy.getMonth() - cumple.getMonth();
+            if (m < 0 || (m === 0 && hoy.getDate() < cumple.getDate())) {
+                edad--;
+            }
+            iEdad.value = edad;
+        }
     });
 
-    // Envío del Formulario
-    document.getElementById('form-registro-historia').addEventListener('submit', function(e) {
-        e.preventDefault();
+    // 4. Envío de datos por AJAX
+    form.addEventListener('submit', function(e) {
+        e.preventDefault(); 
+
         const formData = new FormData(this);
-        
-        fetch(this.getAttribute('action'), {
+        const ruta = this.getAttribute('action');
+
+        fetch(ruta, {
             method: 'POST',
             body: formData
         })
-        .then(res => res.json())
+        .then(response => response.json()) // Cambiado a JSON para coincidir con guardar.php
         .then(data => {
-            if (data.success) {
+            if (data.success === true) {
                 alert("✅ " + data.message);
-                location.reload();
+                location.reload(); 
             } else {
                 alert("⚠️ Error: " + data.message);
             }
         })
-        .catch(err => console.error('Error:', err));
+        .catch(error => {
+            console.error('Error:', error);
+            alert("❌ Error al procesar la solicitud.");
+        });
     });
 });
 </script>

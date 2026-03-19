@@ -1,11 +1,12 @@
 <div class="modal fade" id="formulariomodal" tabindex="-1" aria-labelledby="formulariomodallabel" aria-hidden="true">
-<div class="modal-dialog modal-lg modal-dialog-scrollable">    <div class="modal-content">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="FormularioModalLabel">Formulario de registro de Afiliado</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-        <div class="modal-body" style="max-height: 70vh;">
-          <form action="/IPSPUPTM/app/afiliados/modales/formulario/guardar.php" method="post">
+      <div class="modal-body">
+        <form action="/IPSPUPTM/app/afiliados/modales/formulario/guardar.php" method="post">
           <div class="container">
             
             <h6 class="text-primary fw-bold mb-3"><i class="fas fa-user me-2"></i>Datos Personales</h6>
