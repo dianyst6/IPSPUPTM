@@ -129,7 +129,6 @@ img {
 /* --- Reglas Personalizadas para el Header Fijo y Modal --- */
 .modal {
     z-index: 1055 !important; /* Asegúrate de que el modal esté encima del header fijo */
-    margin-top: 70px; /* Ajusta según la altura del header */
 }
 
 .navbar.fixed-top {

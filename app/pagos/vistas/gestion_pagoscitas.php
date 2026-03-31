@@ -1,0 +1,138 @@
+<?php
+include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
+
+// Consulta para obtener citas de AFILIADOS Y BENEFICIARIOS que estén "Por Pagar"
+$sql = "
+    (SELECT 
+        c.id_cita, 
+        p_ind.cedula,
+        CONCAT(p_ind.nombre, ' ', p_ind.apellido) AS nombre_paciente,
+        'Afiliado' AS tipo,
+        pl.nombre_plan,
+        pl.monto_cobertura,
+        cp_con.ID_contrato,
+        c.fecha_cita,
+        c.estado_pago,
+        e.nombre_especialidad,
+        e.descuento AS descuento_especialidad,
+        (SELECT SUM(precio_historico) FROM citas_examenes WHERE id_cita = c.id_cita) AS costo_total
+    FROM citas c
+    INNER JOIN citas_afil ca ON c.id_cita = ca.idcita
+    INNER JOIN afiliados a ON ca.id_afiliado = a.ID
+    INNER JOIN persona p_ind ON a.cedula = p_ind.cedula
+    INNER JOIN especialidades e ON c.id_especialidad = e.id_especialidad
+    INNER JOIN contrato_plan cp_con ON a.cedula = cp_con.ID_afiliado_contrato
+    INNER JOIN planes pl ON cp_con.ID_planes_contrato = pl.ID_planes
+    WHERE c.estado_pago = 'Por Pagar' AND cp_con.estado_contrato = 'Activo')
+    
+    UNION
+    
+    (SELECT 
+        c.id_cita, 
+        p_ind.cedula,
+        CONCAT(p_ind.nombre, ' ', p_ind.apellido) AS nombre_paciente,
+        'Beneficiario' AS tipo,
+        pl.nombre_plan,
+        pl.monto_cobertura,
+        cp_con.ID_contrato,
+        c.fecha_cita,
+        c.estado_pago,
+        e.nombre_especialidad,
+        e.descuento AS descuento_especialidad,
+        (SELECT SUM(precio_historico) FROM citas_examenes WHERE id_cita = c.id_cita) AS costo_total
+    FROM citas c
+    INNER JOIN citas_benef cb ON c.id_cita = cb.idcita
+    INNER JOIN beneficiarios b ON cb.id_beneficiario = b.ID
+    INNER JOIN persona p_ind ON b.cedula = p_ind.cedula
+    INNER JOIN afiliados a_tit ON b.cedula_afil = a_tit.ID
+    INNER JOIN especialidades e ON c.id_especialidad = e.id_especialidad
+    INNER JOIN contrato_plan cp_con ON a_tit.cedula = cp_con.ID_afiliado_contrato
+    INNER JOIN planes pl ON cp_con.ID_planes_contrato = pl.ID_planes
+    WHERE c.estado_pago = 'Por Pagar' AND cp_con.estado_contrato = 'Activo')
+    
+    ORDER BY fecha_cita DESC
+";
+
+$res = mysqli_query($conn, $sql);
+?>
+
+<div class="card shadow-lg">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h1 class="fw-bold mb-0" style="color: #062974;">Cobro de Citas con Póliza</h1>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalConsumoExterno">
+                <i class="fas fa-plus-circle me-1"></i> Registrar Consumo Externo
+            </button>
+        </div>
+        <hr class="mx-auto" style="width: 50px; height: 3px; background-color: #062974;">
+
+        <div class="table-responsive mt-4">
+            <table class="table table-striped table-hover shadow-sm">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>Paciente</th>
+                        <th>Tipo</th>
+                        <th>Plan</th>
+                        <th>Costo Cita</th>
+                        <th>Saldo Póliza</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                    <?php if (mysqli_num_rows($res) > 0): ?>
+                        <?php while ($row = mysqli_fetch_assoc($res)): 
+                            $id_contrato = $row['ID_contrato'];
+                            $cobertura = $row['monto_cobertura'];
+                            
+                            // Calcular consumo actual
+                            $sql_cons = "SELECT SUM(monto_descontado) AS consumido FROM consumo_plan WHERE ID_contrato_plan = '$id_contrato'";
+                            $res_cons = mysqli_query($conn, $sql_cons);
+                            $consumido = mysqli_fetch_assoc($res_cons)['consumido'] ?? 0;
+                            $saldo_disponible = $cobertura - $consumido;
+                            $costo_cita = $row['costo_total'] ?? 0;
+                            $puede_pagar = ($saldo_disponible >= $costo_cita);
+                        ?>
+                        <tr>
+                            <td class="text-start">
+                                <strong><?php echo $row['nombre_paciente']; ?></strong><br>
+                                <small class="text-muted">C.I: <?php echo $row['cedula']; ?></small>
+                            </td>
+                            <td><span class="badge bg-secondary"><?php echo $row['tipo']; ?></span></td>
+                            <td><?php echo $row['nombre_plan']; ?></td>
+                            <td class="fw-bold text-danger">$<?php echo number_format($costo_cita, 2); ?></td>
+                            <td class="fw-bold <?php echo $puede_pagar ? 'text-success' : 'text-danger'; ?>">
+                                $<?php echo number_format($saldo_disponible, 2); ?>
+                            </td>
+                            <td>
+                                <?php if ($puede_pagar): ?>
+                                <button type="button" class="btn btn-success btn-sm" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#modalPagoPoliza"
+                                        data-bs-idcita="<?php echo $row['id_cita']; ?>"
+                                        data-bs-idcontrato="<?php echo $row['ID_contrato']; ?>"
+                                        data-bs-monto="<?php echo $costo_cita; ?>"
+                                        data-bs-nombre="<?php echo $row['nombre_paciente']; ?>"
+                                        data-bs-especialidad="<?php echo $row['nombre_especialidad']; ?>"
+                                        data-bs-descuento="<?php echo $row['descuento_especialidad']; ?>">
+                                    <i class="fas fa-file-invoice-dollar me-1"></i> Descontar de Póliza
+                                </button>
+                                <?php else: ?>
+                                    <span class="badge bg-warning text-dark">Saldo Insuficiente</span>
+                                    <button class="btn btn-outline-primary btn-sm mt-1">Pagar Diferencia</button>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No hay citas pendientes de cobro para afiliados/beneficiarios.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<?php include 'C:/xampp/htdocs/IPSPUPTM/app/pagos/modales/modal_pago_poliza.php'; ?>
+<?php include 'C:/xampp/htdocs/IPSPUPTM/app/pagos/modales/modal_consumo_externo.php'; ?>

@@ -1,19 +1,30 @@
+
 <?php
 include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $id_plan = intval($_POST['id_plan']);
     $nombre = mysqli_real_escape_string($conn, $_POST['nombre_plan']);
     $precio = $_POST['precio'];
     $monto_cobertura = $_POST['monto_cobertura'];
     $desc = mysqli_real_escape_string($conn, $_POST['descripcion']);
 
-    // 1. Insertar el Plan principal
-    $sql_plan = "INSERT INTO planes (nombre_plan, precio, monto_cobertura, descripcion) VALUES ('$nombre', '$precio', '$monto_cobertura', '$desc')";
+    // 1. Actualizar el Plan principal
+    $sql_update_plan = "UPDATE planes SET 
+                        nombre_plan = '$nombre', 
+                        precio = '$precio', 
+                        monto_cobertura = '$monto_cobertura', 
+                        descripcion = '$desc' 
+                        WHERE ID_planes = $id_plan";
     
-    if (mysqli_query($conn, $sql_plan)) {
-        $id_plan_nuevo = mysqli_insert_id($conn); // Obtenemos el ID del plan que se acaba de crear
+    if (mysqli_query($conn, $sql_update_plan)) {
+        
+        // 2. Eliminar componentes antiguos para re-sincronizar
+        // Nota: Esto es más simple que comparar qué cambió exactamente
+        $sql_delete = "DELETE FROM componentes_planes WHERE ID_planes_componentes = $id_plan";
+        mysqli_query($conn, $sql_delete);
 
-        // 2. Procesar Exámenes Individuales
+        // 3. Procesar Exámenes Individuales
         $examenes = isset($_POST['id_examen']) ? $_POST['id_examen'] : [];
         $cantidades_ex = isset($_POST['cantidad_examen']) ? $_POST['cantidad_examen'] : [];
 
@@ -23,12 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if (!empty($id_ex)) {
                 $sql_comp = "INSERT INTO componentes_planes (ID_planes_componentes, ID_examen_componentes, id_categoria_componente, cantidad_maxima) 
-                             VALUES ('$id_plan_nuevo', '$id_ex', NULL, $cant)";
+                             VALUES ('$id_plan', '$id_ex', NULL, $cant)";
                 mysqli_query($conn, $sql_comp); 
             }
         }
 
-        // 3. Procesar Límites por Categoría
+        // 4. Procesar Límites por Categoría
         $categorias = isset($_POST['id_categoria_comp']) ? $_POST['id_categoria_comp'] : [];
         $cantidades_cat = isset($_POST['cantidad_categoria']) ? $_POST['cantidad_categoria'] : [];
         $montos_cat = isset($_POST['monto_categoria']) ? $_POST['monto_categoria'] : [];
@@ -40,12 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             if (!empty($id_cat)) {
                 $sql_comp_cat = "INSERT INTO componentes_planes (ID_planes_componentes, ID_examen_componentes, id_categoria_componente, cantidad_maxima, monto_maximo) 
-                                 VALUES ('$id_plan_nuevo', NULL, '$id_cat', $cant_c, '$monto_c')";
+                                 VALUES ('$id_plan', NULL, '$id_cat', $cant_c, '$monto_c')";
                 mysqli_query($conn, $sql_comp_cat); 
             }
         }
         
-        echo "<script>alert('Plan y componentes registrados con éxito'); window.location.href='/IPSPUPTM/home.php?vista=gestionplanes';</script>";
+        echo "<script>alert('Plan actualizado con éxito'); window.location.href='/IPSPUPTM/home.php?vista=gestionplanes';</script>";
     } else {
         echo "Error: " . mysqli_error($conn);
     }

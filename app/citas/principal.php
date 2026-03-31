@@ -44,7 +44,8 @@ try {
     -- 4. Especialidad
     LEFT JOIN especialidades e ON c.id_especialidad = e.id_especialidad
     
-    ORDER BY c.id_cita DESC
+    WHERE c.fecha_cita >= CURDATE()
+    ORDER BY c.fecha_cita ASC
     LIMIT $rowsPerPage OFFSET $offset
 ";
 
@@ -55,7 +56,7 @@ try {
     }
 
     // Obtener el total de filas para calcular páginas
-    $totalRowsResult = $conn->query("SELECT COUNT(*) AS total FROM citas");
+    $totalRowsResult = $conn->query("SELECT COUNT(*) AS total FROM citas WHERE fecha_cita >= CURDATE()");
     if (!$totalRowsResult) {
         throw new Exception("Error en la consulta del total de citas: " . $conn->error);
     }

@@ -1,71 +1,112 @@
 document.addEventListener("DOMContentLoaded", function() {
-    
-    // === Carga Dinámica de Select2 ===
-    var script = document.createElement('script');
-    script.src = '/IPSPUPTM/assets/select2/js/select2.min.js'; // Ajusta esta ruta a tu carpeta real
-    script.onload = function() {
-        // Inicializar Select2 al abrir el modal de registro
-        $('#formulariomodal').on('shown.bs.modal', function () {
-            $('#id_paciente_select2').select2({
-                dropdownParent: $('#formulariomodal'),
-                placeholder: "Busque por cédula o nombre...",
-                width: '100%'
-            });
-        });
-    };
-    document.head.appendChild(script);
+    // === 1. ELEMENTOS DEL FILTRADO ===
+    const filterSelect = document.getElementById("filterTipo");
+    const searchInput = document.getElementById("search");
+    const tableBody = document.querySelector('.table tbody');
 
-    // === Lógica de Cambio de Tipo (Interno / Externo) ===
-    const selectorTipo = document.getElementById('tipo_paciente_selector');
-    if (selectorTipo) {
-        selectorTipo.addEventListener('change', function() {
-            const esInterno = (this.value === 'interno');
-            document.getElementById('campos-comunes').style.display = 'block';
-            document.getElementById('btn-guardar-cita').style.display = 'block';
-            
-            document.getElementById('campos-interno').style.display = esInterno ? 'block' : 'none';
-            document.getElementById('campos-externo').style.display = esInterno ? 'none' : 'block';
+    // Función de filtrado mejorada
+    function ejecutarFiltros() {
+        if (!tableBody) return;
+        
+        const filterValue = filterSelect ? filterSelect.value : "todos";
+        const searchText = (searchInput ? searchInput.value : "").toLowerCase().trim();
+        const rows = tableBody.getElementsByTagName('tr');
 
-            // Limpiar y ajustar requeridos
-            if (!esInterno) {
-                $('#id_paciente_select2').val(null).trigger('change');
-            }
-        });
+        for (let row of rows) {
+            // Saltamos la fila si es la de "No se encontraron resultados"
+            if (row.cells.length === 1) continue; 
+
+            const tipoPaciente = (row.getAttribute("data-tipo") || "").trim();
+            const contenidoFila = row.textContent.toLowerCase();
+
+            // Lógica de coincidencia
+            const matchTipo = (filterValue === "todos" || tipoPaciente === filterValue);
+            const matchTexto = (searchText === "" || contenidoFila.includes(searchText));
+
+            // Aplicar visibilidad
+            row.style.display = (matchTipo && matchTexto) ? "" : "none";
+        }
     }
 
-    // === Modal de Eliminación ===
+    // Escuchadores con protección contra NULL
+    if (filterSelect) {
+        filterSelect.addEventListener("change", ejecutarFiltros);
+    } else {
+        console.warn("Advertencia: No se encontró el ID 'filterTipo'");
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener("keyup", ejecutarFiltros);
+    } else {
+        console.warn("Advertencia: No se encontró el ID 'search'");
+    }
+
+    // === 2. MODAL DE ELIMINACIÓN ===
     const eliminamodal = document.getElementById('eliminamodal');
     if (eliminamodal) {
         eliminamodal.addEventListener('shown.bs.modal', event => {
-            const idCita = event.relatedTarget.getAttribute('data-bs-idcita');
-            eliminamodal.querySelector('#id_cita').value = idCita;
+            const button = event.relatedTarget;
+            const idCita = button.getAttribute('data-bs-idcita');
+            const inputId = eliminamodal.querySelector('#id_cita');
+            if (inputId) inputId.value = idCita;
         });
+
+        const formEliminar = eliminamodal.querySelector('form');
+        if (formEliminar) {
+            formEliminar.addEventListener('submit', function(e) {
+                e.preventDefault();
+                fetch('/IPSPUPTM/app/citas/modales/eliminar/eliminar.php', {
+                    method: 'POST',
+                    body: new FormData(this)
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alertify.success(data.message);
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        alertify.error(data.message);
+                    }
+                })
+                .catch(() => alertify.error("Error de conexión"));
+            });
+        }
     }
 
-    // === Modal de Edición ===
+    // === 3. MODAL DE EDICIÓN ===
     const editmodal = document.getElementById('editmodal');
     if (editmodal) {
         editmodal.addEventListener('shown.bs.modal', event => {
-            const idCita = event.relatedTarget.getAttribute('data-bs-idcita');
+            const button = event.relatedTarget;
+            const idCita = button.getAttribute('data-bs-idcita');
             cargarDatosModal(editmodal, idCita);
         });
-    }
 
-    // === Filtrado de Tabla ===
-    const searchInput = document.getElementById("search");
-    if (searchInput) {
-        searchInput.addEventListener("keyup", function() {
-            const term = this.value.toLowerCase();
-            const rows = document.querySelectorAll('.table tbody tr');
-            rows.forEach(row => {
-                row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
+        const formEditar = editmodal.querySelector('form');
+        if (formEditar) {
+            formEditar.addEventListener('submit', function(e) {
+                e.preventDefault();
+                fetch('/IPSPUPTM/app/citas/modales/actualizar/actualizar.php', {
+                    method: 'POST',
+                    body: new FormData(this)
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alertify.success(data.message);
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        alertify.error(data.message);
+                    }
+                });
             });
-        });
+        }
     }
 });
 
-// Función para cargar datos al editar
 function cargarDatosModal(modal, id_cita) {
+    console.log("ID de cita obtenida para cargar datos: ", id_cita);
+
     let formData = new FormData();
     formData.append('id_cita', id_cita);
 
@@ -73,27 +114,74 @@ function cargarDatosModal(modal, id_cita) {
         method: 'POST',
         body: formData
     })
-    .then(res => res.json())
+    .then(response => response.json())
     .then(data => {
-        if (data.length > 0) {
+        if (data.error) {
+            console.error("Error al cargar datos: ", data.error);
+            alertify.error("Error al cargar datos de la cita");
+        } else if (data.length > 0) {
             const cita = data[0];
-            modal.querySelector('#id_cita_editar').value = cita.id_cita;
-            modal.querySelector('#id_especialidad_editar').value = cita.id_especialidad;
-            modal.querySelector('#fecha_cita_editar').value = cita.fecha_cita;
-            modal.querySelector('#descripcion_editar').value = cita.descripcion;
+            console.log("Datos de la cita recibidos:", cita);
+
+            // --- INICIO DE LA LÓGICA DE VISIBILIDAD ---
+            const divInternos = modal.querySelector('#campos_internos_editar');
+            const divExternos = modal.querySelector('#campos_externos_editar');
+            const selectPaciente = modal.querySelector('#id_paciente_editar');
 
             if (cita.tipo_origen === 'externo') {
-                modal.querySelector('#campos_externos_editar').style.display = 'block';
-                modal.querySelector('#campos_internos_editar').style.display = 'none';
-                modal.querySelector('#cedula_ext_editar').value = cita.cedula_ext;
-                modal.querySelector('#nombre_ext_editar').value = cita.nombre_ext;
-                modal.querySelector('#apellido_ext_editar').value = cita.apellido_ext;
+                // Si es externo: mostramos campos de texto, ocultamos el select
+                if (divExternos) divExternos.style.display = 'block';
+                if (divInternos) divInternos.style.display = 'none';
+                
+                // Quitamos el 'required' al select para que no bloquee el envío
+                if (selectPaciente) selectPaciente.removeAttribute('required');
             } else {
-                modal.querySelector('#campos_externos_editar').style.display = 'none';
-                modal.querySelector('#campos_internos_editar').style.display = 'block';
-                modal.querySelector('#id_paciente_editar').value = cita.id_paciente;
+                // Si es interno: mostramos el select, ocultamos campos de texto
+                if (divExternos) divExternos.style.display = 'none';
+                if (divInternos) divInternos.style.display = 'block';
+                
+                // Aseguramos que el select sea obligatorio
+                if (selectPaciente) selectPaciente.setAttribute('required', 'required');
             }
+            // --- FIN DE LA LÓGICA DE VISIBILIDAD ---
+
+            // 1. ID de la cita
+            const inputId = modal.querySelector('#id_cita_editar');
+            if (inputId) inputId.value = cita.id_cita;
+
+            // 2. Selección del paciente (Solo si es interno)
+            if (selectPaciente && cita.tipo_origen !== 'externo') {
+                selectPaciente.value = cita.id_paciente;
+            }
+
+            // 3. Selección de la especialidad
+            const selectEspecialidad = modal.querySelector('#id_especialidad_editar');
+            if (selectEspecialidad) selectEspecialidad.value = cita.id_especialidad;
+
+            // 4. Asignación de fecha y descripción
+            const inputFecha = modal.querySelector('#fecha_cita_editar');
+            if (inputFecha) inputFecha.value = cita.fecha_cita || '';
+            
+            const inputDesc = modal.querySelector('#descripcion_editar');
+            if (inputDesc) inputDesc.value = cita.descripcion || '';
+
+            // 5. Llenado de campos externos (Solo si existen en el JSON)
+            const pNombre = modal.querySelector('#nombre_ext_editar');
+            if (pNombre) pNombre.value = cita.nombre_ext || '';
+            
+            const pApellido = modal.querySelector('#apellido_ext_editar');
+            if (pApellido) pApellido.value = cita.apellido_ext || '';
+
+            const pCedula = modal.querySelector('#cedula_ext_editar');
+            if (pCedula) pCedula.value = cita.cedula_ext || '';
+
+        } else {
+            console.error("No se encontraron datos para el ID:", id_cita);
+            alertify.error("No se encontraron datos de la cita");
         }
     })
-    .catch(err => console.error("Error al cargar:", err));
+    .catch(error => {
+        console.error("Error de conexión:", error);
+        alertify.error("Error de conexión al cargar datos");
+    });
 }

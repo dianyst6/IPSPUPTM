@@ -22,6 +22,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($stmt_citas->execute()) {
                 $id_cita = $conn->insert_id;
+
+                // --- 2. REGISTRAR EXÁMENES SELECCIONADOS ---
+                if (isset($_POST['examenes']) && is_array($_POST['examenes'])) {
+                    foreach ($_POST['examenes'] as $id_ex) {
+                        $id_ex = intval($id_ex);
+                        // Obtener precio actual para guardarlo como histórico
+                        $p_res = $conn->query("SELECT precio FROM examenes WHERE ID_examen = $id_ex");
+                        $p_row = $p_res->fetch_assoc();
+                        $precio_h = $p_row['precio'] ?? 0;
+
+                        $ins_ex = $conn->prepare("INSERT INTO citas_examenes (id_cita, id_examen, precio_historico) VALUES (?, ?, ?)");
+                        $ins_ex->bind_param("iid", $id_cita, $id_ex, $precio_h);
+                        $ins_ex->execute();
+                        $ins_ex->close();
+                    }
+                }
+
                 $tipo_paciente_bitacora = "";
 
               // --- CASO COMUNIDAD UPTM (EXTERNO) ---

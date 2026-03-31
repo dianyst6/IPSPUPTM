@@ -75,6 +75,31 @@ $mes_actual = date('F'); // Esto da el mes en inglés, podrías traducirlo o dej
                 </div>
             </div>
         </div>
+        <div class="col-lg-10 col-xl-8 mb-4">
+            <div class="card border-0 border-start border-warning border-5 bg-light shadow-sm hover-card">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0 bg-white p-3 rounded-circle shadow-sm me-4">
+                            <i class="fa-solid fa-hand-holding-medical fs-1 text-warning"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h3 class="card-title h4 fw-bold mb-1" style="color: #2c3e50;">Pagos por Seguro (Póliza)</h3>
+                            <p class="text-secondary mb-2">Descuento automático de cobertura para Afiliados y Beneficiarios.</p>
+                            <div class="d-flex align-items-center">
+                                <span class="badge rounded-pill bg-warning text-dark px-3">
+                                    <i class="fas fa-shield-alt me-1"></i> Control de Cobertura
+                                </span>
+                            </div>
+                        </div>
+                        <div class="ms-auto">
+                            <a href="/IPSPUPTM/home.php?vista=gestionpagoscitas" class="btn btn-warning btn-lg rounded-pill px-4 shadow-sm fw-bold text-nowrap">
+                                Gestionar <i class="fas fa-arrow-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

@@ -1,13 +1,84 @@
 <link href="/IPSPUPTM/assets/select2/css/select2.min.css" rel="stylesheet" />
 
-<div class="modal fade" id="formulariomodal" tabindex="-1" aria-labelledby="formulariomodallabel" aria-hidden="true">
-<div class="modal-dialog modal-lg modal-dialog-scrollable">    <div class="modal-content">
+<!-- Estilos forzados para modales anidados -->
+<style>
+#modalNuevoExamenCita { 
+    z-index: 2000 !important; 
+    background: rgba(0,0,0,0.5); /* Simulamos backdrop si falla el de BS */
+}
+#modalNuevoExamenCita .modal-dialog {
+    margin-top: 10%;
+}
+</style>
+
+<!-- Modal de Nuevo Examen movido al inicio para mayor visibilidad en el DOM -->
+<div class="modal" id="modalNuevoExamenCita" aria-hidden="true" style="z-index: 2000;">
+    <div class="modal-dialog">
+        <div class="modal-content shadow-lg border-0">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title fw-bold"><i class="fas fa-microscope me-2"></i>Registrar Examen de Catálogo</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="form-nuevo-examen-cita">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nombre del Examen</label>
+                        <input type="text" name="nombre_examen" class="form-control border-info" placeholder="Ej: Rayos X de Muñeca" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">Especialidad Asociada</label>
+                            <select name="id_especialidad" id="id_especialidad_nuevo" class="form-select border-info" required>
+                                <option value="">Seleccione...</option>
+                                <?php
+                                $conn_temp = include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
+                                $esp = $conn->query("SELECT id_especialidad, nombre_especialidad FROM especialidades ORDER BY nombre_especialidad ASC");
+                                while($e = $esp->fetch_assoc()) {
+                                    echo "<option value='{$e['id_especialidad']}'>{$e['nombre_especialidad']}</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label fw-bold">Categoría (Opcional)</label>
+                            <select name="id_categoria" class="form-select border-info" required>
+                                <option value="">Seleccione una categoría...</option>
+                                <?php
+                                $cat_list = $conn->query("SELECT id_categoria, nombre_categoria FROM categorias_examenes ORDER BY nombre_categoria ASC");
+                                while($cl = $cat_list->fetch_assoc()) {
+                                    echo "<option value='{$cl['id_categoria']}'>{$cl['nombre_categoria']}</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-0">
+                        <label class="form-label fw-bold">Precio Base ($)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-info text-white">$</span>
+                            <input type="number" step="0.01" name="precio" class="form-control border-info" placeholder="0.00" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-info text-white fw-bold">
+                        <i class="fas fa-save me-1"></i>Guardar Examen
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="formulariomodal" aria-labelledby="formulariomodallabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="FormularioModalLabel">Registrar nueva cita</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-        <div class="modal-body" style="max-height: 70vh;">
+      <div class="modal-body">
         <form id="form-registro-cita-general">
           
           <div class="mb-3">
@@ -22,30 +93,42 @@
           <hr>
 
           <div id="campos-interno" style="display: none;">
-         <div class="mb-3">
-          <label for="id_paciente_select2" class="form-label fw-bold">Buscar Afiliado / Beneficiario</label>
-        <select name="id_paciente" id="id_paciente_select2" class="form-select">
-            <option value="">Seleccione un paciente...</option>
-            <?php
-            $sql_pacientes = "
-                SELECT a.id, p.cedula, p.nombre, p.apellido, 'Afiliado' as tipo FROM afiliados a JOIN persona p ON a.cedula = p.cedula
+            <div class="mb-3">
+              <label for="id_paciente" class="form-label">Seleccione o Escriba Cédula / Nombre del Paciente</label>
+              <select name="id_paciente" id="id_paciente" class="form-select" style="width: 100%;" required>
+                <option value="" selected disabled>Escriba para buscar...</option>
+                <?php
+                $sql_pacientes = "
+                SELECT a.id AS id_pac_val, p.cedula, CONCAT(p.nombre, ' ', p.apellido, ' - (Afiliado)') AS nombre_completo FROM afiliados a JOIN persona p ON a.cedula = p.cedula
                 UNION
-                SELECT b.id, p.cedula, p.nombre, p.apellido, 'Beneficiario' as tipo FROM beneficiarios b JOIN persona p ON b.cedula = p.cedula
-                ORDER BY nombre ASC";
-            $res = $conn->query($sql_pacientes);
-            while ($f = $res->fetch_assoc()) {
-                echo "<option value='{$f['id']}'>{$f['cedula']} | {$f['nombre']} {$f['apellido']} - ({$f['tipo']})</option>";
-            }
-            ?>
-        </select>
-        </div>
-       </div>
+                SELECT b.id AS id_pac_val, p.cedula, CONCAT(p.nombre, ' ', p.apellido, ' - (Beneficiario)') AS nombre_completo FROM beneficiarios b JOIN persona p ON b.cedula = p.cedula
+                ORDER BY nombre_completo ASC";
+                $result_pacientes = $conn->query($sql_pacientes);
+                while ($row = $result_pacientes->fetch_assoc()) {
+                  echo '<option value="' . $row['id_pac_val'] . '" data-cedula="' . $row['cedula'] . '">' . $row['cedula'] . ' | ' . $row['nombre_completo'] . '</option>';
+                }
+                ?>
+              </select>
+            </div>
+            
+            <!-- ALERTA DE COBERTURA -->
+            <div id="alerta-saldo-poliza" class="alert d-none mb-3" role="alert" style="transition: all 0.3s;">
+                <h5 class="alert-heading fw-bold mb-1" id="titulo-alerta-saldo">Verificando póliza...</h5>
+                <p class="mb-0" id="texto-alerta-saldo">Por favor espere.</p>
+            </div>
+            
+          </div>
 
           <div id="campos-externo" style="display: none;">
             <div class="row">
               <div class="col-md-4 mb-3">
                 <label for="cedula_ext" class="form-label">Cédula</label>
-                <input type="text" name="cedula_ext" id="cedula_ext" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '')" placeholder="Ej: 25123456">
+               <input type="text" 
+              name="cedula_ext" 
+               id="cedula_ext" 
+               class="form-control" 
+               oninput="this.value = this.value.replace(/[^0-9]/g, '')" 
+               placeholder="Ej: 25123456">
               </div>
               <div class="col-md-4 mb-3">
                 <label for="nombre_ext" class="form-label">Nombre</label>
@@ -72,9 +155,26 @@
                 ?>
               </select>
             </div>
+            <div id="contenedor-examenes" class="mb-3" style="display: none;">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="form-label fw-bold mb-0">Seleccione los Exámenes</label>
+                <button type="button" class="btn btn-sm btn-outline-info" onclick="abrirModalNuevoExamen()">
+                  <i class="fas fa-plus me-1"></i>Nuevo Examen
+                </button>
+              </div>
+              <div id="lista-examenes" class="border rounded p-3 bg-light" style="max-height: 200px; overflow-y: auto;">
+                <!-- Se llenará dinámicamente -->
+              </div>
+              <div class="mt-2 d-flex flex-wrap justify-content-between align-items-center bg-white p-2 border border-info rounded shadow-sm">
+                <span class="text-success fw-bold d-none" id="cont-saldo-disponible-cita" style="font-size: 1rem;">
+                    <i class="fas fa-wallet me-1"></i> Disponible en Póliza: $<span id="saldo-disponible-cita">0.00</span>
+                </span>
+                <span class="fw-bold fs-5 text-primary ms-auto">Costo Cita: $<span id="costo-total-cita">0.00</span></span>
+              </div>
+            </div>
             <div class="mb-3">
               <label for="fecha_cita" class="form-label">Fecha y Hora</label>
-              <input type="datetime-local" name="fecha_cita" id="fecha_cita" class="form-control" required>
+              <input type="datetime-local" name="fecha_cita" id="fecha_cita" class="form-control" min="<?php echo date('Y-m-d\TH:i'); ?>" required>
             </div>
             <div class="mb-3">
               <label for="descripcion" class="form-label">Descripción / Motivo</label>
@@ -92,5 +192,376 @@
   </div>
 </div>
 
+<script src="/IPSPUPTM/assets/js/accionescitas.js"></script>
+<script>
+// --- FUNCIÓN GLOBAL PARA ABRIR EL MODAL DE NUEVO EXAMEN ---
+window.abrirModalNuevoExamen = function() {
+    console.log("--- Intentando abrir modal de nuevo examen ---");
+    const modalEl = document.getElementById('modalNuevoExamenCita');
+    if (modalEl) {
+        // Pre-seleccionar especialidad
+        const sEsp = document.getElementById('id_especialidad');
+        const sEspNuevo = document.getElementById('id_especialidad_nuevo');
+        if (sEsp && sEspNuevo) sEspNuevo.value = sEsp.value;
+        
+        // Detección híbrida de Bootstrap (BS4 vs BS5)
+        if (window.bootstrap && window.bootstrap.Modal) {
+            console.log("Usando Bootstrap 5 (Vanilla)");
+            const myModal = new bootstrap.Modal(modalEl);
+            myModal.show();
+        } else if (window.jQuery && typeof window.jQuery.fn.modal === 'function') {
+            console.log("Usando Bootstrap 4 (jQuery)");
+            window.jQuery(modalEl).modal('show');
+            // Forzar z-index en BS4
+            setTimeout(() => {
+                window.jQuery('.modal-backdrop').last().css('z-index', 1999);
+                window.jQuery(modalEl).css('z-index', 2000);
+            }, 100);
+        } else {
+            console.warn("Bootstrap no detectado, usando fallback manual");
+            modalEl.style.display = 'block';
+            modalEl.classList.add('show');
+            document.body.classList.add('modal-open');
+        }
+    } else {
+        console.error("Error: Elemento #modalNuevoExamenCita no encontrado.");
+    }
+};
 
-<script src="/IPSPUPTM/assets/js/accionescitas.js"> </script>  
+(function() {
+    const setupFormulario = () => {
+        const form = document.getElementById('form-registro-cita-general');
+        const selector = document.getElementById('tipo_paciente_selector');
+        
+        // Contenedores
+        const dInterno = document.getElementById('campos-interno');
+        const dExterno = document.getElementById('campos-externo');
+        const dComunes = document.getElementById('campos-comunes');
+        const bGuardar = document.getElementById('btn-guardar-cita');
+        
+        // Inputs Internos
+        const iHidden = document.getElementById('id_paciente'); 
+ 
+        // Inputs Externos
+        const inputCedula = document.getElementById('cedula_ext');
+        const inputNombre = document.getElementById('nombre_ext');
+        const inputApellido = document.getElementById('apellido_ext');
+ 
+        if (!selector) return;
+ 
+        // --- 1. LÓGICA DE MOSTRAR/OCULTAR Y REQUERIDOS ---
+        selector.addEventListener('change', function() {
+            const esInterno = (this.value === 'interno');
+            
+            dComunes.style.display = 'block';
+            bGuardar.style.display = 'block';
+            dInterno.style.display = esInterno ? 'block' : 'none';
+            dExterno.style.display = esInterno ? 'none' : 'block';
+            
+            // Si es externo y había alerta, la ocultamos y reactivamos botones
+            if (!esInterno) {
+                const alerta = document.getElementById('alerta-saldo-poliza');
+                if (alerta) alerta.classList.add('d-none');
+                if (selectEspecialidad) selectEspecialidad.disabled = false;
+                bGuardar.disabled = false;
+                
+                const contSaldo = document.getElementById('cont-saldo-disponible-cita');
+                if (contSaldo) contSaldo.classList.add('d-none');
+            }
+ 
+            // Ajustar requeridos de forma masiva
+            const inputsExt = dExterno.querySelectorAll('input');
+            inputsExt.forEach(input => {
+                if (esInterno) {
+                    input.removeAttribute('required');
+                    input.value = ""; 
+                } else {
+                    input.setAttribute('required', 'required');
+                }
+            });
+ 
+            if (esInterno) {
+                iHidden.setAttribute('required', 'required');
+            } else {
+                iHidden.removeAttribute('required');
+                iHidden.value = "";
+                if (window.jQuery && window.jQuery(iHidden).data('select2')) {
+                    window.jQuery(iHidden).val('').trigger('change');
+                }
+            }
+            
+            // Limpiar especialidad y listado de examenes al cambiar el tipo
+            if (selectEspecialidad) {
+                selectEspecialidad.value = "";
+                selectEspecialidad.dispatchEvent(new Event('change'));
+            }
+        });
+        
+        const revisarSaldoPoliza = (forzarLimpieza) => {
+            if (forzarLimpieza && selectEspecialidad) { 
+                selectEspecialidad.value = ''; 
+                selectEspecialidad.dispatchEvent(new Event('change')); 
+            }
+            
+            if (selector.value !== 'interno') return;
+            
+            // Extracción robusta Vanilla JS para saltarnos posibles bugs de Select2
+            let valCed = null;
+            if (iHidden.selectedIndex >= 0 && iHidden.options[iHidden.selectedIndex]) {
+                valCed = iHidden.options[iHidden.selectedIndex].getAttribute('data-cedula');
+            }
+            
+            const alertaSaldo = document.getElementById('alerta-saldo-poliza');
+            const tituloAlerta = document.getElementById('titulo-alerta-saldo');
+            const textoAlerta = document.getElementById('texto-alerta-saldo');
+            const btnGuardarCita = document.getElementById('btn-guardar-cita');
+            
+            if (valCed && valCed !== 'undefined') {
+                alertaSaldo.classList.remove('d-none', 'alert-success', 'alert-danger');
+                alertaSaldo.classList.add('alert-info');
+                tituloAlerta.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verificando póliza...';
+                textoAlerta.innerText = "Consultando saldos disponibles.";
+                btnGuardarCita.disabled = true;
+                
+                fetch(`/IPSPUPTM/app/pagos/get_afiliado_plan_limits.php?cedula=${valCed}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        alertaSaldo.classList.remove('alert-info');
+                        if (data.success) {
+                            const saldo = data.afiliado.saldo_disponible;
+                            const plan = data.afiliado.plan;
+                            
+                            const contSaldo = document.getElementById('cont-saldo-disponible-cita');
+                            const valSaldo = document.getElementById('saldo-disponible-cita');
+                            if (contSaldo && valSaldo) {
+                                valSaldo.innerText = saldo.toFixed(2);
+                                contSaldo.classList.remove('d-none', 'text-success', 'text-danger');
+                                contSaldo.classList.add(saldo > 0 ? 'text-success' : 'text-danger');
+                            }
+                            
+                            if (saldo <= 0) {
+                                alertaSaldo.classList.add('alert-danger');
+                                tituloAlerta.innerHTML = '<i class="fas fa-ban me-2"></i>Póliza Agotada';
+                                textoAlerta.innerHTML = `<strong>Cobertura de $0.00 restante.</strong> No es posible agendar esta cita bajo el plan "${plan}".<br><span class="fw-bold fs-6">Debe agendar al paciente como Comunidad UPTM (Externo) para que la pague por su cuenta.</span>`;
+                                btnGuardarCita.disabled = true;
+                                if (selectEspecialidad) selectEspecialidad.disabled = true;
+                            } else {
+                                alertaSaldo.classList.add('alert-success');
+                                tituloAlerta.innerHTML = '<i class="fas fa-check-circle me-2"></i>Cobertura Activa';
+                                textoAlerta.innerHTML = `Saldo disponible global en el plan <strong>${plan}</strong>: <span class="fw-bold fs-5 text-success">$${saldo.toFixed(2)}</span>`;
+                                btnGuardarCita.disabled = false;
+                                if (selectEspecialidad) selectEspecialidad.disabled = false;
+                            }
+                        } else {
+                            alertaSaldo.classList.add('alert-danger');
+                            tituloAlerta.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i>Error de Póliza';
+                            textoAlerta.innerHTML = `No se halló un contrato activo para este afiliado. Debe registrarlo como Externo.`;
+                            btnGuardarCita.disabled = true;
+                            if (selectEspecialidad) selectEspecialidad.disabled = true;
+                        }
+                    })
+                    .catch(e => {
+                        alertaSaldo.classList.replace('alert-info', 'alert-warning');
+                        tituloAlerta.innerText = "Error de conexión";
+                        textoAlerta.innerText = "No pudimos validar el saldo.";
+                    });
+            } else {
+                alertaSaldo.classList.add('d-none');
+            }
+        };
+
+        // Escuhar el evento nativo change en caso de que jQuery caiga.
+        iHidden.addEventListener('change', () => revisarSaldoPoliza(true));
+
+        if (window.jQuery) {
+            // Un chequeo de loop para pescar a Select2 después de inyectado asíncronamente
+            const interSelect2 = setInterval(() => {
+                if (window.jQuery(iHidden).data('select2')) {
+                    clearInterval(interSelect2);
+                    window.jQuery(iHidden).on('select2:select', () => revisarSaldoPoliza(true));
+                }
+            }, 500);
+        }
+ 
+        // --- 1.5 LÓGICA DE EXÁMENES POR ESPECIALIDAD ---
+        const selectEspecialidad = document.getElementById('id_especialidad');
+        const contExamenes = document.getElementById('contenedor-examenes');
+        const listaExamenes = document.getElementById('lista-examenes');
+        const labelCosto = document.getElementById('costo-total-cita');
+ 
+        if (selectEspecialidad) {
+            selectEspecialidad.addEventListener('change', function() {
+                const idEsp = this.value;
+                const tipoPac = selector.value;
+                const idPac = (tipoPac === 'interno') ? iHidden.value : '';
+
+                // Fallback: SI la alerta está d-none (nunca se calculó), llamarlo ahora.
+                const alertaSaldo = document.getElementById('alerta-saldo-poliza');
+                if (tipoPac === 'interno' && alertaSaldo && alertaSaldo.classList.contains('d-none')) {
+                    revisarSaldoPoliza(false);
+                }
+
+                if (!idEsp) {
+                    contExamenes.style.display = 'none';
+                    return;
+                }
+    
+                fetch(`/IPSPUPTM/app/citas/get_examenes.php?id_especialidad=${idEsp}&tipo_pac=${tipoPac}&id_paciente=${idPac}`)
+                    .then(r => r.json())
+                    .then(data => {
+                        listaExamenes.innerHTML = '';
+                        if (data.length > 0) {
+                            data.forEach(ex => {
+                                const disableAttr = ex.is_disabled ? 'disabled' : '';
+                                const txtClass = ex.is_disabled ? 'text-muted text-decoration-line-through' : '';
+                                const infoDisp = ex.disponibles === 'ilimitado' ? '' : (ex.is_disabled ? '(Agotado)' : `(Restan: ${ex.disponibles})`);
+
+                                const div = document.createElement('div');
+                                div.className = 'form-check';
+                                div.innerHTML = `
+                                    <input class="form-check-input check-examen" type="checkbox" name="examenes[]" value="${ex.ID_examen}" id="ex_${ex.ID_examen}" data-precio="${ex.precio}" ${disableAttr}>
+                                    <label class="form-check-label ${txtClass}" for="ex_${ex.ID_examen}">
+                                        ${ex.nombre_examen} - <span class="${ex.is_disabled ? 'text-muted' : 'text-primary'}">$${ex.precio}</span> <small class="text-danger fw-bold ms-2">${infoDisp}</small>
+                                    </label>
+                                `;
+                                listaExamenes.appendChild(div);
+                            });
+                            contExamenes.style.display = 'block';
+                            
+                            // Añadir evento a los nuevos checkboxes
+                            document.querySelectorAll('.check-examen').forEach(chk => {
+                                chk.addEventListener('change', calcularCostoTotal);
+                            });
+                        } else {
+                            listaExamenes.innerHTML = '<p class="text-muted small">No hay exámenes registrados para esta especialidad.</p>';
+                            contExamenes.style.display = 'block';
+                        }
+                        calcularCostoTotal();
+                    });
+            });
+        }
+ 
+        function calcularCostoTotal() {
+            let total = 0;
+            document.querySelectorAll('.check-examen:checked').forEach(chk => {
+                total += parseFloat(chk.dataset.precio || 0);
+            });
+            if (labelCosto) labelCosto.innerText = total.toFixed(2);
+        }
+ 
+        // --- 2. BÚSQUEDA EN TIEMPO REAL (EXTERNOS) ---
+        if (inputCedula) {
+            inputCedula.addEventListener('blur', function() {
+                const cedula = this.value.trim();
+                if (cedula.length >= 6) {
+                    fetch(`/IPSPUPTM/app/citas/buscar_externo.php?cedula=${cedula}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.exists) {
+                                inputNombre.value = data.nombre;
+                                inputApellido.value = data.apellido;
+                                alertify.success("Paciente encontrado en el historial.");
+                            }
+                        })
+                        .catch(err => console.error("Error buscando externo:", err));
+                }
+            });
+        }
+ 
+        // --- 5. LÓGICA DE NUEVO EXAMEN DESDE CITA ---
+        const btnNuevoEx = document.getElementById('btn-nuevo-examen-cita');
+        const modalEl = document.getElementById('modalNuevoExamenCita');
+        const formNuevoEx = document.getElementById('form-nuevo-examen-cita');
+        const selectEspNuevo = document.getElementById('id_especialidad_nuevo');
+ 
+
+ 
+        if (formNuevoEx) {
+            formNuevoEx.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+ 
+                fetch('/IPSPUPTM/app/pagos/guardar_examen_nuevo.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        alertify.success(data.message);
+                        const mInstance = bootstrap.Modal.getInstance(document.getElementById('modalNuevoExamenCita'));
+                        if (mInstance) mInstance.hide();
+                        formNuevoEx.reset();
+                        
+                        if (selectEspecialidad) {
+                            selectEspecialidad.dispatchEvent(new Event('change'));
+                        }
+                    } else {
+                        alertify.error(data.message);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alertify.error("Error al crear el examen");
+                });
+            });
+        }
+ 
+        // --- 4. ENVÍO DE DATOS (CITA) ---
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (selector.value === 'interno' && !iHidden.value) {
+                    alertify.error("Por favor, seleccione un paciente de la lista de Afiliados/Beneficiarios.");
+                    return;
+                }
+                const formData = new FormData(this);
+                fetch('/IPSPUPTM/app/citas/modales/formulario/guardar.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alertify.success(data.message);
+                        bootstrap.Modal.getInstance(document.getElementById('formulariomodal')).hide();
+                        form.reset();
+                        dComunes.style.display = 'none';
+                        bGuardar.style.display = 'none';
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        alertify.error(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alertify.error("Error de conexión al guardar");
+                });
+            });
+        }
+    };
+ 
+    setupFormulario();
+})();
+</script>
+
+<script>
+(function initSelect2Citas() {
+    if (window.jQuery) {
+        var s2 = document.createElement('script');
+        s2.src = '/IPSPUPTM/assets/select2/js/select2.min.js';
+        
+        s2.onload = function() {
+            window.jQuery('#id_paciente').select2({
+                dropdownParent: window.jQuery('#formulariomodal'),
+                width: '100%',
+                language: 'es'
+            });
+        };
+        
+        document.body.appendChild(s2);
+    } else {
+        setTimeout(initSelect2Citas, 50);
+    }
+})();
+</script>

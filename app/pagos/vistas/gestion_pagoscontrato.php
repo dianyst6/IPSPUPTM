@@ -51,7 +51,7 @@
                       INNER JOIN afiliados af ON cp.ID_afiliado_contrato = af.cedula
                       INNER JOIN persona p ON af.cedula = p.cedula
                       INNER JOIN planes pl ON cp.ID_planes_contrato = pl.ID_planes
-                      ORDER BY pc.fecha_pago DESC"; // Los más recientes primero
+                      ORDER BY pc.ID_pago DESC"; // Los más recientes primero
 
             $result = mysqli_query($conn, $query);
 
@@ -67,7 +67,7 @@
                     echo "<td><strong>$ " . number_format($row['monto_cuota'], 2) . "</strong></td>";
                     echo "<td>" . $row['metodo_pago'] . "</td>";
                     echo "<td>
-                            <a href='ver_recibo.php?id=" . $row['ID_pago'] . "' class='btn btn-info btn-sm' title='Ver Recibo'><i class='fas fa-file-invoice'></i></a>
+                            <a href='/IPSPUPTM/app/pagos/modales/ver_recibo.php?id=" . $row['ID_pago'] . "' class='btn btn-info btn-sm' title='Ver Recibo' target='_blank'><i class='fas fa-file-invoice'></i></a>
                           
                           </td>";
                     echo "</tr>";

@@ -8,12 +8,18 @@ header('Content-Type: application/json');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     // Captura de datos básicos
-    $ci_paciente_raw = $_POST['ci_paciente'] ?? $_POST['cedula_paciente'] ?? null;
     $tipo_paciente = $_POST['tipo_paciente'] ?? null;
     $ci_medico = $_POST['ci_medico'] ?? null;
     $motivo = $_POST['motivo_consulta'] ?? null;
+    
+    // Obtener la cédula dependiendo del tipo de paciente seleccionado
+    if ($tipo_paciente === 'interno') {
+        $ci_paciente_raw = $_POST['ci_paciente'] ?? $_POST['cedula_paciente'] ?? null;
+    } else {
+        $ci_paciente_raw = $_POST['cedula_ext'] ?? null;
+    }
 
-    if ($ci_paciente_raw && $tipo_paciente && $ci_medico && $motivo) {  
+    if (!empty($ci_paciente_raw) && !empty($tipo_paciente) && !empty($ci_medico) && !empty($motivo)) {  
         
         try {
             // Limpieza de Cédulas (solo números)

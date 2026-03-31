@@ -1,0 +1,110 @@
+
+<?php
+include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
+
+$cedula = isset($_GET['cedula']) ? mysqli_real_escape_string($conn, $_GET['cedula']) : '';
+
+if (empty($cedula)) {
+    echo json_encode(['success' => false, 'message' => 'Cédula no proporcionada']);
+    exit;
+}
+
+// 1. Buscar si la cédula pertenece a un afiliado o beneficiario
+$sql_persona = "SELECT p.cedula, p.nombre, p.apellido, 'Afiliado' as tipo, a.ID as id_vinculo 
+                FROM persona p 
+                JOIN afiliados a ON p.cedula = a.cedula 
+                WHERE p.cedula = '$cedula'
+                UNION
+                SELECT p.cedula, p.nombre, p.apellido, 'Beneficiario' as tipo, b.ID as id_vinculo 
+                FROM persona p 
+                JOIN beneficiarios b ON p.cedula = b.cedula 
+                WHERE p.cedula = '$cedula'";
+
+$res_persona = mysqli_query($conn, $sql_persona);
+$persona = mysqli_fetch_assoc($res_persona);
+
+if (!$persona) {
+    echo json_encode(['success' => false, 'message' => 'Persona no encontrada o no es un afiliado/beneficiario']);
+    exit;
+}
+
+$id_persona = $persona['cedula'];
+$id_vinculo = $persona['id_vinculo'];
+$tipo = $persona['tipo'];
+
+// 2. Obtener el contrato activo (Si es beneficiario, buscar contrato del titular)
+if ($tipo == 'Beneficiario') {
+    $sql_titular = "SELECT cedula_afil FROM beneficiarios WHERE ID = '$id_vinculo'";
+    $res_titular = mysqli_query($conn, $sql_titular);
+    $id_titular_vinculo = mysqli_fetch_assoc($res_titular)['cedula_afil'];
+    
+    $sql_contrato = "SELECT cp.ID_contrato, p.nombre_plan, p.ID_planes, p.monto_cobertura 
+                     FROM contrato_plan cp 
+                     JOIN planes p ON cp.ID_planes_contrato = p.ID_planes 
+                     JOIN afiliados a ON cp.ID_afiliado_contrato = a.cedula
+                     WHERE a.ID = '$id_titular_vinculo' AND cp.estado_contrato = 'Activo'";
+} else {
+    $sql_contrato = "SELECT cp.ID_contrato, p.nombre_plan, p.ID_planes, p.monto_cobertura 
+                     FROM contrato_plan cp 
+                     JOIN planes p ON cp.ID_planes_contrato = p.ID_planes 
+                     WHERE cp.ID_afiliado_contrato = '$cedula' AND cp.estado_contrato = 'Activo'";
+}
+
+$res_contrato = mysqli_query($conn, $sql_contrato);
+$contrato = mysqli_fetch_assoc($res_contrato);
+
+if (!$contrato) {
+    echo json_encode(['success' => false, 'message' => 'No tiene un contrato de plan de salud activo']);
+    exit;
+}
+
+$id_contrato = $contrato['ID_contrato'];
+$id_plan = $contrato['ID_planes'];
+
+// 3. Obtener límites de categorías y consumo actual
+$sql_categorias = "SELECT c.id_categoria, c.nombre_categoria, cp_comp.monto_maximo 
+                   FROM componentes_planes cp_comp 
+                   JOIN categorias_examenes c ON cp_comp.id_categoria_componente = c.id_categoria 
+                   WHERE cp_comp.ID_planes_componentes = '$id_plan' AND cp_comp.id_categoria_componente IS NOT NULL";
+
+$res_cats = mysqli_query($conn, $sql_categorias);
+$categorias = [];
+
+while ($cat = mysqli_fetch_assoc($res_cats)) {
+    $id_cat = $cat['id_categoria'];
+    
+    // Calcular consumo de esta categoría (Exámenes en el catálogo + Estudios externos)
+    $sql_consumo = "SELECT SUM(monto_descontado) as consumido 
+                    FROM consumo_plan 
+                    WHERE ID_contrato_plan = '$id_contrato' 
+                    AND (
+                        ID_examen_plan IN (SELECT ID_examen FROM examenes WHERE id_categoria = '$id_cat')
+                        OR id_categoria_externa = '$id_cat'
+                    )";
+    $res_consumo = mysqli_query($conn, $sql_consumo);
+    $consumido = mysqli_fetch_assoc($res_consumo)['consumido'] ?? 0;
+    
+    $cat['consumido'] = floatval($consumido);
+    $cat['disponible'] = floatval($cat['monto_maximo']) - floatval($consumido);
+    $categorias[] = $cat;
+}
+
+$sql_consumo_total = "SELECT SUM(monto_descontado) as total FROM consumo_plan WHERE ID_contrato_plan = '$id_contrato'";
+$res_total = mysqli_query($conn, $sql_consumo_total);
+$total_gastado = mysqli_fetch_assoc($res_total)['total'] ?? 0;
+$saldo_disponible_global = floatval($contrato['monto_cobertura']) - floatval($total_gastado);
+
+echo json_encode([
+    'success' => true,
+    'afiliado' => [
+        'id_persona' => $id_persona,
+        'nombre' => $persona['nombre'] . ' ' . $persona['apellido'],
+        'tipo' => $tipo,
+        'id_contrato' => $id_contrato,
+        'plan' => $contrato['nombre_plan'],
+        'cobertura_total' => floatval($contrato['monto_cobertura']),
+        'total_gastado' => floatval($total_gastado),
+        'saldo_disponible' => floatval($saldo_disponible_global)
+    ],
+    'categorias' => $categorias
+]);

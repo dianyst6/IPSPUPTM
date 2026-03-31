@@ -1,5 +1,5 @@
 <div class="modal fade" id="editmodal" tabindex="-1" aria-labelledby="editmodallabel" aria-hidden="true">
-<div class="modal-dialog modal-lg modal-dialog-scrollable">    <div class="modal-content">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       
       <div class="modal-header">
@@ -7,7 +7,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
-        <div class="modal-body" style="max-height: 70vh;">
+      <div class="modal-body">
         <form action="/IPSPUPTM/app/afiliados/modales/actualizar/actualizar.php" method="post">
           <input type="hidden" name="id" id="id">
           

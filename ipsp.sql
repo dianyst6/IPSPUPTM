@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-03-2026 a las 18:20:38
+-- Tiempo de generación: 29-03-2026 a las 00:27:41
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `ipsp`
 --
+CREATE DATABASE IF NOT EXISTS `ipsp` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `ipsp`;
 
 -- --------------------------------------------------------
 
@@ -39,11 +41,7 @@ CREATE TABLE `afiliados` (
 --
 
 INSERT INTO `afiliados` (`ID`, `cedula`, `created_at`, `updated_at`) VALUES
-(38, 31253521, '2025-05-13 05:02:40', '2026-03-12 17:06:23'),
-(43, 30270492, '2026-02-19 04:31:30', '2026-02-19 04:31:30'),
-(46, 8012649, '2026-02-24 02:34:01', '2026-03-03 01:14:16'),
-(47, 30960254, '2026-03-12 17:11:53', '2026-03-12 17:11:53'),
-(48, 11955376, '2026-03-12 20:08:18', '2026-03-12 20:08:18');
+(52, 30270492, '2026-03-28 00:58:32', '2026-03-28 00:58:32');
 
 -- --------------------------------------------------------
 
@@ -64,8 +62,7 @@ CREATE TABLE `beneficiarios` (
 --
 
 INSERT INTO `beneficiarios` (`ID`, `cedula`, `cedula_afil`, `created_at`, `updated_at`) VALUES
-(13, 8012649, 38, '2025-05-13 05:16:57', '2025-05-13 05:22:12'),
-(16, 14107471, 48, '2026-03-12 20:10:03', '2026-03-12 20:10:03');
+(19, 10505948, 52, '2026-03-28 15:11:11', '2026-03-28 15:11:11');
 
 -- --------------------------------------------------------
 
@@ -169,7 +166,86 @@ INSERT INTO `bitacora` (`idbitacora`, `usuario`, `accion`, `descripcion`, `fecha
 (214, 'admin', 'Edición de Comunidad UPTM', 'Se actualizaron los datos del externo C.I: 8765345 (Melanie Martinez)', '2026-03-13 03:31:31'),
 (215, 'medico2', 'Historia Ginecología', 'Paciente CI: 14107471 (beneficiario)', '2026-03-13 06:41:08'),
 (216, 'medico2', 'Eliminación de Historia Médica', 'Historia Ginecología ID: 1 — Paciente CI: 14107471', '2026-03-13 07:04:57'),
-(217, 'medico2', 'Historia Ginecología', 'Paciente CI: 14107471 (beneficiario)', '2026-03-13 07:18:14');
+(217, 'medico2', 'Historia Ginecología', 'Paciente CI: 14107471 (beneficiario)', '2026-03-13 07:18:14'),
+(218, 'medico', 'Registro de Historia', 'Paciente CI: 11955376 (afiliado)', '2026-03-13 18:00:47'),
+(219, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 32032832', '2026-03-13 21:18:39'),
+(220, NULL, 'Registro de Beneficiario', 'Cédula: si, Nombre: Estefania, Apellido: Garcia3232', '2026-03-13 21:23:40'),
+(221, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: sdagath (ID Cita: 35), Paciente: Juan Rojas (Afiliado), Fecha: 2026-04-30 09:30:00, Especialidad: Medicina interna', '2026-03-14 02:17:04'),
+(222, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: asd (ID Cita: 17), Paciente: gregory perez (Afiliado), Fecha: 2026-02-19 11:03:00, Especialidad: Oftamología', '2026-03-14 02:27:58'),
+(223, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: dfsdfs (ID Cita: 27), Paciente: gregory perez (Afiliado), Fecha: 2026-02-11 20:46:00, Especialidad: Gastroenterología', '2026-03-14 02:29:44'),
+(224, 'medico2', 'Eliminación de Historia Médica', 'Historia Ginecología ID: 2 — Paciente CI: 14107471', '2026-03-14 02:51:42'),
+(225, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-13T05:13', '2026-03-14 03:08:00'),
+(226, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: cita (ID Cita: 36), Paciente: gregory perez (Afiliado), Fecha: 2026-03-13 05:13:00, Especialidad: Medicina interna', '2026-03-14 03:26:04'),
+(227, 'admin', 'Eliminación de Beneficiario y Citas', 'Se eliminó al beneficiario: Estefania Garcia3232 (Cédula: 0) y todas las citas relacionadas.', '2026-03-19 16:20:54'),
+(228, NULL, 'Registro de Beneficiario', 'Cédula: 23456786, Nombre: Pepe, Apellido: Rojas', '2026-03-19 16:22:58'),
+(229, 'secretaria', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-04-09T10:50', '2026-03-19 17:54:31'),
+(230, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: cita (ID Cita: 37), Paciente: gregory perez (Afiliado), Fecha: 2026-04-09 10:50:00, Especialidad: Oftamología', '2026-03-19 18:35:27'),
+(231, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 12387654', '2026-03-19 18:49:39'),
+(232, 'admin', 'Registro de Historia', 'Paciente CI: 11955376 (afiliado)', '2026-03-22 16:17:34'),
+(233, 'admin', 'Registro de Historia', 'Paciente CI: 902322 (externo)', '2026-03-22 16:18:45'),
+(234, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-24T13:48', '2026-03-22 17:48:40'),
+(235, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-04-04T17:53', '2026-03-22 17:49:17'),
+(236, 'admin', 'Pago Registrado', 'Se procesó pago de cita #39 por  Bs.', '2026-03-22 17:55:57'),
+(237, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-03-28T20:19', '2026-03-23 00:19:44'),
+(238, 'admin', 'Pago Registrado', 'Se procesó pago de cita #40 por  Bs.', '2026-03-23 00:25:23'),
+(239, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-03-22T20:36', '2026-03-23 00:35:17'),
+(240, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: asd (ID Cita: 38), Paciente: gregory perez (Afiliado), Fecha: 2026-03-24 13:48:00, Especialidad: Imagenología', '2026-03-23 02:28:10'),
+(241, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-27T14:34', '2026-03-23 02:30:13'),
+(242, 'admin', 'Pago Cita con Póliza', 'Cita #42 pagada mediante descuento de póliza por monto total de 20.00 $', '2026-03-23 02:30:51'),
+(243, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-23T22:33', '2026-03-23 02:32:54'),
+(244, 'admin', 'Pago Cita con Póliza', 'Cita #43 pagada mediante descuento de póliza por monto total de 20.00 $', '2026-03-23 02:33:19'),
+(245, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2029-11-30T13:40', '2026-03-23 02:37:45'),
+(246, 'admin', 'Pago Cita con Póliza', 'Cita #44 pagada mediante descuento de póliza por monto total de 20.00 $', '2026-03-23 02:38:07'),
+(247, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Beneficiario para la fecha: 2026-03-27T14:57', '2026-03-23 02:54:00'),
+(248, 'admin', 'Pago Cita con Póliza', 'Cita #45 pagada mediante descuento de póliza por monto total de 40.00 $', '2026-03-23 02:54:14'),
+(249, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 12308787', '2026-03-27 22:35:14'),
+(250, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-31T22:40', '2026-03-27 22:36:11'),
+(251, 'admin', 'Pago Cita con Póliza', 'Cita #46 pagada mediante descuento de póliza por monto total de 20.00 $', '2026-03-27 22:37:05'),
+(252, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-04-04T22:41', '2026-03-27 22:37:51'),
+(253, 'admin', 'Pago Cita con Póliza', 'Cita #47 pagada mediante descuento de póliza por monto total de 40.00 $', '2026-03-27 22:38:12'),
+(254, 'grego', 'Registro Integral', 'Afiliado y Plan creados: 30270492', '2026-03-28 00:58:32'),
+(255, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-28T23:05', '2026-03-28 01:00:24'),
+(256, 'grego', 'Pago Cita con Póliza', 'Cita #48 pagada mediante descuento de póliza por monto total de 35.00 $', '2026-03-28 01:01:07'),
+(257, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-28T10:20', '2026-03-28 01:52:57'),
+(258, 'grego', 'Pago Cita con Póliza', 'Cita #49 pagada mediante descuento de póliza por monto total de 50.00 $', '2026-03-28 01:53:38'),
+(259, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-30T10:25', '2026-03-28 02:23:37'),
+(260, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-29T10:26', '2026-03-28 02:56:22'),
+(261, 'grego', 'Pago Cita con Póliza', 'Cita #51 pagada mediante descuento de póliza. Monto original: 40.00 $, Monto descontado: 20.00 $.', '2026-03-28 02:57:28'),
+(262, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-04-04T12:30', '2026-03-28 03:07:52'),
+(263, NULL, 'Registro de Beneficiario', 'Cédula: 10505948, Nombre: Teresa, Apellido: Pérez', '2026-03-28 15:11:11'),
+(264, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-30T10:55', '2026-03-28 16:34:32'),
+(265, 'grego', 'Pago Cita con Póliza', 'Cita #53 pagada mediante descuento de póliza. Monto original: 105.00 $, Monto descontado: 105.00 $.', '2026-03-28 16:35:15'),
+(266, 'grego', 'Pago Cita con Póliza', 'Cita #52 pagada mediante descuento de póliza. Monto original: 20.00 $, Monto descontado: 12.00 $.', '2026-03-28 16:35:24'),
+(267, 'grego', 'Pago Cita con Póliza', 'Cita #50 pagada mediante descuento de póliza. Monto original: 20.00 $, Monto descontado: 20.00 $.', '2026-03-28 16:35:29'),
+(268, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-04-04T14:26', '2026-03-28 22:58:17'),
+(269, 'grego', 'Pago Cita con Póliza', 'Cita #54 pagada mediante descuento de póliza. Monto original: 20.00 $, Monto descontado: 20.00 $.', '2026-03-28 22:58:26');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `categorias_examenes`
+--
+
+CREATE TABLE `categorias_examenes` (
+  `id_categoria` int(11) NOT NULL,
+  `nombre_categoria` varchar(100) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `monto_maximo_cobertura` decimal(10,2) DEFAULT 0.00
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `categorias_examenes`
+--
+
+INSERT INTO `categorias_examenes` (`id_categoria`, `nombre_categoria`, `descripcion`, `monto_maximo_cobertura`) VALUES
+(1, 'Consultas', 'Todas las consultas médicas generales y especializadas', 0.00),
+(3, 'Estudios Ecograficos', '', 0.00),
+(4, 'Rayos X', '', 0.00),
+(5, 'Procedimientos Medicos', '', 0.00),
+(6, 'Procedimientos especiales', '', 0.00),
+(7, 'Odontologia', '', 0.00),
+(8, 'Emergencia Ambulatoria', '', 0.00),
+(9, 'Laboratorio', '', 0.00);
 
 -- --------------------------------------------------------
 
@@ -182,6 +258,7 @@ CREATE TABLE `citas` (
   `id_especialidad` int(11) NOT NULL,
   `fecha_cita` datetime NOT NULL,
   `descripcion` text DEFAULT NULL,
+  `estado_pago` enum('Por Pagar','Pagada','Deducida de Póliza') NOT NULL DEFAULT 'Por Pagar',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -190,15 +267,14 @@ CREATE TABLE `citas` (
 -- Volcado de datos para la tabla `citas`
 --
 
-INSERT INTO `citas` (`id_cita`, `id_especialidad`, `fecha_cita`, `descripcion`, `created_at`, `updated_at`) VALUES
-(17, 4, '2026-02-19 11:03:00', 'asd', '2026-02-19 15:03:28', '2026-02-19 15:03:28'),
-(27, 5, '2026-02-11 20:46:00', 'dfsdfs', '2026-02-25 00:46:40', '2026-02-25 00:46:40'),
-(30, 5, '2026-03-18 20:50:00', 'skasjad', '2026-03-03 00:50:45', '2026-03-03 00:50:45'),
-(31, 1, '2026-03-26 21:06:00', 'sdssdds', '2026-03-03 01:06:56', '2026-03-03 01:06:56'),
-(32, 1, '2026-03-19 21:24:00', 'gfddg', '2026-03-03 01:24:52', '2026-03-03 01:24:52'),
-(33, 5, '2026-03-04 22:19:00', 'ghhhg', '2026-03-03 02:19:21', '2026-03-03 02:19:21'),
-(34, 5, '2026-03-12 16:10:00', 'asdgg', '2026-03-12 20:11:09', '2026-03-12 20:11:09'),
-(35, 2, '2026-04-30 09:30:00', 'sdagath', '2026-03-12 20:20:51', '2026-03-12 20:20:51');
+INSERT INTO `citas` (`id_cita`, `id_especialidad`, `fecha_cita`, `descripcion`, `estado_pago`, `created_at`, `updated_at`) VALUES
+(48, 6, '2026-03-28 23:05:00', 'asd', 'Deducida de Póliza', '2026-03-28 01:00:24', '2026-03-28 01:01:07'),
+(49, 5, '2026-03-28 10:20:00', 'asd', 'Deducida de Póliza', '2026-03-28 01:52:57', '2026-03-28 01:53:38'),
+(50, 2, '2026-03-30 10:25:00', 'asd', 'Deducida de Póliza', '2026-03-28 02:23:37', '2026-03-28 16:35:29'),
+(51, 4, '2026-03-29 10:26:00', 'ads', 'Deducida de Póliza', '2026-03-28 02:56:22', '2026-03-28 02:57:28'),
+(52, 7, '2026-04-04 12:30:00', 'asd', 'Deducida de Póliza', '2026-03-28 03:07:52', '2026-03-28 16:35:24'),
+(53, 6, '2026-03-30 10:55:00', 'asd', 'Deducida de Póliza', '2026-03-28 16:34:32', '2026-03-28 16:35:15'),
+(54, 6, '2026-04-04 14:26:00', 'ad', 'Deducida de Póliza', '2026-03-28 22:58:17', '2026-03-28 22:58:26');
 
 -- --------------------------------------------------------
 
@@ -219,9 +295,13 @@ CREATE TABLE `citas_afil` (
 --
 
 INSERT INTO `citas_afil` (`id_citas_afil`, `idcita`, `id_afiliado`, `updated_at`, `created_at`) VALUES
-(11, 17, 43, '2026-02-19 15:03:28', '2026-02-19 15:03:28'),
-(16, 27, 43, '2026-02-25 00:46:40', '2026-02-25 00:46:40'),
-(17, 35, 47, '2026-03-12 20:20:51', '2026-03-12 20:20:51');
+(26, 48, 52, '2026-03-28 01:00:24', '2026-03-28 01:00:24'),
+(27, 49, 52, '2026-03-28 01:52:57', '2026-03-28 01:52:57'),
+(28, 50, 52, '2026-03-28 02:23:37', '2026-03-28 02:23:37'),
+(29, 51, 52, '2026-03-28 02:56:22', '2026-03-28 02:56:22'),
+(30, 52, 52, '2026-03-28 03:07:52', '2026-03-28 03:07:52'),
+(31, 53, 52, '2026-03-28 16:34:32', '2026-03-28 16:34:32'),
+(32, 54, 52, '2026-03-28 22:58:17', '2026-03-28 22:58:17');
 
 -- --------------------------------------------------------
 
@@ -237,12 +317,33 @@ CREATE TABLE `citas_benef` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Volcado de datos para la tabla `citas_benef`
+-- Estructura de tabla para la tabla `citas_examenes`
 --
 
-INSERT INTO `citas_benef` (`id_citas_benef`, `idcita`, `id_beneficiario`, `updated_at`, `created_at`) VALUES
-(7, 34, 16, '2026-03-12 20:11:09', '2026-03-12 20:11:09');
+CREATE TABLE `citas_examenes` (
+  `id_cita_examen` int(11) NOT NULL,
+  `id_cita` int(11) NOT NULL,
+  `id_examen` int(11) NOT NULL,
+  `precio_historico` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `citas_examenes`
+--
+
+INSERT INTO `citas_examenes` (`id_cita_examen`, `id_cita`, `id_examen`, `precio_historico`) VALUES
+(7, 48, 6, 35.00),
+(8, 49, 12, 50.00),
+(9, 50, 5, 20.00),
+(10, 51, 2, 40.00),
+(11, 52, 13, 20.00),
+(12, 53, 6, 35.00),
+(13, 53, 7, 30.00),
+(14, 53, 8, 40.00),
+(15, 54, 11, 20.00);
 
 -- --------------------------------------------------------
 
@@ -258,16 +359,6 @@ CREATE TABLE `citas_uptm` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `citas_uptm`
---
-
-INSERT INTO `citas_uptm` (`id_citas_uptm`, `idcita`, `id_externo`, `created_at`, `updated_at`) VALUES
-(6, 30, 1, '2026-03-03 00:50:45', '2026-03-03 00:50:45'),
-(7, 31, 2, '2026-03-03 01:07:00', '2026-03-03 01:07:00'),
-(8, 32, 1, '2026-03-03 01:24:52', '2026-03-03 01:24:52'),
-(9, 33, 1, '2026-03-03 02:19:23', '2026-03-03 02:19:23');
-
 -- --------------------------------------------------------
 
 --
@@ -277,21 +368,23 @@ INSERT INTO `citas_uptm` (`id_citas_uptm`, `idcita`, `id_externo`, `created_at`,
 CREATE TABLE `componentes_planes` (
   `ID_componenteplan` int(11) NOT NULL,
   `ID_planes_componentes` int(11) NOT NULL,
-  `ID_examen_componentes` int(11) NOT NULL,
-  `cantidad_maxima` int(11) DEFAULT 0
+  `ID_examen_componentes` int(11) DEFAULT NULL,
+  `id_categoria_componente` int(11) DEFAULT NULL,
+  `cantidad_maxima` int(11) DEFAULT NULL,
+  `monto_maximo` decimal(10,2) DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `componentes_planes`
 --
 
-INSERT INTO `componentes_planes` (`ID_componenteplan`, `ID_planes_componentes`, `ID_examen_componentes`, `cantidad_maxima`) VALUES
-(1, 1, 1, 3),
-(2, 1, 2, 2),
-(3, 2, 1, 2),
-(4, 2, 2, 4),
-(5, 3, 1, 1),
-(6, 4, 1, 2);
+INSERT INTO `componentes_planes` (`ID_componenteplan`, `ID_planes_componentes`, `ID_examen_componentes`, `id_categoria_componente`, `cantidad_maxima`, `monto_maximo`) VALUES
+(24, 6, NULL, 1, 8, 300.00),
+(25, 6, NULL, 3, 4, 80.00),
+(26, 6, NULL, 4, NULL, 60.00),
+(27, 6, NULL, 6, NULL, 60.00),
+(28, 6, NULL, 7, NULL, 0.00),
+(29, 6, NULL, 8, NULL, 300.00);
 
 -- --------------------------------------------------------
 
@@ -310,14 +403,6 @@ CREATE TABLE `comunidad_uptm` (
   `id_tipo_ext` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `comunidad_uptm`
---
-
-INSERT INTO `comunidad_uptm` (`id`, `cedula`, `nombre`, `apellido`, `created_at`, `updated_at`, `deleted_at`, `id_tipo_ext`) VALUES
-(1, 12913223, 'José', 'Perez', '2026-02-24 23:44:02', '2026-03-03 03:39:15', NULL, NULL),
-(2, 902322, 'Melanie', 'Martinez', '2026-02-27 05:19:19', '2026-03-03 01:06:58', NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -327,10 +412,32 @@ INSERT INTO `comunidad_uptm` (`id`, `cedula`, `nombre`, `apellido`, `created_at`
 CREATE TABLE `consumo_plan` (
   `ID_consumo` int(11) NOT NULL,
   `ID_contrato_plan` int(11) NOT NULL,
+  `id_cita` int(11) DEFAULT NULL,
   `ID_persona_plan` int(11) NOT NULL,
-  `ID_examen_plan` int(11) NOT NULL,
+  `ID_examen_plan` int(11) DEFAULT NULL,
+  `nombre_estudio_externo` varchar(255) DEFAULT NULL,
+  `id_categoria_externa` int(11) DEFAULT NULL,
+  `monto_descontado` decimal(10,2) NOT NULL DEFAULT 0.00,
   `fecha_consumo` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `consumo_plan`
+--
+
+INSERT INTO `consumo_plan` (`ID_consumo`, `ID_contrato_plan`, `id_cita`, `ID_persona_plan`, `ID_examen_plan`, `nombre_estudio_externo`, `id_categoria_externa`, `monto_descontado`, `fecha_consumo`) VALUES
+(7, 13, 48, 30270492, 6, NULL, NULL, 35.00, '2026-03-27 21:01:07'),
+(8, 13, 49, 30270492, 12, NULL, NULL, 50.00, '2026-03-27 21:53:38'),
+(9, 13, 51, 30270492, 2, NULL, NULL, 20.00, '2026-03-27 22:57:28'),
+(10, 13, NULL, 30270492, NULL, 'ecografia lateral', 3, 25.00, '2026-03-28 11:48:13'),
+(11, 13, NULL, 30270492, NULL, 'rayos x abdominal', 4, 30.00, '2026-03-28 11:48:13'),
+(12, 13, NULL, 10505948, NULL, 'consulta neurologica', 1, 80.00, '2026-03-28 11:53:56'),
+(13, 13, 53, 30270492, 6, NULL, NULL, 35.00, '2026-03-28 12:35:15'),
+(14, 13, 53, 30270492, 7, NULL, NULL, 30.00, '2026-03-28 12:35:15'),
+(15, 13, 53, 30270492, 8, NULL, NULL, 40.00, '2026-03-28 12:35:15'),
+(16, 13, 52, 30270492, 13, NULL, NULL, 12.00, '2026-03-28 12:35:24'),
+(17, 13, 50, 30270492, 5, NULL, NULL, 20.00, '2026-03-28 12:35:29'),
+(18, 13, 54, 30270492, 11, NULL, NULL, 20.00, '2026-03-28 18:58:26');
 
 -- --------------------------------------------------------
 
@@ -355,11 +462,29 @@ CREATE TABLE `contrato_plan` (
 --
 
 INSERT INTO `contrato_plan` (`ID_contrato`, `ID_planes_contrato`, `ID_afiliado_contrato`, `fecha_inicio`, `fecha_fin`, `monto_total`, `frecuencia_pago`, `dia_pago_mensual`, `estado_contrato`) VALUES
-(1, 1, 31253521, '2026-02-01', '2026-05-01', 120.00, 'mensual', 31, 'Activo'),
-(4, 1, 30270492, '2026-02-19', '2026-12-31', 120.00, 'Mensual', 29, 'Activo'),
-(7, 2, 8012649, '2026-02-24', '2026-02-25', 450.00, 'Mensual', 12, 'Activo'),
-(8, 1, 30960254, '2026-03-12', '2027-12-30', 120.00, 'Mensual', 31, 'Activo'),
-(9, 1, 11955376, '2026-03-12', '2026-12-12', 120.00, 'Mensual', 30, 'Activo');
+(13, 6, 30270492, '2026-03-28', '2027-03-27', 180.00, 'Mensual', 29, 'Activo');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `descuentos_poliza`
+--
+
+CREATE TABLE `descuentos_poliza` (
+  `id_descuento` int(11) NOT NULL,
+  `nombre_descuento` varchar(100) NOT NULL,
+  `porcentaje` decimal(5,2) NOT NULL DEFAULT 0.00
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `descuentos_poliza`
+--
+
+INSERT INTO `descuentos_poliza` (`id_descuento`, `nombre_descuento`, `porcentaje`) VALUES
+(1, 'Sin Descuento', 0.00),
+(2, 'Laboratorio (40%)', 40.00),
+(3, 'Oftalmologia(50%)', 50.00),
+(4, 'Odontologia (30%)', 30.00);
 
 -- --------------------------------------------------------
 
@@ -369,20 +494,23 @@ INSERT INTO `contrato_plan` (`ID_contrato`, `ID_planes_contrato`, `ID_afiliado_c
 
 CREATE TABLE `especialidades` (
   `id_especialidad` int(11) NOT NULL,
-  `nombre_especialidad` varchar(50) NOT NULL
+  `nombre_especialidad` varchar(50) NOT NULL,
+  `descuento` decimal(5,2) DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `especialidades`
 --
 
-INSERT INTO `especialidades` (`id_especialidad`, `nombre_especialidad`) VALUES
-(1, 'Ginecología'),
-(2, 'Medicina interna'),
-(3, 'Odontología'),
-(4, 'Oftamología'),
-(5, 'Gastroenterología'),
-(6, 'Imagenología');
+INSERT INTO `especialidades` (`id_especialidad`, `nombre_especialidad`, `descuento`) VALUES
+(1, 'Ginecología', 0.00),
+(2, 'Medicina interna', 0.00),
+(3, 'Odontología', 30.00),
+(4, 'Oftamología', 50.00),
+(5, 'Gastroenterología', 0.00),
+(6, 'Imagenología', 0.00),
+(7, 'Laboratorio', 40.00),
+(8, 'Urologia', 0.00);
 
 -- --------------------------------------------------------
 
@@ -393,16 +521,28 @@ INSERT INTO `especialidades` (`id_especialidad`, `nombre_especialidad`) VALUES
 CREATE TABLE `examenes` (
   `ID_examen` int(11) NOT NULL,
   `nombre_examen` varchar(150) NOT NULL,
-  `ID_especialidad_examenes` int(11) NOT NULL
+  `precio` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `ID_especialidad_examenes` int(11) NOT NULL,
+  `id_categoria` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `examenes`
 --
 
-INSERT INTO `examenes` (`ID_examen`, `nombre_examen`, `ID_especialidad_examenes`) VALUES
-(1, 'Consulta Ginecológica', 1),
-(2, 'Consulta Oftalmologia', 4);
+INSERT INTO `examenes` (`ID_examen`, `nombre_examen`, `precio`, `ID_especialidad_examenes`, `id_categoria`) VALUES
+(1, 'Consulta Ginecológica', 20.00, 1, 1),
+(2, 'Consulta Oftalmologia', 40.00, 4, 1),
+(4, 'Consulta gatroenterologia', 20.00, 5, 1),
+(5, 'Consulta Medicina interna', 20.00, 2, 1),
+(6, 'Ecografa Abdominal', 35.00, 6, 3),
+(7, 'Ecografa Plvica', 30.00, 6, 3),
+(8, 'Ecografa Renal', 40.00, 6, 3),
+(9, 'Rayos X de Trax', 25.00, 6, 4),
+(10, 'Rayos X de Columna Cervical', 50.00, 6, 4),
+(11, 'Rayos X de Miembro Inferior', 20.00, 6, 4),
+(12, 'Endoscopia', 50.00, 5, 6),
+(13, 'Glicemia post pandrial', 20.00, 7, 9);
 
 -- --------------------------------------------------------
 
@@ -418,7 +558,7 @@ CREATE TABLE `historias_medicas` (
   `fecha` date NOT NULL,
   `fecha_nacimiento` date NOT NULL,
   `edad` int(3) NOT NULL,
-  `dirección` varchar(200) NOT NULL,
+  `direccion` varchar(200) NOT NULL,
   `motivo_consulta` text NOT NULL,
   `enfermedad_actual` text NOT NULL,
   `antecedentes_familiares` text NOT NULL,
@@ -474,13 +614,6 @@ CREATE TABLE `historias_medicas_gine` (
   `conducta` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `historias_medicas_gine`
---
-
-INSERT INTO `historias_medicas_gine` (`id_historia_g`, `ci_paciente`, `tipo_paciente`, `ci_medico`, `fecha`, `fecha_nacimiento`, `edad`, `direccion`, `motivo_consulta`, `enfermedad_actual`, `antecedentes_familiares`, `antecedentes_personales`, `gs`, `fuma`, `ant_gineco_obstetrico`, `c.m`, `prs`, `cs`, `mac`, `fuc`, `fum`, `gestaciones`, `rc`, `año`, `otros`, `ex.fisico.t.a`, `f.c`, `peso`, `talla`, `cabeza`, `o.r.l`, `c.v`, `tiroides`, `mamas`, `abdomen`, `ginecologico`, `ultrasonido`, `diagnostico`, `conducta`) VALUES
-(2, 14107471, 'beneficiario', 11955376, '2026-03-13', '1980-10-15', 45, 'san juan', 'sgherhe', 'fhergsdfh', 'dfgetjg', 'sgjryj', 'AB+', 'No', 'dfgeth', 'regular', '3', '2', '45', '13546', '25734', '3', '4', '0000', 'dfsh', '120/80', '80', '65', '170', '40', '35', '436', '34', '346', '40', 'jwrj', 'sfgjry', 'sgherb', 'thbry');
-
 -- --------------------------------------------------------
 
 --
@@ -517,25 +650,6 @@ CREATE TABLE `pagos_contrato` (
   `metodo_pago` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `pagos_contrato`
---
-
-INSERT INTO `pagos_contrato` (`ID_pago`, `ID_contrato`, `monto_cuota`, `fecha_pago`, `numero_cuota`, `metodo_pago`) VALUES
-(2, 1, 20.00, '2026-02-19', 2, 'Transferencia'),
-(3, 1, 10.00, '2026-02-20', 3, 'Transferencia'),
-(4, 1, 80.00, '2026-02-21', 4, 'Transferencia'),
-(5, 1, 10.00, '2026-02-22', 5, 'Transferencia'),
-(6, 4, 20.00, '2026-02-19', 1, 'Transferencia'),
-(7, 4, 10.00, '2026-01-19', 2, 'Transferencia'),
-(8, 4, 20.00, '2026-02-19', 3, 'Transferencia'),
-(9, 4, 20.00, '2026-02-19', 4, 'Transferencia'),
-(10, 4, 20.00, '2026-02-19', 5, 'Transferencia'),
-(12, 4, 30.00, '2026-02-27', 6, 'Transferencia'),
-(13, 7, 30.00, '2026-03-03', 1, 'Transferencia'),
-(14, 7, 30.00, '2026-03-03', 2, 'Transferencia'),
-(15, 7, 30.00, '2026-03-03', 3, 'Transferencia');
-
 -- --------------------------------------------------------
 
 --
@@ -550,19 +664,6 @@ CREATE TABLE `pagos_externos` (
   `metodo_pago` varchar(50) DEFAULT 'Efectivo',
   `fecha_pago` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `pagos_externos`
---
-
-INSERT INTO `pagos_externos` (`id_pago_ext`, `id_cita`, `monto_base`, `monto_final`, `metodo_pago`, `fecha_pago`) VALUES
-(13, 30, 0.00, 0.00, 'Efectivo', '2026-03-03 00:58:25'),
-(14, 30, 0.00, 0.00, 'Efectivo', '2026-03-03 00:58:33'),
-(15, 30, 0.00, 0.00, 'Efectivo', '2026-03-03 00:58:36'),
-(16, 30, 0.00, 0.00, 'Efectivo', '2026-03-03 00:58:38'),
-(17, 31, 0.00, 2000.00, 'Efectivo', '2026-03-03 01:07:31'),
-(18, 32, 0.00, 500.00, 'Efectivo', '2026-03-03 01:26:03'),
-(19, 33, 20.00, 18.00, 'Pago Móvil', '2026-03-03 02:45:29');
 
 -- --------------------------------------------------------
 
@@ -587,13 +688,8 @@ CREATE TABLE `persona` (
 --
 
 INSERT INTO `persona` (`cedula`, `nombre`, `apellido`, `fechanacimiento`, `genero`, `telefono`, `correo`, `ocupacion`, `estado`) VALUES
-(1, 'JUAN', 'NUÑEZ ', '2025-04-07', 'Masculino', 2147483647, 'WDRIIWEM@GMAIL.COM', 'SI ', ''),
-(8012649, 'ZULEYMA', 'NUÑEZ', '2025-05-21', 'Femenino', 2147483647, 'zuleyma_nunez@gmail.com', 'Odontologo', ''),
-(11955376, 'Miguel', 'Sosa', '1972-10-15', 'Masculino', 2147483647, 'miguel@gmail.com', 'mecanico', ''),
-(14107471, 'Maria', 'Marquez', '1980-10-15', 'Femenino', 2147483647, 'maria@gmail.com', 'enfermera', ''),
-(30270492, 'gregory', 'perez', '2002-08-31', 'Masculino', 46564654, 'gps.3108@gmail.com', 'profesor', ''),
-(30960254, 'Juan', 'Rojas', '1999-08-13', 'Masculino', 2147483647, 'juan@gmail.com', 'Estudiante', ''),
-(31253521, 'GABRIELA ', 'GARCÍA NUÑEZ', '2005-05-19', 'Femenino', 2147483647, 'GABRIELAVAL.GN31@GMAIL.COM', 'Estudiante', '');
+(10505948, 'Teresa', 'Pérez', '1974-03-21', 'Femenino', 2147483647, 'tere_34_11_3@gmail.com', 'Nada', ''),
+(30270492, 'Gregory', 'Pérez', '2002-08-31', 'Masculino', 46544, 'gps.3108@gmail.com', 'asdasd', '');
 
 -- --------------------------------------------------------
 
@@ -605,6 +701,7 @@ CREATE TABLE `planes` (
   `ID_planes` int(11) NOT NULL,
   `nombre_plan` varchar(100) NOT NULL,
   `precio` decimal(10,2) NOT NULL,
+  `monto_cobertura` decimal(10,2) NOT NULL DEFAULT 0.00,
   `descripcion` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -612,11 +709,8 @@ CREATE TABLE `planes` (
 -- Volcado de datos para la tabla `planes`
 --
 
-INSERT INTO `planes` (`ID_planes`, `nombre_plan`, `precio`, `descripcion`) VALUES
-(1, 'Plan salud 2026', 120.00, 'asd'),
-(2, 'plan oro', 450.00, 'asd'),
-(3, 'Plan Gold', 120.00, 'edfkikdfjfd\r\n'),
-(4, 'Plan de prueba', 120.00, 'dssdsdsd');
+INSERT INTO `planes` (`ID_planes`, `nombre_plan`, `precio`, `monto_cobertura`, `descripcion`) VALUES
+(6, 'Plan salud 2026', 180.00, 800.00, '');
 
 -- --------------------------------------------------------
 
@@ -762,6 +856,12 @@ ALTER TABLE `bitacora`
   ADD KEY `usuario` (`usuario`);
 
 --
+-- Indices de la tabla `categorias_examenes`
+--
+ALTER TABLE `categorias_examenes`
+  ADD PRIMARY KEY (`id_categoria`);
+
+--
 -- Indices de la tabla `citas`
 --
 ALTER TABLE `citas`
@@ -785,6 +885,14 @@ ALTER TABLE `citas_benef`
   ADD KEY `id_beneficiario` (`id_beneficiario`);
 
 --
+-- Indices de la tabla `citas_examenes`
+--
+ALTER TABLE `citas_examenes`
+  ADD PRIMARY KEY (`id_cita_examen`),
+  ADD KEY `id_cita` (`id_cita`),
+  ADD KEY `id_examen` (`id_examen`);
+
+--
 -- Indices de la tabla `citas_uptm`
 --
 ALTER TABLE `citas_uptm`
@@ -798,7 +906,8 @@ ALTER TABLE `citas_uptm`
 ALTER TABLE `componentes_planes`
   ADD PRIMARY KEY (`ID_componenteplan`),
   ADD KEY `ID_examen_componentes` (`ID_examen_componentes`),
-  ADD KEY `componentes_planes_ibfk_1` (`ID_planes_componentes`);
+  ADD KEY `componentes_planes_ibfk_1` (`ID_planes_componentes`),
+  ADD KEY `fk_componente_categoria` (`id_categoria_componente`);
 
 --
 -- Indices de la tabla `comunidad_uptm`
@@ -815,7 +924,8 @@ ALTER TABLE `consumo_plan`
   ADD PRIMARY KEY (`ID_consumo`),
   ADD KEY `ID_contrato_plan` (`ID_contrato_plan`),
   ADD KEY `ID_persona_plan` (`ID_persona_plan`),
-  ADD KEY `ID_examen_plan` (`ID_examen_plan`);
+  ADD KEY `ID_examen_plan` (`ID_examen_plan`),
+  ADD KEY `fk_consumo_cita` (`id_cita`);
 
 --
 -- Indices de la tabla `contrato_plan`
@@ -824,6 +934,12 @@ ALTER TABLE `contrato_plan`
   ADD PRIMARY KEY (`ID_contrato`),
   ADD KEY `ID_planes_contrato` (`ID_planes_contrato`),
   ADD KEY `contrato_plan_ibfk_2` (`ID_afiliado_contrato`);
+
+--
+-- Indices de la tabla `descuentos_poliza`
+--
+ALTER TABLE `descuentos_poliza`
+  ADD PRIMARY KEY (`id_descuento`);
 
 --
 -- Indices de la tabla `especialidades`
@@ -836,7 +952,8 @@ ALTER TABLE `especialidades`
 --
 ALTER TABLE `examenes`
   ADD PRIMARY KEY (`ID_examen`),
-  ADD KEY `fk_examen_especialidad` (`ID_especialidad_examenes`);
+  ADD KEY `fk_examen_especialidad` (`ID_especialidad_examenes`),
+  ADD KEY `fk_examen_categoria` (`id_categoria`);
 
 --
 -- Indices de la tabla `historias_medicas`
@@ -928,85 +1045,103 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `afiliados`
 --
 ALTER TABLE `afiliados`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT de la tabla `beneficiarios`
 --
 ALTER TABLE `beneficiarios`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `bitacora`
 --
 ALTER TABLE `bitacora`
-  MODIFY `idbitacora` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=218;
+  MODIFY `idbitacora` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=270;
+
+--
+-- AUTO_INCREMENT de la tabla `categorias_examenes`
+--
+ALTER TABLE `categorias_examenes`
+  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `citas`
 --
 ALTER TABLE `citas`
-  MODIFY `id_cita` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id_cita` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT de la tabla `citas_afil`
 --
 ALTER TABLE `citas_afil`
-  MODIFY `id_citas_afil` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id_citas_afil` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT de la tabla `citas_benef`
 --
 ALTER TABLE `citas_benef`
-  MODIFY `id_citas_benef` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_citas_benef` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT de la tabla `citas_examenes`
+--
+ALTER TABLE `citas_examenes`
+  MODIFY `id_cita_examen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `citas_uptm`
 --
 ALTER TABLE `citas_uptm`
-  MODIFY `id_citas_uptm` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_citas_uptm` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `componentes_planes`
 --
 ALTER TABLE `componentes_planes`
-  MODIFY `ID_componenteplan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `ID_componenteplan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT de la tabla `comunidad_uptm`
 --
 ALTER TABLE `comunidad_uptm`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `consumo_plan`
 --
 ALTER TABLE `consumo_plan`
-  MODIFY `ID_consumo` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID_consumo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `contrato_plan`
 --
 ALTER TABLE `contrato_plan`
-  MODIFY `ID_contrato` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `ID_contrato` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT de la tabla `descuentos_poliza`
+--
+ALTER TABLE `descuentos_poliza`
+  MODIFY `id_descuento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `especialidades`
 --
 ALTER TABLE `especialidades`
-  MODIFY `id_especialidad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_especialidad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `examenes`
 --
 ALTER TABLE `examenes`
-  MODIFY `ID_examen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID_examen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `historias_medicas`
 --
 ALTER TABLE `historias_medicas`
-  MODIFY `id_historia` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_historia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `historias_medicas_gine`
@@ -1024,19 +1159,19 @@ ALTER TABLE `medicos`
 -- AUTO_INCREMENT de la tabla `pagos_contrato`
 --
 ALTER TABLE `pagos_contrato`
-  MODIFY `ID_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `ID_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT de la tabla `pagos_externos`
 --
 ALTER TABLE `pagos_externos`
-  MODIFY `id_pago_ext` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id_pago_ext` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `planes`
 --
 ALTER TABLE `planes`
-  MODIFY `ID_planes` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ID_planes` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `preguntas_seguridad`
@@ -1112,6 +1247,13 @@ ALTER TABLE `citas_benef`
   ADD CONSTRAINT `citas_benef_ibfk_2` FOREIGN KEY (`id_beneficiario`) REFERENCES `beneficiarios` (`ID`) ON DELETE CASCADE;
 
 --
+-- Filtros para la tabla `citas_examenes`
+--
+ALTER TABLE `citas_examenes`
+  ADD CONSTRAINT `citas_examenes_ibfk_1` FOREIGN KEY (`id_cita`) REFERENCES `citas` (`id_cita`) ON DELETE CASCADE,
+  ADD CONSTRAINT `citas_examenes_ibfk_2` FOREIGN KEY (`id_examen`) REFERENCES `examenes` (`ID_examen`);
+
+--
 -- Filtros para la tabla `citas_uptm`
 --
 ALTER TABLE `citas_uptm`
@@ -1123,7 +1265,8 @@ ALTER TABLE `citas_uptm`
 --
 ALTER TABLE `componentes_planes`
   ADD CONSTRAINT `componentes_planes_ibfk_1` FOREIGN KEY (`ID_planes_componentes`) REFERENCES `planes` (`ID_planes`),
-  ADD CONSTRAINT `componentes_planes_ibfk_2` FOREIGN KEY (`ID_examen_componentes`) REFERENCES `examenes` (`ID_examen`);
+  ADD CONSTRAINT `componentes_planes_ibfk_2` FOREIGN KEY (`ID_examen_componentes`) REFERENCES `examenes` (`ID_examen`),
+  ADD CONSTRAINT `fk_componente_categoria` FOREIGN KEY (`id_categoria_componente`) REFERENCES `categorias_examenes` (`id_categoria`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `comunidad_uptm`
@@ -1137,7 +1280,8 @@ ALTER TABLE `comunidad_uptm`
 ALTER TABLE `consumo_plan`
   ADD CONSTRAINT `consumo_plan_ibfk_1` FOREIGN KEY (`ID_contrato_plan`) REFERENCES `contrato_plan` (`ID_contrato`),
   ADD CONSTRAINT `consumo_plan_ibfk_2` FOREIGN KEY (`ID_persona_plan`) REFERENCES `persona` (`cedula`),
-  ADD CONSTRAINT `consumo_plan_ibfk_3` FOREIGN KEY (`ID_examen_plan`) REFERENCES `examenes` (`ID_examen`);
+  ADD CONSTRAINT `consumo_plan_ibfk_3` FOREIGN KEY (`ID_examen_plan`) REFERENCES `examenes` (`ID_examen`),
+  ADD CONSTRAINT `fk_consumo_cita` FOREIGN KEY (`id_cita`) REFERENCES `citas` (`id_cita`) ON DELETE SET NULL;
 
 --
 -- Filtros para la tabla `contrato_plan`
@@ -1150,6 +1294,7 @@ ALTER TABLE `contrato_plan`
 -- Filtros para la tabla `examenes`
 --
 ALTER TABLE `examenes`
+  ADD CONSTRAINT `fk_examen_categoria` FOREIGN KEY (`id_categoria`) REFERENCES `categorias_examenes` (`id_categoria`) ON DELETE SET NULL,
   ADD CONSTRAINT `fk_examen_especialidad` FOREIGN KEY (`ID_especialidad_examenes`) REFERENCES `especialidades` (`id_especialidad`);
 
 --

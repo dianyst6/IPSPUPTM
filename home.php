@@ -28,6 +28,10 @@ switch ($vista) {
         $contenido = $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/app/pagos/agregar_plan.php';
         include $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/recursos/layout.php';
         break;
+     case 'editarplan':
+        $contenido = $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/app/pagos/editar_plan.php';
+        include $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/recursos/layout.php';
+        break;
      case 'gestionpagoscontrato':
         $contenido = $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/app/pagos/vistas/gestion_pagoscontrato.php';
         include $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/recursos/layout.php';
@@ -48,8 +52,20 @@ switch ($vista) {
         $contenido = $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/app/pagos/vistas/gestion_planesasignados.php';
         include $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/recursos/layout.php';
         break;
+    case 'gestionexamenes':
+        $contenido = $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/app/pagos/vistas/gestion_examenes.php';
+        include $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/recursos/layout.php';
+        break;
+    case 'gestionpagoscitas':
+        $contenido = $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/app/pagos/vistas/gestion_pagoscitas.php';
+        include $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/recursos/layout.php';
+        break;
      case 'historiasmedicas':
         $contenido = $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/app/historias_medicas/principal.php';
+        include $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/recursos/layout.php';
+        break;
+    case 'gestioncategorias':
+        $contenido = $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/app/pagos/vistas/gestion_categorias.php';
         include $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/recursos/layout.php';
         break;
     case 'reportes':

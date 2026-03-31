@@ -14,10 +14,13 @@ if (isset($_SESSION['user_id'])) {
 }
 ?>
 
+<!-- Estilos de Select2 -->
+<link href="/IPSPUPTM/assets/select2/css/select2.min.css" rel="stylesheet" />
+
 <!-- Modal Historia Médica - Ginecología -->
 <div class="modal fade" id="formulariomodal_ginecologia" tabindex="-1" aria-labelledby="formularioGineLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
-    <div class="modal-content">
+    <form class="modal-content" id="form-ginecologia" action="/IPSPUPTM/app/historias_medicas/modales/formulario/guardar_ginecologia.php" method="POST">
       <div class="modal-header bg-primary text-white">
         <h5 class="modal-title fw-bold" id="formularioGineLabel">
           <i class="fas fa-female me-2"></i>Historia Médica — Ginecología
@@ -26,7 +29,7 @@ if (isset($_SESSION['user_id'])) {
       </div>
 
       <div class="modal-body">
-        <form id="form-ginecologia" action="/IPSPUPTM/app/historias_medicas/modales/formulario/guardar_ginecologia.php" method="POST">
+        
           <input type="hidden" name="ci_medico" value="<?= htmlspecialchars($ci_medico_session) ?>">
 
           <!-- === SECCIÓN 1: DATOS DEL PACIENTE === -->
@@ -44,18 +47,17 @@ if (isset($_SESSION['user_id'])) {
           <!-- Paciente interno -->
           <div id="gine_campos_interno" style="display:none;">
             <div class="mb-3">
-              <label class="form-label">Cédula o Nombre (Afiliado/Beneficiario)</label>
-              <input class="form-control border-primary" list="gine_lista_pacientes" id="gine_paciente_search" placeholder="Buscar por CI o Nombre...">
-              <input type="hidden" name="ci_paciente" id="gine_ci_paciente_hidden">
-              <datalist id="gine_lista_pacientes">
+              <label class="form-label">Seleccione Cédula o Nombre (Afiliado/Beneficiario)</label>
+              <select name="ci_paciente" id="gine_ci_paciente_hidden" class="form-select border-primary" style="width: 100%;">
+                <option value="" selected disabled>Buscar por CI o Nombre...</option>
                 <?php
                 $sql = "SELECT cedula, fechanacimiento, CONCAT(nombre, ' ', apellido) as nombre_completo FROM persona";
                 $res = $conn->query($sql);
                 while ($r = $res->fetch_assoc()) {
-                    echo '<option data-ci="' . $r['cedula'] . '" data-fecha="' . $r['fechanacimiento'] . '" value="' . $r['cedula'] . ' | ' . htmlspecialchars($r['nombre_completo']) . '"></option>';
+                    echo '<option data-fecha="' . $r['fechanacimiento'] . '" value="' . $r['cedula'] . '">' . $r['cedula'] . ' | ' . htmlspecialchars($r['nombre_completo']) . '</option>';
                 }
                 ?>
-              </datalist>
+              </select>
             </div>
           </div>
 
@@ -64,7 +66,16 @@ if (isset($_SESSION['user_id'])) {
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label">Cédula Externo</label>
-                <input type="number" name="cedula_ext" id="gine_cedula_ext" class="form-control border-primary">
+                <select name="cedula_ext" id="gine_cedula_ext" class="form-select border-primary" style="width: 100%;">
+                  <option value="" selected disabled>Busque o ingrese Cédula...</option>
+                  <?php
+                  $sql_ext = "SELECT cedula, CONCAT(nombre, ' ', apellido) as nombre_completo FROM comunidad_uptm";
+                  $res_ext = $conn->query($sql_ext);
+                  while($r_ext = $res_ext->fetch_assoc()){
+                    echo '<option value="' . $r_ext['cedula'] . '" data-nombre="' . htmlspecialchars($r_ext['nombre_completo']) . '">' . $r_ext['cedula'] . ' | ' . htmlspecialchars($r_ext['nombre_completo']) . '</option>';
+                  }
+                  ?>
+                </select>
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label">Nombre y Apellido</label>
@@ -263,15 +274,15 @@ if (isset($_SESSION['user_id'])) {
 
           </div><!-- fin gine_campos_comunes -->
 
-          <div class="modal-footer px-0 pb-0">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-primary" id="btn_guardar_gine" style="display:none;">
-              <i class="fas fa-save me-1"></i>Guardar Historia
-            </button>
-          </div>
-        </form>
       </div><!-- modal-body -->
-    </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="btn_guardar_gine" style="display:none;">
+          <i class="fas fa-save me-1"></i>Guardar Historia
+        </button>
+      </div>
+    </form> <!-- Cierre del form (que es el modal-content) -->
   </div>
 </div>
 
@@ -306,19 +317,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // -- Buscador datalist de pacientes internos --
-    document.getElementById('gine_paciente_search').addEventListener('input', function () {
-        const datalist = document.getElementById('gine_lista_pacientes');
-        const hidden   = document.getElementById('gine_ci_paciente_hidden');
-
-        for (let opt of datalist.options) {
-            if (opt.value === this.value) {
-                hidden.value    = opt.getAttribute('data-ci');
-                iFechaNac.value = opt.getAttribute('data-fecha');
-                calcularEdad(iFechaNac.value);
-                break;
-            }
-        }
-    });
+    // Removido, ahora Select2 se encarga del evento de cambio de forma asíncrona.
 
     // -- Calcular edad para externos --
     iFechaNac.addEventListener('change', function () {
@@ -352,4 +351,76 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(() => alert('❌ Error al procesar la solicitud.'));
     });
 });
+
+// Esperar a que jQuery esté disponible en el layout principal antes de cargar e inicializar Select2
+(function initSelect2Ginecologia() {
+    if (window.jQuery) {
+        var s2 = document.createElement('script');
+        s2.src = '/IPSPUPTM/assets/select2/js/select2.min.js';
+        
+        s2.onload = function() {
+            // --- 1. Select2 para Internos ---
+            var $select = window.jQuery('#gine_ci_paciente_hidden');
+            $select.select2({
+                dropdownParent: window.jQuery('#formulariomodal_ginecologia'),
+                width: '100%',
+                language: 'es'
+            });
+
+            $select.on('change', function() {
+                var fecha = window.jQuery(this).find(':selected').data('fecha');
+                var iFechaNac = document.getElementById('gine_fecha_nac');
+                
+                if (fecha) {
+                    iFechaNac.value = fecha;
+                    calcularEdadSelect2(fecha);
+                } else {
+                    iFechaNac.value = "";
+                    document.getElementById('gine_edad').value = "";
+                }
+            });
+
+            // --- 2. Select2 para Externos ---
+            var $selectExt = window.jQuery('#gine_cedula_ext');
+            $selectExt.select2({
+                dropdownParent: window.jQuery('#formulariomodal_ginecologia'),
+                width: '100%',
+                language: 'es',
+                tags: true,
+                createTag: function (params) {
+                    var term = window.jQuery.trim(params.term);
+                    if (term === '' || isNaN(term)) { return null; } 
+                    return { id: term, text: term, newTag: true };
+                }
+            });
+
+            $selectExt.on('change', function() {
+                var selectedOption = window.jQuery(this).find(':selected');
+                var nombreCompleto = selectedOption.data('nombre');
+                var iNombreExt = document.getElementById('gine_nombre_ext');
+                
+                if (nombreCompleto) {
+                    iNombreExt.value = nombreCompleto;
+                    iNombreExt.setAttribute('readonly', 'readonly');
+                } else {
+                    iNombreExt.value = "";
+                    iNombreExt.removeAttribute('readonly');
+                }
+            });
+            
+            function calcularEdadSelect2(fecha) {
+                const hoy   = new Date();
+                const cumple = new Date(fecha);
+                let edad = hoy.getFullYear() - cumple.getFullYear();
+                const m = hoy.getMonth() - cumple.getMonth();
+                if (m < 0 || (m === 0 && hoy.getDate() < cumple.getDate())) edad--;
+                document.getElementById('gine_edad').value = edad;
+            }
+        };
+        
+        document.body.appendChild(s2);
+    } else {
+        setTimeout(initSelect2Ginecologia, 50);
+    }
+})();
 </script>

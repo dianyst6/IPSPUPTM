@@ -1,13 +1,15 @@
+<!-- Estilos de Select2 -->
 <link href="/IPSPUPTM/assets/select2/css/select2.min.css" rel="stylesheet" />
 
 <div class="modal fade" id="formulariomodal" tabindex="-1" aria-labelledby="formulariomodallabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-scrollable"> 
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5">Registrar Historia Médica</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body" style="max-height: 70vh;"> <form id="form-registro-historia" action="/IPSPUPTM/app/historias_medicas/modales/formulario/guardar.php" method="POST">
+      <div class="modal-body">
+        <form id="form-registro-historia" action="/IPSPUPTM/app/historias_medicas/modales/formulario/guardar.php" method="POST">
           
           <input type="hidden" name="ci_medico" id="ci_medico_input" value="14107471">
 
@@ -22,16 +24,15 @@
 
           <div id="campos-interno" style="display: none;">
             <div class="mb-3">
-              <label class="form-label">Cédula o Nombre (Afiliado/Beneficiario)</label>
-              <select name="ci_paciente" id="id_paciente_select2" class="form-select">
-                <option value=""></option>
+              <label class="form-label">Seleccione Cédula o Nombre (Afiliado/Beneficiario)</label>
+              <select name="ci_paciente" id="ci_paciente_hidden" class="form-select" style="width: 100%;">
+                <option value="" selected disabled>Buscar por CI o Nombre...</option>
                 <?php
-                // Consulta optimizada para Select2
-                $sql = "SELECT cedula, fechanacimiento, nombre, apellido FROM persona";
+                // Consulta a la tabla 'persona'
+                $sql = "SELECT cedula, fechanacimiento, CONCAT(nombre, ' ', apellido) as nombre_completo FROM persona";
                 $res = $conn->query($sql);
                 while($r = $res->fetch_assoc()){
-                  // Guardamos la fecha en un atributo data para usarla luego
-                  echo '<option value="'.$r['cedula'].'" data-fecha="'.$r['fechanacimiento'].'">'.$r['cedula'].' | '.$r['nombre'].' '.$r['apellido'].'</option>';
+                  echo '<option value="'.$r['cedula'].'" data-fecha="'.$r['fechanacimiento'].'">'.$r['cedula'].' | '.$r['nombre_completo'].'</option>';
                 }
                 ?>
               </select>
@@ -42,7 +43,17 @@
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label">Cédula Externo</label>
-                <input type="number" name="cedula_ext" id="cedula_ext" class="form-control">
+                <select name="cedula_ext" id="cedula_ext" class="form-select" style="width: 100%;">
+                  <option value="" selected disabled>Busque o ingrese Cédula...</option>
+                  <?php
+                  // Consulta a la tabla 'comunidad_uptm'
+                  $sql_ext = "SELECT cedula, CONCAT(nombre, ' ', apellido) as nombre_completo FROM comunidad_uptm";
+                  $res_ext = $conn->query($sql_ext);
+                  while($r_ext = $res_ext->fetch_assoc()){
+                    echo '<option value="'.$r_ext['cedula'].'" data-nombre="'.$r_ext['nombre_completo'].'">'.$r_ext['cedula'].' | '.$r_ext['nombre_completo'].'</option>';
+                  }
+                  ?>
+                </select>
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label">Nombre y Apellido</label>
@@ -59,7 +70,7 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Edad</label>
-                    <input type="number" name="edad" id="edad_input" class="form-control" required readonly>
+                    <input type="number" name="edad" id="edad_input" class="form-control" required>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label class="form-label">Fecha Consulta</label>
@@ -99,107 +110,164 @@
             </div>
           </div>
 
-          <div class="modal-footer px-0 pb-0">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-primary" id="btn_guardar_historia" style="display:none;">Guardar Historia</button>
-          </div>
-        </form>
+        </form> <!-- Cierre del form dentro del modal-body -->
+      </div> <!-- Cierre modal-body -->
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" form="form-registro-historia" class="btn btn-primary" id="btn_guardar_historia" style="display:none;">Guardar Historia</button>
       </div>
-    </div>
+    </div> <!-- Cierre del modal-content -->
   </div>
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     
-    // === CARGA DINÁMICA DE SELECT2 ===
-    var script = document.createElement('script');
-    script.src = '/IPSPUPTM/assets/select2/js/select2.min.js';
-    script.onload = function() {
-        $('#formulariomodal').on('shown.bs.modal', function () {
-            $('#id_paciente_select2').select2({
-                dropdownParent: $('#formulariomodal'),
-                placeholder: "Buscar por CI o Nombre...",
-                width: '100%'
-            });
-        });
-
-        // Evento cuando se selecciona un paciente interno
-        $('#id_paciente_select2').on('select2:select', function (e) {
-            const fecha = e.params.data.element.dataset.fecha;
-            const iFechaNac = document.getElementById('fecha_nacimiento_input');
-            
-            if (fecha) {
-                iFechaNac.value = fecha;
-                calcularEdad(fecha);
-            }
-        });
-    };
-    document.head.appendChild(script);
-
-    // === LÓGICA DE INTERFAZ ===
     const selector = document.getElementById('tipo_paciente_selector');
     const dInterno = document.getElementById('campos-interno');
     const dExterno = document.getElementById('campos-externo');
     const dComunes = document.getElementById('campos-comunes');
     const bGuardar = document.getElementById('btn_guardar_historia');
+    
     const iFechaNac = document.getElementById('fecha_nacimiento_input');
     const iEdad = document.getElementById('edad_input');
+    const form = document.getElementById('form-registro-historia');
 
+    // 1. Lógica para mostrar/ocultar secciones según tipo de paciente
     selector.addEventListener('change', function() {
+        const opcion = this.value;
         dComunes.style.display = 'block';
         bGuardar.style.display = 'block';
 
-        if (this.value === 'interno') {
+        if (opcion === 'interno') {
             dInterno.style.display = 'block';
             dExterno.style.display = 'none';
             iFechaNac.setAttribute('readonly', 'readonly');
         } else {
             dInterno.style.display = 'none';
             dExterno.style.display = 'block';
-            iFechaNac.removeAttribute('readonly');
             iFechaNac.value = "";
             iEdad.value = "";
+            iFechaNac.removeAttribute('readonly');
         }
     });
 
-    // Función para calcular edad
-    function calcularEdad(fecha) {
-        if (!fecha) return;
-        const hoy = new Date();
-        const cumple = new Date(fecha);
-        let edad = hoy.getFullYear() - cumple.getFullYear();
-        const m = hoy.getMonth() - cumple.getMonth();
-        if (m < 0 || (m === 0 && hoy.getDate() < cumple.getDate())) {
-            edad--;
-        }
-        iEdad.value = edad;
-    }
+    // 2. Buscador de Pacientes Internos (Datalist)
+    // El código nativo fue removido. Ahora el evento "change" se maneja vía jQuery al cargar Select2 asíncronamente.
 
-    // Escuchar cambio manual de fecha para externos
+    // 3. Cálculo de edad para externos
     iFechaNac.addEventListener('change', function() {
-        calcularEdad(this.value);
+        if (this.value && !this.readOnly) {
+            const hoy = new Date();
+            const cumple = new Date(this.value);
+            let edad = hoy.getFullYear() - cumple.getFullYear();
+            const m = hoy.getMonth() - cumple.getMonth();
+            if (m < 0 || (m === 0 && hoy.getDate() < cumple.getDate())) {
+                edad--;
+            }
+            iEdad.value = edad;
+        }
     });
 
-    // Envío del Formulario
-    document.getElementById('form-registro-historia').addEventListener('submit', function(e) {
-        e.preventDefault();
+    // 4. Envío de datos por AJAX
+    form.addEventListener('submit', function(e) {
+        e.preventDefault(); 
+
         const formData = new FormData(this);
-        
-        fetch(this.getAttribute('action'), {
+        const ruta = this.getAttribute('action');
+
+        fetch(ruta, {
             method: 'POST',
             body: formData
         })
-        .then(res => res.json())
+        .then(response => response.json()) // Cambiado a JSON para coincidir con guardar.php
         .then(data => {
-            if (data.success) {
+            if (data.success === true) {
                 alert("✅ " + data.message);
-                location.reload();
+                location.reload(); 
             } else {
                 alert("⚠️ Error: " + data.message);
             }
         })
-        .catch(err => console.error('Error:', err));
+        .catch(error => {
+            console.error('Error:', error);
+            alert("❌ Error al procesar la solicitud.");
+        });
     });
 });
+
+// Esperar a que jQuery esté disponible en el layout principal antes de cargar e inicializar Select2
+(function initSelect2Historias() {
+    if (window.jQuery) {
+        var s2 = document.createElement('script');
+        s2.src = '/IPSPUPTM/assets/select2/js/select2.min.js';
+        
+        s2.onload = function() {
+            // --- 1. Select2 para Internos ---
+            var $select = window.jQuery('#ci_paciente_hidden');
+            $select.select2({
+                dropdownParent: window.jQuery('#formulariomodal'),
+                width: '100%',
+                language: 'es'
+            });
+
+            // Lógica para auto-completar fecha y edad al seleccionar en Select2
+            $select.on('change', function() {
+                // Al usar 'data-fecha', lo leemos directamente del :selected
+                var fecha = window.jQuery(this).find(':selected').data('fecha');
+                var iFechaNac = document.getElementById('fecha_nacimiento_input');
+                var iEdad = document.getElementById('edad_input');
+                
+                if (fecha) {
+                    iFechaNac.value = fecha;
+                    const hoy = new Date();
+                    const cumple = new Date(fecha);
+                    let edad = hoy.getFullYear() - cumple.getFullYear();
+                    const m = hoy.getMonth() - cumple.getMonth();
+                    if (m < 0 || (m === 0 && hoy.getDate() < cumple.getDate())) {
+                        edad--;
+                    }
+                    iEdad.value = edad;
+                } else {
+                    iFechaNac.value = "";
+                    iEdad.value = "";
+                }
+            });
+
+            // --- 2. Select2 para Externos ---
+            var $selectExt = window.jQuery('#cedula_ext');
+            $selectExt.select2({
+                dropdownParent: window.jQuery('#formulariomodal'),
+                width: '100%',
+                language: 'es',
+                tags: true, // Permite crear una nueva cédula si no existe
+                createTag: function (params) {
+                    var term = window.jQuery.trim(params.term);
+                    if (term === '' || isNaN(term)) { return null; } // Guardar solo números
+                    return { id: term, text: term, newTag: true };
+                }
+            });
+
+            // Autocompletar nombre si el externo ya existe en la BD
+            $selectExt.on('change', function() {
+                var selectedOption = window.jQuery(this).find(':selected');
+                var nombreCompleto = selectedOption.data('nombre');
+                var iNombreExt = document.getElementById('nombre_ext');
+                
+                if (nombreCompleto) {
+                    iNombreExt.value = nombreCompleto;
+                    iNombreExt.setAttribute('readonly', 'readonly');
+                } else {
+                    iNombreExt.value = "";
+                    iNombreExt.removeAttribute('readonly');
+                }
+            });
+        };
+        
+        document.body.appendChild(s2);
+    } else {
+        setTimeout(initSelect2Historias, 50);
+    }
+})();
 </script>

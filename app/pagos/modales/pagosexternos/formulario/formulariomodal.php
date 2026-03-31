@@ -16,7 +16,7 @@
 
                     <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Monto Base (Bs.)</label>
+                        <label class="form-label fw-bold">Monto Base ($)</label>
                         <input type="number" step="0.01" name="monto_base" id="monto_base" 
                             class="form-control border-primary" placeholder="Ingrese monto..." 
                             oninput="calcularMontoFinal()">
@@ -42,9 +42,15 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="monto_pago" class="form-label fw-bold text-success">Monto Final (Bs.)</label>
+                            <label for="monto_pago" class="form-label fw-bold text-success">Monto Final ($)</label>
                             <input type="number" step="0.01" name="monto_pago" id="monto_pago" 
                                    class="form-control border-success fw-bold bg-light" readonly>
+                            <small class="text-muted d-block mt-1">
+                                Tasa BCV: <span id="ext_tasa_bcv_label">Cargando...</span> Bs |
+                                Equivalente: <strong class="text-success" id="ext_monto_bs_label">0,00 Bs</strong>
+                            </small>
+                            <input type="hidden" name="tasa_bcv" id="ext_tasa_bcv_input" value="0">
+                            <input type="hidden" name="monto_bs" id="ext_monto_bs_input" value="0">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="metodo_pago" class="form-label fw-bold">Método</label>
@@ -67,8 +73,38 @@
     </div>
 </div>
 <script>
+let extTasaBCVAbsoluta = 0;
+
+function formatearMonedaVE(valor) {
+    return new Intl.NumberFormat('es-VE', { 
+        minimumFractionDigits: 2, 
+        maximumFractionDigits: 2 
+    }).format(valor);
+}
+
+function extObtenerTasaBCV() {
+    fetch('https://ve.dolarapi.com/v1/dolares/oficial')
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.promedio) {
+                extTasaBCVAbsoluta = data.promedio;
+            } else if (data && data.venta) {
+                extTasaBCVAbsoluta = data.venta;
+            }
+            document.getElementById('ext_tasa_bcv_label').innerText = formatearMonedaVE(extTasaBCVAbsoluta);
+            document.getElementById('ext_tasa_bcv_input').value = extTasaBCVAbsoluta;
+            if (typeof window.calcularMontoFinal === 'function') {
+                window.calcularMontoFinal();
+            }
+        })
+        .catch(error => {
+            console.error('Error obteniendo tasa BCV:', error);
+            document.getElementById('ext_tasa_bcv_label').innerText = 'Error API';
+        });
+}
 
 document.addEventListener('DOMContentLoaded', function() {
+    extObtenerTasaBCV();
     const modalPago = document.getElementById('pagomodal');
     const formPago = document.getElementById('form-registro-pago-ext');
 
@@ -85,11 +121,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Realiza la operación
     const ahorro = montoBase * (descuentoPorc / 100);
-    const montoFinal = montoBase - ahorro;
+    const montoFinalUSD = montoBase - ahorro;
 
-    // Refleja el resultado
-    document.getElementById('monto_pago').value = montoFinal.toFixed(2);
+    // Refleja el resultado en dólares
+    document.getElementById('monto_pago').value = montoFinalUSD.toFixed(2);
     document.getElementById('porcentaje_desc').value = descuentoPorc;
+    
+    // Calcula y refleja el equivalente en bolívares
+    const montoFinalBs = montoFinalUSD * extTasaBCVAbsoluta;
+    document.getElementById('ext_monto_bs_label').innerText = formatearMonedaVE(montoFinalBs) + ' Bs';
+    document.getElementById('ext_monto_bs_input').value = montoFinalBs.toFixed(2);
 };
 
     // 2. Al abrir el modal: Cargar datos iniciales

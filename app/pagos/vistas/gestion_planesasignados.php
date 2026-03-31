@@ -52,12 +52,7 @@
                     </td>
                     <td>
                         <div class="btn-group" role="group">
-                            <button class="btn btn-sm btn-outline-info" title="Ver Detalles">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="btn btn-sm btn-outline-primary" title="Editar Contrato">
-                                <i class="fas fa-edit"></i>
-                            </button>
+                           
                             <button class="btn btn-sm btn-outline-danger" title="Eliminar Contrato"
                                 onclick="eliminarContrato(<?php echo $row['ID_contrato']; ?>)">
                                 <i class="fas fa-trash"></i>

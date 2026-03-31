@@ -101,7 +101,7 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                             <td><?php echo date('d-m-Y', strtotime($row['fecha_cita'])); ?></td>
                             
                             <td class="fw-bold text-success">
-                                <?php echo $pagado ? $row['monto_final'] . " Bs" : "---"; ?>
+                                <?php echo $pagado ? $row['monto_final'] . " $" : "---"; ?>
                             </td>
 
                             <td>
@@ -120,7 +120,8 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                                     data-bs-target="#pagomodal"
                                     data-bs-idcita="<?= $row['id_cita']; ?>" 
                                     data-bs-nombre="<?= $row['nombre_paciente']; ?>"
-> 
+                                    data-bs-costobase=""
+                                    data-bs-descuento=""> 
                                 Pagar
                             </button>   
                                 <?php else: ?>
@@ -155,3 +156,7 @@ $totalPages = ceil($totalRows / $rowsPerPage);
 </div>
 
 <?php include 'C:/xampp/htdocs/IPSPUPTM/app/pagos/modales/pagosexternos/formulario/formulariomodal.php'; ?>
+<?php include 'C:/xampp/htdocs/IPSPUPTM/app/citas/modales/formulario/formulariomodal.php'; ?>
+<?php include 'C:/xampp/htdocs/IPSPUPTM/app/citas/modales/actualizar/editmodal.php'; ?>
+
+<script src="/IPSPUPTM/assets/js/accionescitas.js"></script>

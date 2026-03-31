@@ -49,8 +49,14 @@ include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Monto a Pagar ($)</label>
-                            <input type="number" step="0.01" name="monto_cuota" class="form-control" required
-                                placeholder="0.00">
+                            <input type="number" step="0.01" name="monto_cuota" id="monto_cuota_input" class="form-control" required
+                                placeholder="0.00" oninput="calcularBolivares()">
+                            <small class="text-muted d-block mt-1">
+                                Tasa BCV: <span id="tasa_bcv_label">Cargando...</span> Bs |
+                                Equivalente: <strong class="text-success" id="monto_bs_label">0.00 Bs</strong>
+                            </small>
+                            <input type="hidden" name="tasa_bcv" id="tasa_bcv_input" value="0">
+                            <input type="hidden" name="monto_bs" id="monto_bs_input" value="0">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Fecha de Pago</label>
@@ -87,8 +93,46 @@ include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
 </div>
 
 <script>
+let tasaBCVAbsoluta = 0;
+
+function formatearMonedaVE(valor) {
+    return new Intl.NumberFormat('es-VE', { 
+        minimumFractionDigits: 2, 
+        maximumFractionDigits: 2 
+    }).format(valor);
+}
+
+function obtenerTasaBCV() {
+    fetch('https://ve.dolarapi.com/v1/dolares/oficial')
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.promedio) {
+                tasaBCVAbsoluta = data.promedio;
+            } else if (data && data.venta) {
+                tasaBCVAbsoluta = data.venta;
+            }
+            document.getElementById('tasa_bcv_label').innerText = formatearMonedaVE(tasaBCVAbsoluta);
+            document.getElementById('tasa_bcv_input').value = tasaBCVAbsoluta;
+            calcularBolivares();
+        })
+        .catch(error => {
+            console.error('Error obteniendo tasa BCV:', error);
+            document.getElementById('tasa_bcv_label').innerText = 'Error API';
+        });
+}
+
+function calcularBolivares() {
+    const inputMonto = document.getElementById('monto_cuota_input');
+    const montoUSD = parseFloat(inputMonto.value) || 0;
+    const montoBs = montoUSD * tasaBCVAbsoluta;
+    
+    document.getElementById('monto_bs_label').innerText = formatearMonedaVE(montoBs) + ' Bs';
+    document.getElementById('monto_bs_input').value = montoBs.toFixed(2);
+}
+
 // Inicializar Select2 en el modal, asegúrate que jQuery esté cargado primero
 document.addEventListener("DOMContentLoaded", function() {
+    obtenerTasaBCV();
     // Cargar dinámicamente el script de Select2 SOLO después de que el DOM esté listo
     // Esto asegura que jQuery, que se carga al final de layout.php, ya esté disponible.
     var script = document.createElement('script');
