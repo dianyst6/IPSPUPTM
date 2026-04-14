@@ -11,11 +11,11 @@ $filtro = isset($_GET['estado']) ? $_GET['estado'] : 'pendientes';
 
 // Construir la consulta según el filtro
 if ($filtro == 'pendientes') {
-    // Solo los que NO están en la tabla de pagos
-    $whereSQL = "WHERE p.id_pago_ext IS NULL";
+    // Solo los que NO están en la tabla de pagos y que no estén canceladas
+    $whereSQL = "WHERE p.id_pago_ext IS NULL AND c.estado != 'cancelada'";
 } else {
-    // Todos (Historial)
-    $whereSQL = ""; 
+    // Todos (Historial) - Excluimos las canceladas para limpieza del reporte
+    $whereSQL = "WHERE c.estado != 'cancelada'"; 
 }
 
 // Consulta principal con JOINS
@@ -26,7 +26,8 @@ $sql = "SELECT c.id_cita,
                e.nombre_especialidad, 
                c.fecha_cita,
                p.monto_final,
-               p.id_pago_ext
+               p.id_pago_ext,
+               (SELECT SUM(ce.precio_historico) FROM citas_examenes ce WHERE ce.id_cita = c.id_cita) AS monto_cita
         FROM citas c
         INNER JOIN citas_uptm h ON c.id_cita = h.idcita
         INNER JOIN comunidad_uptm u ON h.id_externo = u.id
@@ -71,13 +72,12 @@ $totalPages = ceil($totalRows / $rowsPerPage);
             </div>
         </div>
 
+        <h4 class="mb-3">
+            <?php echo ($filtro == 'pendientes') ? 'Citas por Cobrar' : 'Registro Histórico de Pagos'; ?>
+        </h4>
         <div class="table-responsive mt-4">
-            <h4 class="mb-3">
-                <?php echo ($filtro == 'pendientes') ? 'Citas por Cobrar' : 'Registro Histórico de Pagos'; ?>
-            </h4>
-            
             <table class="table table-sm table-striped table-hover shadow-sm">
-                <thead class="table-dark text-center">
+                <thead class="table-dark">
                     <tr>
                         <th>Paciente</th>
                         <th>Cédula</th>
@@ -88,7 +88,7 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody class="text-center">
+                <tbody>
                     <?php if ($citas->num_rows > 0) { ?>
                         <?php while ($row = $citas->fetch_assoc()) { 
                             // Lógica para determinar si ya pagó
@@ -101,7 +101,7 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                             <td><?php echo date('d-m-Y', strtotime($row['fecha_cita'])); ?></td>
                             
                             <td class="fw-bold text-success">
-                                <?php echo $pagado ? $row['monto_final'] . " $" : "---"; ?>
+                                <?php echo $pagado ? $row['monto_final'] . " $" : ($row['monto_cita'] ?? "0.00") . " $"; ?>
                             </td>
 
                             <td>
@@ -114,14 +114,14 @@ $totalPages = ceil($totalRows / $rowsPerPage);
 
                            <td>
                                 <?php if (!$pagado): ?>
-                                   <button type="button" 
+                                    <button type="button" 
                                     class="btn btn-success btn-sm" 
                                     data-bs-toggle="modal" 
                                     data-bs-target="#pagomodal"
                                     data-bs-idcita="<?= $row['id_cita']; ?>" 
                                     data-bs-nombre="<?= $row['nombre_paciente']; ?>"
-                                    data-bs-costobase=""
-                                    data-bs-descuento=""> 
+                                    data-bs-costobase="<?= $row['monto_cita'] ?? '0.00'; ?>"
+                                    data-bs-descuento="0"> 
                                 Pagar
                             </button>   
                                 <?php else: ?>

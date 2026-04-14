@@ -48,7 +48,7 @@ $totalPages = ceil($totalRows / $rowsPerPage);
 
         <div class="table-responsive">
             <table class="table table-sm table-striped table-hover mt-4">
-                <thead class="table-dark text-center">
+                <thead class="table-dark">
                     <tr>
                         <th>Cédula</th>
                         <th>Nombre</th>

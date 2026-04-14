@@ -46,7 +46,7 @@ if (isset($_GET['cedula'])) {
         
         echo '<div class="table-responsive">
                 <table class="table table-hover table-bordered border-dark">
-                    <thead class="table-dark text-center">
+                    <thead class="table-dark">
                         <tr>
                             <th>Servicio (Grupo Familiar)</th>
                             <th>Límite Plan</th>

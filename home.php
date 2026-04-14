@@ -44,6 +44,8 @@ switch ($vista) {
         $contenido = $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/app/pagos/vistas/principalpagos.php';
         include $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/recursos/layout.php';
         break;
+
+
     case 'gestionplanes':
         $contenido = $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/app/pagos/vistas/gestion_planes.php';
         include $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/recursos/layout.php';

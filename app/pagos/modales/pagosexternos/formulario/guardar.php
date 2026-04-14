@@ -29,10 +29,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("idds", $id_cita, $monto_base, $monto_fin, $metodo);
 
         if ($stmt->execute()) {
+            // ACTUALIZACIÓN: Cambiar el estado de la cita a 'Pagada'
+            $stmt_upd = $conn->prepare("UPDATE citas SET estado_pago = 'Pagada' WHERE id_cita = ?");
+            $stmt_upd->bind_param("i", $id_cita);
+            $stmt_upd->execute();
+            $stmt_upd->close();
+
             $usuario = $_SESSION['username'] ?? 'Sistema';
             
            
-            registrarenBitacora($conn, $usuario, "Pago Registrado", "Se procesó pago de cita #$id_cita por $monto Bs.");
+            registrarenBitacora($conn, $usuario, "Pago Registrado", "Se procesó pago de cita #$id_cita por $monto_fin $.");
             
             ob_clean(); // Borramos cualquier eco previo por si acaso
             echo json_encode(['success' => true, 'message' => "¡Pago procesado exitosamente!"]);

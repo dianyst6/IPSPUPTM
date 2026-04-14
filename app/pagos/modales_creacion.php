@@ -4,7 +4,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-info text-white">
-                <h5 class="modal-title fw-bold" id="modalNuevoExamenLabel">Registrar Examen de Catálogo</h5>
+                <h5 class="modal-title fw-bold" id="modalNuevoExamenLabel">Registrar Examen</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="form-nuevo-examen">
@@ -101,6 +101,8 @@ document.getElementById('form-nuevo-examen').addEventListener('submit', function
             });
             this.reset();
             bootstrap.Modal.getInstance(document.getElementById('modalNuevoExamen')).hide();
+            // Disparar evento personalizado para que otras vistas puedan reaccionar (ej: recargar tabla)
+            document.dispatchEvent(new CustomEvent('examenCreado', { detail: data }));
         } else {
             alertify.error(data.message);
         }

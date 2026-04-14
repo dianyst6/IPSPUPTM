@@ -123,7 +123,7 @@ try {
 
     <div class="table-responsive">
         <table class="table table-sm table-striped table-hover" id="tablaHistorias">
-            <thead class="table-dark text-center">
+            <thead class="table-dark">
                 <tr>
                     <th>Cédula</th>
                     <th>Nombre del Paciente</th>

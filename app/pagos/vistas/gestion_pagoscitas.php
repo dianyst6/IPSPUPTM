@@ -1,8 +1,14 @@
 <?php
 include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
 
-// Consulta para obtener citas de AFILIADOS Y BENEFICIARIOS que estén "Por Pagar"
-$sql = "
+// --- LÓGICA DE PAGINACIÓN ---
+$rowsPerPage = 10;
+$currentPage = isset($_GET['page']) ? intval($_GET['page']) : 1;
+if ($currentPage < 1) $currentPage = 1;
+$offset = ($currentPage - 1) * $rowsPerPage;
+
+// SQL BASE (UNION) para contar y para paginar
+$sql_base = "
     (SELECT 
         c.id_cita, 
         p_ind.cedula,
@@ -23,7 +29,7 @@ $sql = "
     INNER JOIN especialidades e ON c.id_especialidad = e.id_especialidad
     INNER JOIN contrato_plan cp_con ON a.cedula = cp_con.ID_afiliado_contrato
     INNER JOIN planes pl ON cp_con.ID_planes_contrato = pl.ID_planes
-    WHERE c.estado_pago = 'Por Pagar' AND cp_con.estado_contrato = 'Activo')
+    WHERE c.estado_pago = 'Por Pagar' AND cp_con.estado_contrato = 'Activo' AND c.estado != 'cancelada')
     
     UNION
     
@@ -48,12 +54,17 @@ $sql = "
     INNER JOIN especialidades e ON c.id_especialidad = e.id_especialidad
     INNER JOIN contrato_plan cp_con ON a_tit.cedula = cp_con.ID_afiliado_contrato
     INNER JOIN planes pl ON cp_con.ID_planes_contrato = pl.ID_planes
-    WHERE c.estado_pago = 'Por Pagar' AND cp_con.estado_contrato = 'Activo')
-    
-    ORDER BY fecha_cita DESC
+    WHERE c.estado_pago = 'Por Pagar' AND cp_con.estado_contrato = 'Activo' AND c.estado != 'cancelada')
 ";
 
-$res = mysqli_query($conn, $sql);
+// Obtener total de registros
+$countResult = mysqli_query($conn, "SELECT COUNT(*) as total FROM ($sql_base) AS t");
+$totalRows = mysqli_fetch_assoc($countResult)['total'] ?? 0;
+$totalPages = ceil($totalRows / $rowsPerPage);
+
+// Obtener registros paginados
+$sql_paginado = "$sql_base ORDER BY fecha_cita DESC LIMIT $rowsPerPage OFFSET $offset";
+$res = mysqli_query($conn, $sql_paginado);
 ?>
 
 <div class="card shadow-lg">
@@ -66,9 +77,10 @@ $res = mysqli_query($conn, $sql);
         </div>
         <hr class="mx-auto" style="width: 50px; height: 3px; background-color: #062974;">
 
+        <h4 class="mb-3">Citas Pendientes de Cobro</h4>
         <div class="table-responsive mt-4">
             <table class="table table-striped table-hover shadow-sm">
-                <thead class="table-dark text-center">
+                <thead class="table-dark">
                     <tr>
                         <th>Paciente</th>
                         <th>Tipo</th>
@@ -78,7 +90,7 @@ $res = mysqli_query($conn, $sql);
                         <th>Acción</th>
                     </tr>
                 </thead>
-                <tbody class="text-center">
+                <tbody>
                     <?php if (mysqli_num_rows($res) > 0): ?>
                         <?php while ($row = mysqli_fetch_assoc($res)): 
                             $id_contrato = $row['ID_contrato'];
@@ -94,11 +106,11 @@ $res = mysqli_query($conn, $sql);
                         ?>
                         <tr>
                             <td class="text-start">
-                                <strong><?php echo $row['nombre_paciente']; ?></strong><br>
-                                <small class="text-muted">C.I: <?php echo $row['cedula']; ?></small>
+                                <strong><?php echo htmlspecialchars($row['nombre_paciente']); ?></strong><br>
+                                <small class="text-muted">C.I: <?php echo htmlspecialchars($row['cedula']); ?></small>
                             </td>
                             <td><span class="badge bg-secondary"><?php echo $row['tipo']; ?></span></td>
-                            <td><?php echo $row['nombre_plan']; ?></td>
+                            <td><?php echo htmlspecialchars($row['nombre_plan']); ?></td>
                             <td class="fw-bold text-danger">$<?php echo number_format($costo_cita, 2); ?></td>
                             <td class="fw-bold <?php echo $puede_pagar ? 'text-success' : 'text-danger'; ?>">
                                 $<?php echo number_format($saldo_disponible, 2); ?>
@@ -131,6 +143,26 @@ $res = mysqli_query($conn, $sql);
                 </tbody>
             </table>
         </div>
+
+        <!-- Paginación -->
+        <?php if ($totalPages > 1): ?>
+        <nav aria-label="Navegación de cobros" class="mt-4">
+            <ul class="pagination justify-content-center pagination-sm">
+                <li class="page-item <?= ($currentPage <= 1) ? 'disabled' : '' ?>">
+                    <a class="page-link" href="?vista=gestionpagoscitas&page=<?= $currentPage - 1 ?>">Anterior</a>
+                </li>
+                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                <li class="page-item <?= ($i == $currentPage) ? 'active' : '' ?>">
+                    <a class="page-link" href="?vista=gestionpagoscitas&page=<?= $i ?>"><?= $i ?></a>
+                </li>
+                <?php endfor; ?>
+                <li class="page-item <?= ($currentPage >= $totalPages) ? 'disabled' : '' ?>">
+                    <a class="page-link" href="?vista=gestionpagoscitas&page=<?= $currentPage + 1 ?>">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+        <?php endif; ?>
+
     </div>
 </div>
 

@@ -23,7 +23,7 @@ $totalPages = ceil($totalRows / $rowsPerPage);
         <p>Aquí puedes agregar, editar, eliminar y
             configurar los permisos de cada usuario.</p>
         <table class="table table-sm table-striped table-hover mt-4">
-            <thead class="table-dark text-center">
+            <thead class="table-dark">
                 <tr>
                     <th>Usuario</th>
                     <th>Rol</th>

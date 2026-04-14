@@ -110,19 +110,29 @@
         </aside>
         <div class="cont-general mt-1 pt-1" style="width: 100%; flex-grow: 1;">
             <div class="main p-3">
-                <div class="card shadow-lg">
-                    <div>
+                <?php if ($vista !== 'inicial'): ?>
+                    <div class="card shadow-lg">
+                        <div>
+                <?php endif; ?>
 
-                        <?php
-                    // Incluir el contenido específico del módulo
-                    if (isset($contenido)) {
-                        include $contenido;
-                    } else {
-                        echo "<p>Contenido no disponible.</p>";
-                    }
-                    ?>
+                <?php
+                // Incluir el contenido específico del módulo
+                if (isset($contenido)) {
+                    include $contenido;
+                } else {
+                    echo "<p>Contenido no disponible.</p>";
+                }
+                ?>
+
+                <?php if ($vista !== 'inicial'): ?>
+                        </div>
                     </div>
-                </div>
+                <?php endif; ?>
+
+
+
+
+
             </div>
         </div>
     </div>

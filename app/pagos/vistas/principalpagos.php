@@ -2,101 +2,95 @@
 
 include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
 
-
 $sql_ext = "SELECT COUNT(*) AS total 
             FROM citas c
             INNER JOIN citas_uptm h ON c.id_cita = h.idcita 
             LEFT JOIN pagos_externos p ON c.id_cita = p.id_cita
-            WHERE p.id_pago_ext IS NULL";
+            WHERE p.id_pago_ext IS NULL AND c.estado != 'cancelada'";
 $res_ext = mysqli_query($conn, $sql_ext);
 $pendientes_externos = mysqli_fetch_assoc($res_ext)['total'];
 
-// Obtener el mes actual para la tarjeta de contrato
-setlocale(LC_TIME, 'es_ES.UTF-8');
-$mes_actual = date('F'); // Esto da el mes en inglés, podrías traducirlo o dejarlo así
+// Localización de fecha en español para el mes
+$meses_es = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+$mes_actual_es = $meses_es[date('n') - 1];
 ?>
 
-<div class="p-4">
+<div class="container-fluid p-4">
     <div class="text-center mb-5">
-        <h1 class="fw-bold" style="color: #062974; letter-spacing: 1px;">Administración de Pagos</h1>
-        <p class="text-muted">Seleccione el módulo de recaudación que desea gestionar</p>
-        <hr class="mx-auto" style="width: 60px; height: 4px; background-color: #062974; border-radius: 2px; opacity: 1;">
+        <h1 class="fw-bold" style="color: #062974; letter-spacing: 0.5px; font-size: 2.25rem;">Administración de Pagos</h1>
+        <p class="text-muted fs-5">Seleccione el módulo de recaudación para comenzar la gestión</p>
+        <div class="mx-auto" style="width: 80px; height: 3px; background: #e2e8f0; border-radius: 10px; margin-top: 15px;"></div>
     </div>
 
-    <div class="row justify-content-center">
-        <div class="col-lg-10 col-xl-8 mb-4">
-            <div class="card border-0 border-start border-success border-5 bg-light shadow-sm hover-card">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0 bg-white p-3 rounded-circle shadow-sm me-4">
-                            <i class="fa-solid fa-user-doctor fs-1 text-success"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h3 class="card-title h4 fw-bold mb-1" style="color: #2c3e50;">Pagos de Externos</h3>
-                            <p class="text-secondary mb-2">Comunidad UPTM y pacientes particulares. Gestión de cobros por servicios médicos.</p>
-                            <div class="d-flex align-items-center">
-                                <span class="badge rounded-pill bg-success px-3">
-                                    <i class="fas fa-clock me-1"></i> <?php echo $pendientes_externos; ?> Pendientes
-                                </span>
-                            </div>
-                        </div>
-                        <div class="ms-auto">
-                            <a href="/IPSPUPTM/home.php?vista=gestionpagosexternos" class="btn btn-success btn-lg rounded-pill px-4 shadow-sm fw-bold text-nowrap">
-                                Gestionar <i class="fas fa-arrow-right ms-2"></i>
-                            </a>
-                        </div>
+    <div class="row g-4 justify-content-center">
+        <!-- Pagos de Externos -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-premium-grid hover-card-grid text-center p-3">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <div class="icon-bubble mb-4" style="background: rgba(25, 135, 84, 0.1); color: #198754;">
+                        <i class="fa-solid fa-user-doctor fs-1"></i>
                     </div>
+                    
+                    <h3 class="h4 fw-bold mb-2" style="color: #1e293b;">Pagos de Externos</h3>
+                    <p class="text-secondary mb-4 flex-grow-1" style="font-size: 0.95rem;">Gestión de cobros para Comunidad UPTM y pacientes particulares por servicios médicos.</p>
+                    
+                    <div class="mb-4">
+                        <span class="badge rounded-pill px-3 py-2" style="background-color: rgba(25, 135, 84, 0.1); color: #198754; font-weight: 600;">
+                            <i class="fas fa-clock me-1"></i> <?php echo $pendientes_externos; ?> Pendientes
+                        </span>
+                    </div>
+                    
+                    <a href="/IPSPUPTM/home.php?vista=gestionpagosexternos" class="btn btn-success-premium w-100 py-3 fw-bold">
+                        Entrar al Módulo <i class="fas fa-chevron-right ms-2"></i>
+                    </a>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-10 col-xl-8 mb-4">
-            <div class="card border-0 border-start border-primary border-5 bg-light shadow-sm hover-card">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0 bg-white p-3 rounded-circle shadow-sm me-4">
-                            <i class="fa-solid fa-file-invoice-dollar fs-1 text-primary"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h3 class="card-title h4 fw-bold mb-1" style="color: #2c3e50;">Pagos por Contrato</h3>
-                            <p class="text-secondary mb-2">Afiliados y convenios institucionales. Control de cuotas y estados de cuenta.</p>
-                            <div class="d-flex align-items-center">
-                                <span class="badge rounded-pill bg-primary px-3">
-                                    <i class="fas fa-calendar-check me-1"></i> Mes: <?php echo date('M'); ?>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="ms-auto">
-                            <a href="/IPSPUPTM/home.php?vista=gestionpagoscontrato" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm fw-bold text-nowrap">
-                                Gestionar <i class="fas fa-arrow-right ms-2"></i>
-                            </a>
-                        </div>
+        <!-- Pagos por Contrato -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-premium-grid hover-card-grid text-center p-3">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <div class="icon-bubble mb-4" style="background: rgba(6, 41, 116, 0.1); color: #062974;">
+                        <i class="fa-solid fa-file-invoice-dollar fs-1"></i>
                     </div>
+                    
+                    <h3 class="h4 fw-bold mb-2" style="color: #1e293b;">Pagos por Contrato</h3>
+                    <p class="text-secondary mb-4 flex-grow-1" style="font-size: 0.95rem;">Gestion de pagos por contrato de Planes salud</p>
+                    
+                    <div class="mb-4">
+                        <span class="badge rounded-pill px-3 py-2" style="background-color: rgba(6, 41, 116, 0.1); color: #062974; font-weight: 600;">
+                            <i class="fas fa-calendar-alt me-1"></i> Mes: <?php echo $mes_actual_es; ?>
+                        </span>
+                    </div>
+                    
+                    <a href="/IPSPUPTM/home.php?vista=gestionpagoscontrato" class="btn btn-primary-premium w-100 py-3 fw-bold">
+                        Entrar al Módulo <i class="fas fa-chevron-right ms-2"></i>
+                    </a>
                 </div>
             </div>
         </div>
-        <div class="col-lg-10 col-xl-8 mb-4">
-            <div class="card border-0 border-start border-warning border-5 bg-light shadow-sm hover-card">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0 bg-white p-3 rounded-circle shadow-sm me-4">
-                            <i class="fa-solid fa-hand-holding-medical fs-1 text-warning"></i>
-                        </div>
-                        <div class="flex-grow-1">
-                            <h3 class="card-title h4 fw-bold mb-1" style="color: #2c3e50;">Pagos por Seguro (Póliza)</h3>
-                            <p class="text-secondary mb-2">Descuento automático de cobertura para Afiliados y Beneficiarios.</p>
-                            <div class="d-flex align-items-center">
-                                <span class="badge rounded-pill bg-warning text-dark px-3">
-                                    <i class="fas fa-shield-alt me-1"></i> Control de Cobertura
-                                </span>
-                            </div>
-                        </div>
-                        <div class="ms-auto">
-                            <a href="/IPSPUPTM/home.php?vista=gestionpagoscitas" class="btn btn-warning btn-lg rounded-pill px-4 shadow-sm fw-bold text-nowrap">
-                                Gestionar <i class="fas fa-arrow-right ms-2"></i>
-                            </a>
-                        </div>
+
+        <!-- Pagos por Seguro -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-premium-grid hover-card-grid text-center p-3">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <div class="icon-bubble mb-4" style="background: rgba(39, 177, 241, 0.1); color: #27b1f1;">
+                        <i class="fa-solid fa-hand-holding-medical fs-1"></i>
                     </div>
+                    
+                    <h3 class="h4 fw-bold mb-2" style="color: #1e293b;">Pagos por Cobertura</h3>
+                    <p class="text-secondary mb-4 flex-grow-1" style="font-size: 0.95rem;">Descuento automático de cobertura para Afiliados y Beneficiarios registrados.</p>
+                    
+                    <div class="mb-4">
+                        <span class="badge rounded-pill px-3 py-2" style="background-color: rgba(39, 177, 241, 0.1); color: #27b1f1; font-weight: 600;">
+                            <i class="fas fa-shield-alt me-1"></i> Control Activo
+                        </span>
+                    </div>
+                    
+                    <a href="/IPSPUPTM/home.php?vista=gestionpagoscitas" class="btn btn-info-premium w-100 py-3 fw-bold">
+                        Entrar al Módulo <i class="fas fa-chevron-right ms-2"></i>
+                    </a>
                 </div>
             </div>
         </div>
@@ -104,15 +98,74 @@ $mes_actual = date('F'); // Esto da el mes en inglés, podrías traducirlo o dej
 </div>
 
 <style>
-    .hover-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    .shadow-premium-grid {
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.04) !important;
     }
-    .hover-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+
+    .hover-card-grid {
+        border-radius: 20px !important;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        position: relative;
+        overflow: hidden;
+        border: 1px solid #f1f5f9 !important;
+        background: #fff !important;
     }
-    .flex-shrink-0 i {
-        width: 50px;
-        text-align: center;
+
+    .hover-card-grid:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12) !important;
+        border-color: #e2e8f0 !important;
+    }
+
+    .icon-bubble {
+        width: 100px;
+        height: 100px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.5s ease;
+    }
+
+    .hover-card-grid:hover .icon-bubble {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .btn-success-premium, .btn-primary-premium, .btn-info-premium {
+        border: none;
+        color: white;
+        transition: all 0.3s ease;
+        border-radius: 12px; /* Botones cuadrados con bordes suaves */
+    }
+
+    .btn-success-premium { background: #198754; }
+    .btn-success-premium:hover {
+        background: #146c43;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(25, 135, 84, 0.4);
+        color: white;
+    }
+
+    .btn-primary-premium { background: #062974; }
+    .btn-primary-premium:hover {
+        background: #041d52;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(6, 41, 116, 0.4);
+        color: white;
+    }
+
+    .btn-info-premium { background: #27b1f1; }
+    .btn-info-premium:hover {
+        background: #219bd4;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(39, 177, 241, 0.4);
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .icon-bubble {
+            width: 80px;
+            height: 80px;
+        }
     }
 </style>

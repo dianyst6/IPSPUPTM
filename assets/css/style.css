@@ -30,8 +30,9 @@ html, body {
     margin-left: 240px; /* Margen igual al ancho del sidebar */
     overflow-x: auto;
     transition: margin-left 0.35s ease-in-out, width 0.35s ease-in-out;
-    background-color: #fafbfe;
-    padding: 15px;
+    background-color: #f1f5f9;
+    padding: 25px;
+
     box-sizing: border-box;
     margin-top: 70px;
     flex: 1;
@@ -112,9 +113,21 @@ a.sidebar-link:hover {
     color: #FFF;
 }
 
+/* Estilo unificado para el contenedor de tablas */
 .table-responsive {
-    overflow-x: auto; /* Maneja desbordamientos horizontales */
+    max-width: 100%;
+    overflow: hidden; /* Importante para que los bordes redondeados funcionen */
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+    margin-top: 20px; /* Espacio arriba del contenedor, no de la tabla */
 }
+
+/* Forzar que la tabla no tenga márgenes internos que dejen espacios blancos */
+.table-responsive table {
+    margin: 0 !important;
+    width: 100%;
+}
+
 
 img {
     max-width: 100%; /* Ajusta imágenes grandes */
@@ -125,6 +138,23 @@ img {
     word-wrap: break-word; /* Ajusta texto largo */
     word-break: break-word; /* Maneja palabras largas */
 }
+
+/* Alineación global de tablas: Todo centrado (Cabeceras y Datos) */
+.table th, .table td {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+/* Cambiar cabeceras a azul corporativo */
+.table thead, .table-dark {
+    --bs-table-bg: #0e213d !important;
+    --bs-table-color: #ffffff !important;
+    background-color: #0e213d !important;
+    color: #ffffff !important;
+}
+
+
+
 
 /* --- Reglas Personalizadas para el Header Fijo y Modal --- */
 .modal {
@@ -298,18 +328,12 @@ a:hover {
     min-width: 120px;
     margin: 0 auto;
 }
-.table-responsive {
-    max-width: 100%;
-    overflow-x: auto;
-}
-.table-responsive table {
-    min-width: 700px; /* Ajusta según la cantidad de columnas */
-}
-
 .table-responsive td, 
 .table-responsive th {
     white-space: nowrap;
 }
+
+
 
 .footerm {
     background-color: #2a6aaa;
@@ -324,5 +348,20 @@ a:hover {
 
 .bg-primary {
     background-color: #0e213d !important;
+}
+
+/* Botón personalizado con color institucional #062974 (Estilo Bootstrap) */
+.btn-primary-custom {
+    background-color: #062974 !important;
+    border-color: #062974 !important;
+    color: #ffffff !important;
+}
+
+.btn-primary-custom:hover, 
+.btn-primary-custom:focus, 
+.btn-primary-custom:active {
+    background-color: #041d52 !important;
+    border-color: #041d52 !important;
+    color: #ffffff !important;
 }
 

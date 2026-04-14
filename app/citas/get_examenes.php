@@ -56,7 +56,7 @@ if (isset($_GET['id_especialidad'])) {
                     ) AS consumido
                 FROM examenes e
                 LEFT JOIN componentes_planes cp_comp ON (cp_comp.ID_planes_componentes = '$id_plan' AND (cp_comp.ID_examen_componentes = e.ID_examen OR cp_comp.id_categoria_componente = e.id_categoria))
-                WHERE e.ID_especialidad_examenes = '$id_esp'
+                WHERE e.ID_especialidad_examenes = '$id_esp' AND e.estado = 'activo'
                 GROUP BY e.ID_examen
             ";
 
@@ -77,7 +77,7 @@ if (isset($_GET['id_especialidad'])) {
             }
         } else {
             // Si el paciente interno no tiene plan activo, mostrar todo bloqueado o como sin cupo.
-            $sql = "SELECT ID_examen, nombre_examen, precio FROM examenes WHERE ID_especialidad_examenes = '$id_esp'";
+            $sql = "SELECT ID_examen, nombre_examen, precio FROM examenes WHERE ID_especialidad_examenes = '$id_esp' AND estado = 'activo'";
             $res = mysqli_query($conn, $sql);
             while ($row = mysqli_fetch_assoc($res)) {
                 $row['disponibles'] = 0;
@@ -87,7 +87,7 @@ if (isset($_GET['id_especialidad'])) {
         }
     } else {
         // Lógica para paciente externo (Sin plan, no importa el límite)
-        $sql = "SELECT ID_examen, nombre_examen, precio FROM examenes WHERE ID_especialidad_examenes = '$id_esp'";
+        $sql = "SELECT ID_examen, nombre_examen, precio FROM examenes WHERE ID_especialidad_examenes = '$id_esp' AND estado = 'activo'";
         $res = mysqli_query($conn, $sql);
         while ($row = mysqli_fetch_assoc($res)) {
             $row['disponibles'] = 'ilimitado';

@@ -83,7 +83,7 @@ if (isset($_GET['cedula'])) {
         echo '<div class="table-responsive">
                 <h5 class="fw-bold mb-3"><i class="fas fa-list-ul me-2"></i>Límites de Exámenes por Cantidad</h5>
                 <table class="table table-hover table-bordered border-dark">
-                    <thead class="table-dark text-center">
+                    <thead class="table-dark">
                         <tr>
                             <th>Examen Incluido</th>
                             <th>Límite (Familiar)</th>
@@ -140,7 +140,7 @@ if (isset($_GET['cedula'])) {
                 <h5 class="fw-bold mb-3"><i class="fas fa-file-invoice-dollar me-2"></i>Historial de Gastos del Plan</h5>
                 <table class="table table-hover table-striped border">
                     <strong class="text-danger ps-2 mb-2 d-block">* Los montos a continuación reflejan lo que se ha ido descontando del saldo de Cobertura.</strong>
-                    <thead class="table-light text-center">
+                    <thead class="table-light">
                         <tr>
                             <th>Fecha</th>
                             <th>Paciente (C.I.)</th>

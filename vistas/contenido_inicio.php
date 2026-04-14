@@ -1,222 +1,256 @@
 <?php
 
 include_once 'C:/xampp/htdocs/IPSPUPTM/config/estadistica.php';
+
+// Array de meses en español
+$meses_es = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+$mes_actual_es = $meses_es[date('n') - 1];
 ?>
-<div class="card shadow-lg " style="background-color: #ffffffff;">
-    <div class="cont-general m-3">
-        <br>
-         <h1 class="fw-bold text-center" style="color: #062974;">Estadísticas de la Institución IPSPUPTM-KR</h1>
-            <hr class="mx-auto" style="width: 50px; height: 3px; background-color: #062974;">
 
-        <br>
+<div class="card border-0 shadow-premium-main mb-4" style="background-color: #fff; border-radius: 25px;">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-5 px-lg-2">
+             <div>
+                <h1 class="fw-bold mb-1" style="color: #062974; letter-spacing: -1px; font-size: 2.75rem;">
+                    Control de Estadísticas
+                </h1>
+                <p class="text-muted mb-0 fw-semibold fs-5">Resumen analítico del periodo <?php echo ($periodo === 'mes') ? "actual (" . $mes_actual_es . ")" : "(" . date('Y') . ")"; ?></p>
+             </div>
+             <form method="GET" class="d-flex align-items-center bg-white p-2 rounded-3 shadow-sm mt-4 mt-lg-0 border px-3" style="min-width: 280px; height: 60px;">
+                <label for="periodo" class="ms-2 me-3 fw-bold text-nowrap" style="color: #062974; font-size: 1rem;">Periodo:</label>
+                <select name="periodo" id="periodo" class="form-select border-0 bg-transparent fw-bold" style="color: #062974; font-size: 1rem; cursor: pointer; min-width: 150px;" onchange="this.form.submit()">
+                    <option value="anio" <?php echo ($periodo === 'anio') ? 'selected' : ''; ?>>Este Año</option>
+                    <option value="mes" <?php echo ($periodo === 'mes') ? 'selected' : ''; ?>>Este Mes</option>
+                </select>
+             </form>
+        </div>
 
-        <div class="row">
-            
-            <div class="col-md-3 p-3">
-
-                <div class="card text-center mb-3 text-white" style="background-color: #0e213d;">
-                    <div class="card-body d-flex align-items-center justify-content-center">
-                        <i class="fa-solid fa-person fa-3x me-3"></i>
-                        <div class="text-center">
-                            <h5 class="card-title"><strong>Afiliados</strong></h5>
-                            <p class="card-text display-4"><?php echo $total_afiliados; ?></p>
+        <div class="row g-4 mx-lg-1">
+            <!-- Citas Afiliados -->
+            <div class="col-md-6 col-xl-3">
+                <div class="card h-100 border-0 shadow-premium-grid hover-card-dash" style="background: #062974 !important; color: #fff; border-radius: 20px;">
+                    <div class="card-body p-4 d-flex align-items-center">
+                        <div class="icon-bubble-dash flex-shrink-0 me-3" style="background: rgba(255, 255, 255, 0.15); color: #fff;">
+                            <i class="fa-solid fa-person fs-3"></i>
                         </div>
-                    </div>
-                </div>
-
-
-            </div>
-
-            <div class="col-md-3 p-3">
-                <div class="card text-center mb-3 text-white" style="background-color: #062974;">
-                    <div class="card-body d-flex align-items-center justify-content-center">
-                        <i class="fa-solid fa-people-arrows fa-3x me-3"></i>
-                        <div class="text-center">
-                            <h5 class="card-title"><strong>Beneficiarios</strong></h5>
-                            <p class="card-text display-4"><?php echo $total_beneficiarios; ?></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 p-3">
-                <div class="card text-center mb-3 text-white" style="background-color: #0e213d;">
-                    <div class="card-body d-flex align-items-center justify-content-center">
-                        <i class="fa-solid fa-user-nurse fa-3x me-3"></i>
-                        <div class="text-center">
-                            <h5 class="card-title"><strong>Citas</strong></h5>
-                            <span class="card-text display-4"><?php echo $total_citas; ?></span>
+                        <div class="overflow-hidden">
+                            <p class="text-white mb-0 fw-bold small text-uppercase" style="letter-spacing: 0.5px; opacity: 0.9; font-size: 0.75rem;">Citas Afiliados</p>
+                            <h2 class="fw-bold mb-0 text-white" style="font-size: 2.2rem; line-height: 1.2;"><?php echo $total_citas_afil; ?></h2>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-3 p-3">
-                <div class="card text-center mb-3 text-white" style="background-color: #062974;">
-                    <div class="card-body d-flex align-items-center justify-content-center">
-                        <i class="fa-solid fa-house fa-3x me-3"></i>
-                        <div class="text-center">
-                            <h5 class="card-title"><strong>Comu.UPTM</strong></h5>
-                            <span class="card-text display-4"><?php echo $total_citas_uptm; ?></span>
+            <!-- Citas Beneficiarios -->
+            <div class="col-md-6 col-xl-3">
+                <div class="card h-100 border-0 shadow-premium-grid hover-card-dash" style="background: #062974 !important; color: #fff; border-radius: 20px;">
+                    <div class="card-body p-4 d-flex align-items-center">
+                        <div class="icon-bubble-dash flex-shrink-0 me-3" style="background: rgba(255, 255, 255, 0.15); color: #fff;">
+                            <i class="fa-solid fa-people-arrows fs-3"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <p class="text-white mb-0 fw-bold small text-uppercase" style="letter-spacing: 0.5px; opacity: 0.9; font-size: 0.75rem;">Citas Beneficiarios</p>
+                            <h2 class="fw-bold mb-0 text-white" style="font-size: 2.2rem; line-height: 1.2;"><?php echo $total_citas_benef; ?></h2>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- Citas Comunidad -->
+            <div class="col-md-6 col-xl-3">
+                <div class="card h-100 border-0 shadow-premium-grid hover-card-dash" style="background: #062974 !important; color: #fff; border-radius: 20px;">
+                    <div class="card-body p-4 d-flex align-items-center">
+                        <div class="icon-bubble-dash flex-shrink-0 me-3" style="background: rgba(255, 255, 255, 0.15); color: #fff;">
+                            <i class="fa-solid fa-house-medical fs-3"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <p class="text-white mb-0 fw-bold small text-uppercase" style="letter-spacing: 0.5px; opacity: 0.9; font-size: 0.75rem;">Citas Comunidad UPTM</p>
+                            <h2 class="fw-bold mb-0 text-white" style="font-size: 2.2rem; line-height: 1.2;"><?php echo $total_citas_uptm; ?></h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Citas Totales -->
+            <div class="col-md-6 col-xl-3">
+                <div class="card h-100 border-0 shadow-premium-grid hover-card-dash" style="background: #062974 !important; color: #fff; border-radius: 20px;">
+                    <div class="card-body p-4 d-flex align-items-center">
+                        <div class="icon-bubble-dash flex-shrink-0 me-3" style="background: rgba(255, 255, 255, 0.15); color: #fff;">
+                            <i class="fa-solid fa-user-nurse fs-3"></i>
+                        </div>
+                        <div class="overflow-hidden">
+                            <p class="text-white mb-0 fw-bold small text-uppercase" style="letter-spacing: 0.5px; opacity: 0.9; font-size: 0.75rem;">Citas Totales</p>
+                            <h2 class="fw-bold mb-0 text-white" style="font-size: 2.2rem; line-height: 1.2;"><?php echo $total_citas; ?></h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
 </div>
-<br>
 
-<div class="row">
-    <div class="col-md-3 p-3">
-        <div class="card shadow-lg  " style="background-color: #ffffffff;">
-
-
-
-            <div class="text-center mt-3 mx-3">
-                <h5 class="card-title"><strong>Distribución de Pacientes</strong></h5>
-                <div style="position: relative; height:250px; width:100%">
+<div class="row g-4 pb-5">
+    <!-- Distribución -->
+    <div class="col-md-6 col-xl-3">
+        <div class="card border border-light shadow-premium-grid h-100 p-3 hover-card-dash" style="border-radius: 25px; background: #fff;">
+            <div class="card-body mt-2">
+                <h5 class="fw-bold mb-4 text-center" style="color: #062974;">Distribución de Pacientes</h5>
+                <div style="position: relative; height:240px; width:100%">
                     <canvas id="chartPacientes"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-md-5 p-3">
-        <div class="card shadow-lg  " style="background-color: #ffffffff;">
-
-
-
-            <div class="card text-center mt-3 mx-3 shadow-sm">
-    <div class="card-body">
-        <h5 class="card-title"><strong>Pacientes en el Mes</strong></h5>
-        <div style="position: relative; height: 200px;">
-            <canvas id="chartProgreso"></canvas>
-            <div style="position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%);">
-                <span class="display-4" style="color: #0e213d; font-weight: bold;">
-                    <?php echo $total_citas ?>
-                </span>
-            </div>
-        </div>
-    </div>
-</div>
-        </div>
-    </div>
-
-    <div class="col-md-4 p-3">
-        <div class="card shadow-lg  " style="background-color: #ffffffff;">
-
-
-
-            <div class="text-center mt-3 mx-3">
-                <h5 class="card-title"><strong>Especialidades más visitadas</strong></h5>
-                <div style="position: relative; height:300px; width:100%;">
-                    <canvas id="chartEspecialidades"></canvas>
+    <!-- Progreso -->
+    <div class="col-md-6 col-xl-5">
+        <div class="card border border-light shadow-premium-grid h-100 p-3 hover-card-dash" style="border-radius: 25px; background: #fff;">
+            <div class="card-body mt-2">
+                <?php 
+                    $meses_largos = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+                    $mes_largo_actual = $meses_largos[date('n') - 1];
+                    
+                    if ($periodo === 'mes') {
+                        $titulo_progreso = "Pacientes registrados en " . $mes_largo_actual;
+                        $valor_progreso = $total_citas_mes;
+                    } else {
+                        $titulo_progreso = "Pacientes registrados en " . date('Y');
+                        $valor_progreso = $total_citas;
+                    }
+                ?>
+                <h5 class="fw-bold mb-4 text-center" style="color: #062974;"><?php echo $titulo_progreso; ?></h5>
+                <div style="position: relative; height: 180px;">
+                    <canvas id="chartProgreso"></canvas>
+                    <div style="position: absolute; top: 65%; left: 50%; transform: translate(-50%, -50%);">
+                        <span class="display-4 fw-bold" style="color: #0e213d;">
+                            <?php echo $valor_progreso ?>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="./recursos/chart.js"></script>
-    <script>
+    <!-- Especialidades -->
+    <div class="col-md-12 col-xl-4">
+        <div class="card border border-light shadow-premium-grid h-100 p-3 hover-card-dash" style="border-radius: 25px; background: #fff;">
+            <div class="card-body mt-2">
+                <h5 class="fw-bold mb-4 text-center" style="color: #062974;">Especialidades más visitadas</h5>
+                <div style="position: relative; height:240px; width:100%;">
+                    <canvas id="chartEspecialidades"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .shadow-premium-main {
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .shadow-premium-grid {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.02) !important;
+    }
+
+
+    .hover-card-dash {
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 18px !important;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hover-card-dash:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .icon-bubble-dash {
+        width: 65px;
+        height: 65px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.4s ease;
+    }
+
+    .hover-card-dash:hover .icon-bubble-dash {
+        transform: scale(1.1) rotate(-5deg);
+    }
+</style>
+
+<script src="./recursos/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Chart Pacientes
     const ctx = document.getElementById('chartPacientes').getContext('2d');
-
-    // Pasamos la variable de PHP a JavaScript
-    const totalAfiliados = <?php echo $total_afiliados; ?>;
-    const totalBeneficiarios = <?php echo $total_beneficiarios; ?>;
-    const totalcomunidaduptm = <?php echo $total_citas_uptm; ?>;
-
-
-    const myChart = new Chart(ctx, {
+    new Chart(ctx, {
         type: 'pie',
         data: {
-            labels: ['Afiliados', 'Beneficiarios', 'Comunidad UPTM'],
+            labels: ['Afiliados', 'Beneficiarios', 'Comunidad'],
             datasets: [{
-                data: [totalAfiliados, totalBeneficiarios, totalcomunidaduptm], // Los valores
-                backgroundColor: [
-                    '#0e213d', // Verde (Bootstrap Success)
-                    '#062974', // Azul (Bootstrap Info)
-                    '#27b1f1' // Gris claro
-                ],
-                borderWidth: 1
+                data: [<?php echo $total_citas_afil; ?>, <?php echo $total_citas_benef; ?>, <?php echo $total_citas_uptm; ?>],
+                backgroundColor: ['#0e213d', '#062974', '#27b1f1'],
+                borderWidth: 0
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    position: 'bottom'
-                }
+                legend: { position: 'bottom', labels: { boxWidth: 12, padding: 15, font: { weight: 'bold' } } }
             }
         }
     });
-    </script>
-    <script>
-document.addEventListener("DOMContentLoaded", function() {
+
+    // Chart Especialidades
     const ctxBar = document.getElementById('chartEspecialidades').getContext('2d');
-
-    // Pasar las variables PHP a variables JavaScript
-    const ginecologia = <?php echo $citas_ginecologia; ?>;
-    const medicinaInterna = <?php echo $citas_medicina_interna; ?>;
-    const odontologia = <?php echo $citas_odontologia; ?>;
-    const oftalmologia = <?php echo $citas_oftalmologia; ?>;
-    const gastroenterologia = <?php echo $citas_gastroenterologia; ?>;
-    const imagenologia = <?php echo $citas_imagenologia; ?>;
-
-    const etiquetasEspecialidades = ['Odontología', 'Ginecología', 'Imagenología', 'Gastroenterología', 'Medicina Interna', 'Oftalmología'];
-    const datosVisitas = [odontologia, ginecologia, imagenologia, gastroenterologia, medicinaInterna, oftalmologia]; 
-
     new Chart(ctxBar, {
         type: 'bar',
         data: {
-            labels: etiquetasEspecialidades,
+            labels: ['Odontol.', 'Ginecol.', 'Imagenol.', 'Gastro.', 'Med. Int.', 'Oftalm.'],
             datasets: [{
                 label: 'Visitas',
-                data: datosVisitas,
-                backgroundColor: ['#0e213d', '#062974', '#27b1f1', '#58bcff', '#a8d0ff', '#cfe2ff'],
-                borderWidth: 1
+                data: [<?php echo $citas_odontologia; ?>, <?php echo $citas_ginecologia; ?>, <?php echo $citas_imagenologia; ?>, <?php echo $citas_gastroenterologia; ?>, <?php echo $citas_medicina_interna; ?>, <?php echo $citas_oftalmologia; ?>],
+                backgroundColor: '#062974',
+                borderRadius: 4,
+                borderWidth: 0
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false, // Esto requiere que el padre tenga altura fija
+            maintainAspectRatio: false,
             scales: {
-                y: { beginAtZero: true }
+                y: { grid: { color: '#f1f5f9' }, beginAtZero: true },
+                x: { grid: { display: false } }
             },
-            plugins: {
-                legend: { display: false }
-            }
+            plugins: { legend: { display: false } }
         }
     });
-});
-</script>
-<script>
-    const ctxProgreso = document.getElementById('chartProgreso').getContext('2d');
-    const total = <?php echo $total_citas ?>;
-    const meta = 100; // Define una meta lógica para tu sistema
 
+    // Chart Progreso
+    const ctxProgreso = document.getElementById('chartProgreso').getContext('2d');
     new Chart(ctxProgreso, {
         type: 'doughnut',
         data: {
             datasets: [{
-                data: [total, meta - total > 0 ? meta - total : 0],
-                backgroundColor: ['#0e213d', '#e9ecef'],
+                data: [<?php echo $valor_progreso ?>, Math.max(0, 100 - <?php echo $valor_progreso ?>)],
+                backgroundColor: ['#0e213d', '#f1f5f9'],
                 borderWidth: 0,
-                circumference: 180, // Medio círculo
-                rotation: 270,      // Orientación hacia arriba
-                cutout: '80%'       // Grosor de la línea
+                circumference: 180,
+                rotation: 270,
+                cutout: '82%'
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: { enabled: false }
-            }
+            plugins: { tooltip: { enabled: false } }
         }
     });
+});
 </script>

@@ -175,6 +175,13 @@
             <div class="mb-3">
               <label for="fecha_cita" class="form-label">Fecha y Hora</label>
               <input type="datetime-local" name="fecha_cita" id="fecha_cita" class="form-control" min="<?php echo date('Y-m-d\TH:i'); ?>" required>
+              <!-- ALERTA DE DISPONIBILIDAD -->
+              <div id="alerta-disponibilidad" class="mt-2 d-none">
+                  <div class="alert alert-danger py-2 mb-0 d-flex align-items-center">
+                      <i class="fas fa-exclamation-triangle me-2"></i>
+                      <span id="texto-alerta-disponibilidad" class="small fw-bold"></span>
+                  </div>
+              </div>
             </div>
             <div class="mb-3">
               <label for="descripcion" class="form-label">Descripción / Motivo</label>
@@ -419,7 +426,7 @@ window.abrirModalNuevoExamen = function() {
                                 const div = document.createElement('div');
                                 div.className = 'form-check';
                                 div.innerHTML = `
-                                    <input class="form-check-input check-examen" type="checkbox" name="examenes[]" value="${ex.ID_examen}" id="ex_${ex.ID_examen}" data-precio="${ex.precio}" ${disableAttr}>
+                                    <input class="form-check-input check-examen" type="radio" name="examenes[]" value="${ex.ID_examen}" id="ex_${ex.ID_examen}" data-precio="${ex.precio}" ${disableAttr} required>
                                     <label class="form-check-label ${txtClass}" for="ex_${ex.ID_examen}">
                                         ${ex.nombre_examen} - <span class="${ex.is_disabled ? 'text-muted' : 'text-primary'}">$${ex.precio}</span> <small class="text-danger fw-bold ms-2">${infoDisp}</small>
                                     </label>
@@ -428,9 +435,12 @@ window.abrirModalNuevoExamen = function() {
                             });
                             contExamenes.style.display = 'block';
                             
-                            // Añadir evento a los nuevos checkboxes
+                            // Añadir evento a los nuevos radios
                             document.querySelectorAll('.check-examen').forEach(chk => {
-                                chk.addEventListener('change', calcularCostoTotal);
+                                chk.addEventListener('change', () => {
+                                    calcularCostoTotal();
+                                    validarDisponibilidad();
+                                });
                             });
                         } else {
                             listaExamenes.innerHTML = '<p class="text-muted small">No hay exámenes registrados para esta especialidad.</p>';
@@ -447,6 +457,64 @@ window.abrirModalNuevoExamen = function() {
                 total += parseFloat(chk.dataset.precio || 0);
             });
             if (labelCosto) labelCosto.innerText = total.toFixed(2);
+        }
+
+        // --- 1.8 VALIDACIÓN DE DISPONIBILIDAD (TIEMPO REAL) ---
+        const inputFechaCita = document.getElementById('fecha_cita');
+        const alertaDisponibilidad = document.getElementById('alerta-disponibilidad');
+        const textoAlertaDisponibilidad = document.getElementById('texto-alerta-disponibilidad');
+
+        const validarDisponibilidad = () => {
+            const fecha = inputFechaCita.value;
+            const checks = document.querySelectorAll('.check-examen:checked');
+            const examenes = Array.from(checks).map(c => c.value);
+
+            if (!fecha || examenes.length === 0) {
+                alertaDisponibilidad.classList.add('d-none');
+                checkBotonesEstado();
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('fecha_cita', fecha);
+            examenes.forEach(id => formData.append('examenes[]', id));
+
+            fetch('/IPSPUPTM/app/citas/verificar_disponibilidad.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.count > 0) {
+                    alertaDisponibilidad.classList.remove('d-none');
+                    textoAlertaDisponibilidad.innerHTML = `Horario ocupado para: ${data.conflicts.join(', ')}. Por favor elija otra hora u otro examen.`;
+                    bGuardar.disabled = true;
+                    bGuardar.classList.replace('btn-primary', 'btn-danger');
+                } else {
+                    alertaDisponibilidad.classList.add('d-none');
+                    checkBotonesEstado();
+                }
+            })
+            .catch(err => console.error("Error validando disponibilidad:", err));
+        };
+
+        const checkBotonesEstado = () => {
+            // Re-evaluar saldo de póliza y otros bloqueos si existen
+            // Por ahora, solo restauramos el botón si no hay conflictos
+            bGuardar.disabled = false;
+            bGuardar.classList.replace('btn-danger', 'btn-primary');
+            
+            // Si es interno, respetamos la decisión del validador de póliza
+            if (selector.value === 'interno') {
+                const alertaSaldo = document.getElementById('alerta-saldo-poliza');
+                if (alertaSaldo && alertaSaldo.classList.contains('alert-danger')) {
+                    bGuardar.disabled = true;
+                }
+            }
+        };
+
+        if (inputFechaCita) {
+            inputFechaCita.addEventListener('change', validarDisponibilidad);
         }
  
         // --- 2. BÚSQUEDA EN TIEMPO REAL (EXTERNOS) ---

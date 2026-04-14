@@ -82,7 +82,7 @@ try {
             <!-- Tabla de beneficiarios -->
             <div class="table-responsive">
                 <table class="table table-sm table-striped table-hover mt-4">
-                    <thead class="table-dark text-center">
+                    <thead class="table-dark">
                         <tr>
                             <th>Cédula</th>
                             <th>Nombre</th>
@@ -100,11 +100,11 @@ try {
                             <td><?php echo $row['nombre_afiliado']; ?></td> <!-- Nombre del afiliado relacionado -->
                             <td class="text-center">
                                 <!-- Botón Ver Información -->
-                                <a href="#" class="btn btn-info btn-sm" data-bs-toggle="modal"
+                                <a href="#" class="btn btn-primary-custom btn-sm" data-bs-toggle="modal"
                                     data-bs-target="#vermodal" data-bs-cedula="<?= $row['cedula']; ?>">
                                     <i class="fas fa-eye"></i> Ver información
                                 </a>
-                                <button class="btn btn-sm btn-outline-info"
+                                <button class="btn btn-sm btn-primary"
                                     onclick="verConsumoBeneficiario('<?= $row['cedula']; ?>', '<?= $row['nombre_beneficiario'].' '.$row['apellido_beneficiario']; ?>', '<?= $row['nombre_afiliado']; ?>')">
                                     <i class="fas fa-chart-pie"></i> Ver Plan
                                 </button>

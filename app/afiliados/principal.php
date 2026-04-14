@@ -52,7 +52,7 @@ $totalPages = ceil($totalRows / $rowsPerPage);
         <!-- Tabla de afiliados -->
         <div class="table-responsive">
             <table class="table table-sm table-striped table-hover mt-4">
-                <thead class="table-dark text-center">
+                <thead class="table-dark">
                     <tr>
                         <th>Cédula</th>
                         <th>Nombre</th>
@@ -68,11 +68,11 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                         <td><?php echo $row['apellido']; ?></td>
                         <td class="text-center">
                             <!-- Botón Ver Información -->
-                            <a href="#" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#vermodal"
+                            <a href="#" class="btn btn-primary-custom btn-sm" data-bs-toggle="modal" data-bs-target="#vermodal"
                                 data-bs-cedula="<?= $row['cedula']; ?>">
                                 <i class="fas fa-eye"></i> Ver información
                             </a>
-                            <button class="btn btn-sm btn-info text-white" title="Ver Consumo"
+                            <button class="btn btn-sm btn-primary text-white" title="Ver Consumo"
                                 onclick="verResumenConsumo('<?php echo $row['cedula']; ?>', '<?php echo $row['nombre'].' '.$row['apellido']; ?>')">
                                 <i class="fas fa-eye"></i> Ver Plan
                             </button>

@@ -19,7 +19,7 @@
         </a>
         <div class="my-4">
             <table class="table table-sm table-striped table-hover">
-                <thead class="table-dark text-center">
+                <thead class="table-dark">
                     <tr>
                         <th>Dato 1</th>
                         <th>Dato 2</th>

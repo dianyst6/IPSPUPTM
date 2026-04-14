@@ -5,6 +5,25 @@ $rowsPerPage = 15; // Número de registros por página
 $currentPage = isset($_GET['page']) ? intval($_GET['page']) : 1; // Página actual
 $offset = ($currentPage - 1) * $rowsPerPage;
 
+// Determinar pestaña actual
+$currentTab = isset($_GET['tab']) ? $_GET['tab'] : 'activas';
+
+// Construir condición de filtrado según pestaña
+$whereTab = "";
+switch ($currentTab) {
+    case 'pagadas':
+        $whereTab = "AND (c.estado_pago = 'Pagada' OR c.estado_pago = 'Deducida de Póliza')";
+        break;
+    case 'canceladas':
+        $whereTab = "AND c.estado = 'cancelada'";
+        break;
+    case 'activas':
+    default:
+        $whereTab = "AND c.estado = 'activa' AND c.estado_pago = 'Por Pagar'";
+        $currentTab = 'activas'; // Asegurar valor por defecto
+        break;
+}
+
 try {
     // Consulta SQL combinada    
     $sqlCitas = "
@@ -12,6 +31,8 @@ try {
         c.id_cita, 
         c.fecha_cita, 
         c.descripcion, 
+        c.estado,
+        c.estado_pago,
         e.nombre_especialidad,
         CASE 
             WHEN ca.idcita IS NOT NULL THEN 'Afiliado'
@@ -44,7 +65,7 @@ try {
     -- 4. Especialidad
     LEFT JOIN especialidades e ON c.id_especialidad = e.id_especialidad
     
-    WHERE c.fecha_cita >= CURDATE()
+    WHERE c.fecha_cita >= CURDATE() $whereTab
     ORDER BY c.fecha_cita ASC
     LIMIT $rowsPerPage OFFSET $offset
 ";
@@ -56,7 +77,7 @@ try {
     }
 
     // Obtener el total de filas para calcular páginas
-    $totalRowsResult = $conn->query("SELECT COUNT(*) AS total FROM citas WHERE fecha_cita >= CURDATE()");
+    $totalRowsResult = $conn->query("SELECT COUNT(*) AS total FROM citas c WHERE c.fecha_cita >= CURDATE() $whereTab");
     if (!$totalRowsResult) {
         throw new Exception("Error en la consulta del total de citas: " . $conn->error);
     }
@@ -82,6 +103,7 @@ catch (Exception $e) {
                 </h1>
                 <br>
 
+ 
                 <div class="row mt-3">
                     <div class="col-auto">
                         <!-- Botón Agregar Cita -->
@@ -93,9 +115,9 @@ catch (Exception $e) {
                             <select id="filterTipo" class="form-select w-auto">
                            <option value="todos">Todos los Tipos</option>
                          <option value="Afiliado">Afiliados</option>
-                          <option value="Beneficiario">Beneficiarios</option>
-                            <option value="Comunidad UPTM">Comunidad UPTM</option>
-                      </select>
+                           <option value="Beneficiario">Beneficiarios</option>
+                             <option value="Comunidad UPTM">Comunidad UPTM</option>
+                       </select>
     </div>
                     <div class="col text-end mt-2">
                         <!-- Input de búsqueda alineado a la derecha -->
@@ -103,19 +125,47 @@ catch (Exception $e) {
                             placeholder="Buscar cita...">
                     </div>
                 </div>
+                               <!-- Pestañas de Filtrado -->
+                <ul class="nav nav-tabs mb-4 shadow-sm rounded-top" id="citasTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link <?= ($currentTab == 'activas') ? 'active fw-bold' : '' ?>" 
+                           href="?vista=citas&tab=activas">
+                           <i class="fas fa-calendar-check me-2"></i>Citas Activas (Por Pagar)
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= ($currentTab == 'pagadas') ? 'active fw-bold text-success' : '' ?>" 
+                           href="?vista=citas&tab=pagadas">
+                           <i class="fas fa-file-invoice-dollar me-2"></i>Citas Pagadas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= ($currentTab == 'canceladas') ? 'active fw-bold text-danger' : '' ?>" 
+                           href="?vista=citas&tab=canceladas">
+                           <i class="fas fa-calendar-times me-2"></i>Citas Canceladas
+                        </a>
+                    </li>
+                </ul>
 
+
+                <h4>
+                    <?php 
+                        if($currentTab == 'pagadas') echo "Citas Pagadas / Deducidas";
+                        elseif($currentTab == 'canceladas') echo "Citas Canceladas";
+                        else echo "Citas Pendientes de Pago";
+                    ?>
+                </h4>
                 <div class="table-responsive mt-3">
                     <!-- Tabla de citas -->
-                     <h4>Citas Registradas
-                    </h4>
                     <table class="table table-sm table-striped table-hover mx-auto">
-                        <thead class="table-dark text-center">
+                        <thead class="table-dark">
                             <tr>
                                 <th>Nombre del Paciente</th>
                                 <th>Tipo de Paciente</th>
                                 <th>Especialidad</th>
                                 <th>Descripción</th>
                                 <th>Fecha</th>
+                                <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -128,16 +178,27 @@ catch (Exception $e) {
                 <td><?php echo htmlspecialchars($row['nombre_especialidad']); ?></td>
                 <td><?php echo htmlspecialchars($row['descripcion']); ?></td>
                 <td><?php echo date('d-m-Y H:i', strtotime($row['fecha_cita'])); ?></td>
+                <td>
+                    <?php if($row['estado'] == 'activa'): ?>
+                        <?php if($row['estado_pago'] == 'Por Pagar'): ?>
+                            <span class="badge bg-success">Activa / Por Pagar</span>
+                        <?php else: ?>
+                            <span class="badge bg-primary"><?php echo $row['estado_pago']; ?></span>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <span class="badge bg-danger">Cancelada</span>
+                    <?php endif; ?>
+                </td>
                 <td class="text-center">
                     <a href="#" class="btn btn-warning btn-sm" data-bs-toggle="modal"
                         data-bs-target="#editmodal"
                         data-bs-idcita="<?= htmlspecialchars($row['id_cita']); ?>">
                         <i class="fas fa-edit"></i> Editar
                     </a>
-                    <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                    <a href="#" class="btn btn-danger btn-sm <?php echo ($row['estado'] == 'cancelada') ? 'disabled' : ''; ?>" data-bs-toggle="modal"
                         data-bs-target="#eliminamodal"
                         data-bs-idcita="<?= htmlspecialchars($row['id_cita']); ?>">
-                        <i class="fas fa-trash"></i> Eliminar
+                        <i class="fas fa-ban"></i> Cancelar
                     </a>
                 </td>
             </tr>
@@ -157,7 +218,7 @@ else { ?>
 
                 <div class="d-flex justify-content-center mt-3">
                     <?php for ($i = 1; $i <= $totalPages; $i++) { ?>
-                    <a href="?page=<?php echo $i; ?>"
+                    <a href="?vista=citas&page=<?php echo $i; ?>&tab=<?php echo $currentTab; ?>"
                         class="btn btn-sm <?php echo($i == $currentPage) ? 'btn-secondary' : 'btn-primary'; ?> mx-1">
                         <?php echo $i; ?>
                     </a>
