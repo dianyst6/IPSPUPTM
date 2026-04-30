@@ -56,6 +56,7 @@
                                         pc.monto_cuota,
                                         pc.numero_cuota,
                                         pc.metodo_pago,
+                                        pc.tipo_pago,
                                         p.nombre, 
                                         p.apellido,
                                         pl.nombre_plan
@@ -77,7 +78,11 @@
                                     echo "<td>" . date('d/m/Y', strtotime($row['fecha_pago'])) . "</td>";
                                     echo "<td class='text-start text-nowrap'>" . htmlspecialchars($row['nombre'] . " " . $row['apellido']) . "</td>";
                                     echo "<td>" . htmlspecialchars($row['nombre_plan']) . "</td>";
-                                    echo "<td>Cuota #" . $row['numero_cuota'] . "</td>";
+                                    if ($row['tipo_pago'] === 'Pago Inicial') {
+                                        echo "<td><span class='badge bg-info'><i class='fas fa-piggy-bank'></i> Pago Inicial</span></td>";
+                                    } else {
+                                        echo "<td>Cuota #" . $row['numero_cuota'] . "</td>";
+                                    }
                                     echo "<td><strong>$ " . number_format($row['monto_cuota'], 2) . "</strong></td>";
                                     echo "<td>" . htmlspecialchars($row['metodo_pago']) . "</td>";
                                     echo "<td>

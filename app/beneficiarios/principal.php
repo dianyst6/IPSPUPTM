@@ -12,6 +12,8 @@ try {
             b.cedula, 
             p_b.nombre AS nombre_beneficiario, 
             p_b.apellido AS apellido_beneficiario, 
+            b.parentesco,
+            p_b.fechanacimiento,
             CONCAT(p_a.nombre, ' ', p_a.apellido) AS nombre_afiliado, 
             b.created_at, 
             b.updated_at 
@@ -22,6 +24,17 @@ try {
         LIMIT $rowsPerPage OFFSET $offset
     ";
     $beneficiarios = $conn->query($sqlBeneficiarios);
+
+    // Consulta para detectar beneficiarios hijos con edad excedida
+    $sqlExcedidos = "
+        SELECT p_b.nombre, p_b.apellido, p_b.cedula, 
+               TIMESTAMPDIFF(YEAR, p_b.fechanacimiento, CURDATE()) AS edad
+        FROM beneficiarios b
+        JOIN persona p_b ON b.cedula = p_b.cedula
+        WHERE b.parentesco = 'Hijo' 
+        AND TIMESTAMPDIFF(YEAR, p_b.fechanacimiento, CURDATE()) >= 25
+    ";
+    $resultExcedidos = $conn->query($sqlExcedidos);
 
     // Validación de errores en la consulta
     if (!$beneficiarios) {
@@ -58,6 +71,18 @@ try {
 
 <div class="card shadow-lg">
     <div class="cont-general">
+        
+        <?php if ($resultExcedidos && $resultExcedidos->num_rows > 0): ?>
+        <div class="alert alert-warning m-3 shadow-sm border-start border-warning border-5" role="alert">
+            <h5 class="alert-heading fw-bold"><i class="fas fa-exclamation-triangle me-2"></i>Atención: Hijos con Edad Excedida</h5>
+            <p class="mb-2">Los siguientes beneficiarios han alcanzado o superado los 25 años y <strong>no podrán recibir cobertura en nuevas citas</strong>:</p>
+            <ul class="mb-0">
+                <?php while ($ex = $resultExcedidos->fetch_assoc()): ?>
+                <li><strong><?= $ex['nombre'].' '.$ex['apellido'] ?></strong> (C.I: <?= $ex['cedula'] ?>) - Edad: <?= $ex['edad'] ?> años.</li>
+                <?php endwhile; ?>
+            </ul>
+        </div>
+        <?php endif; ?>
 
         <div class="mt-3 m-3 text-justify">
              <h1 class="fw-bold text-center" style="color: #062974;">Beneficiarios</h1>
@@ -87,16 +112,26 @@ try {
                             <th>Cédula</th>
                             <th>Nombre</th>
                             <th>Apellido</th>
+                            <th>Parentesco</th>
                             <th>Afiliado</th> <!-- Nueva columna -->
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while ($row = $beneficiarios->fetch_assoc()) { ?>
-                        <tr>
+                        <?php while ($row = $beneficiarios->fetch_assoc()) { 
+                            $edad = date_diff(date_create($row['fechanacimiento']), date_create('today'))->y;
+                            $alertaEdad = ($row['parentesco'] == 'Hijo' && $edad >= 25);
+                        ?>
+                        <tr class="<?= $alertaEdad ? 'table-warning' : '' ?>">
                             <td><?php echo $row['cedula']; ?></td>
                             <td><?php echo $row['nombre_beneficiario']; ?></td>
                             <td><?php echo $row['apellido_beneficiario']; ?></td>
+                            <td>
+                                <span class="badge bg-secondary"><?php echo $row['parentesco']; ?></span>
+                                <?php if ($alertaEdad): ?>
+                                    <span class="badge bg-danger" title="Edad: <?= $edad ?> años"><i class="fas fa-clock"></i> +25</span>
+                                <?php endif; ?>
+                            </td>
                             <td><?php echo $row['nombre_afiliado']; ?></td> <!-- Nombre del afiliado relacionado -->
                             <td class="text-center">
                                 <!-- Botón Ver Información -->

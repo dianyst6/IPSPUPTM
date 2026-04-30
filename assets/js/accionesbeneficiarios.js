@@ -10,6 +10,7 @@ function cargarDatosModal(modal, cedula) {
   let inputtelefono = modal.querySelector('#telefono');
   let inputcorreo = modal.querySelector('#correo');
   let inputocupacion = modal.querySelector('#ocupacion');
+  let inputparentesco = modal.querySelector('#parentesco');
   let selectAfiliado = modal.querySelector('#cedula_afil'); // El select de afiliados
 
   let url = "/IPSPUPTM/app/beneficiarios/getbeneficiarios.php";
@@ -34,6 +35,7 @@ function cargarDatosModal(modal, cedula) {
       inputtelefono.value = data.telefono || '';
       inputcorreo.value = data.correo || '';
       inputocupacion.value = data.ocupacion || '';
+      if (inputparentesco) inputparentesco.value = data.parentesco || '';
 
       // Para el modal de visualización
       if (modal.id === 'vermodal') {

@@ -3,13 +3,14 @@ require 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
 include 'C:/xampp/htdocs/IPSPUPTM/app/configuracion/bitacora/bitacora.php';  
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {  
-    if (isset($_POST['cedula_afil'], $_POST['cedula'], $_POST['nombre'], $_POST['apellido'], $_POST['fechanacimiento'], $_POST['genero'], $_POST['telefono'], $_POST['correo'], $_POST['ocupacion'])) {  
+    if (isset($_POST['cedula_afil'], $_POST['cedula'], $_POST['nombre'], $_POST['apellido'], $_POST['fechanacimiento'], $_POST['parentesco'], $_POST['genero'], $_POST['telefono'], $_POST['correo'], $_POST['ocupacion'])) {  
         // Limpiar datos
         $cedula_afil = htmlspecialchars($_POST['cedula_afil']);  
         $cedula = htmlspecialchars($_POST['cedula']);  
         $nombre = htmlspecialchars($_POST['nombre']);  
         $apellido = htmlspecialchars($_POST['apellido']);  
         $fechanacimiento = htmlspecialchars($_POST['fechanacimiento']);  
+        $parentesco = htmlspecialchars($_POST['parentesco']);  
         $genero = htmlspecialchars($_POST['genero']);  
         $telefono = htmlspecialchars($_POST['telefono']);  
         $correo = htmlspecialchars($_POST['correo']);  
@@ -36,10 +37,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }  
 
         // Insertar beneficiario
-        $sql_beneficiarios = "INSERT INTO beneficiarios (cedula_afil, cedula, created_at, updated_at) 
-                            VALUES (?, ?, NOW(), NOW())";  
+        $sql_beneficiarios = "INSERT INTO beneficiarios (cedula_afil, parentesco, cedula, created_at, updated_at) 
+                            VALUES (?, ?, ?, NOW(), NOW())";  
         $stmt_beneficiarios = $conn->prepare($sql_beneficiarios);  
-        $stmt_beneficiarios->bind_param("is", $cedula_afil, $cedula);  
+        $stmt_beneficiarios->bind_param("iss", $cedula_afil, $parentesco, $cedula);  
 
         if ($stmt_beneficiarios->execute()) {  
             // Registrar en bitácora

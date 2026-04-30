@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 07-04-2026 a las 01:53:42
+-- Tiempo de generación: 01-05-2026 a las 01:20:51
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -53,6 +53,7 @@ CREATE TABLE `beneficiarios` (
   `ID` int(11) NOT NULL,
   `cedula` int(20) NOT NULL,
   `cedula_afil` int(20) NOT NULL,
+  `parentesco` enum('Hijo','Esposo/a','Padre','Madre','Otro') NOT NULL DEFAULT 'Otro',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -61,8 +62,9 @@ CREATE TABLE `beneficiarios` (
 -- Volcado de datos para la tabla `beneficiarios`
 --
 
-INSERT INTO `beneficiarios` (`ID`, `cedula`, `cedula_afil`, `created_at`, `updated_at`) VALUES
-(19, 10505948, 52, '2026-03-28 15:11:11', '2026-03-28 15:11:11');
+INSERT INTO `beneficiarios` (`ID`, `cedula`, `cedula_afil`, `parentesco`, `created_at`, `updated_at`) VALUES
+(19, 10505948, 52, 'Otro', '2026-03-28 15:11:11', '2026-03-28 15:11:11'),
+(20, 22657594, 52, 'Hijo', '2026-04-30 22:36:32', '2026-04-30 22:36:32');
 
 -- --------------------------------------------------------
 
@@ -83,161 +85,7 @@ CREATE TABLE `bitacora` (
 --
 
 INSERT INTO `bitacora` (`idbitacora`, `usuario`, `accion`, `descripcion`, `fecha`) VALUES
-(133, 'Admin', 'Eliminación de usuario', 'Se eliminó al usuario: flowernoni y sus respuestas de seguridad.', '2025-05-14 03:13:58'),
-(135, 'Admin', 'Eliminación de usuario', 'Se eliminó al usuario: gabibi y sus respuestas de seguridad.', '2025-05-14 03:25:29'),
-(136, 'Admin', 'Eliminación de usuario', 'Se eliminó al usuario: gabrielaGN y sus respuestas de seguridad.', '2025-05-14 03:25:38'),
-(137, NULL, 'Registro de Beneficiario', 'Cédula: 10505948, Nombre: teresa, Apellido: perez', '2025-08-06 15:17:29'),
-(138, 'admin', 'Registro de Afiliado', 'Cédula: 30270492, Nombre: gregory, Apellido: perez', '2026-02-19 03:34:57'),
-(139, 'admin', 'Eliminación de Afiliado y Citas', 'Se eliminó al afiliado: gregory perez (Cédula: 30270492) y todas las citas relacionadas.', '2026-02-19 03:50:48'),
-(140, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 30270492', '2026-02-19 03:52:09'),
-(141, 'grego', 'Eliminación de Afiliado y Citas', 'Se eliminó al afiliado: gregory perez (Cédula: 30270492) y todas las citas relacionadas.', '2026-02-19 04:24:33'),
-(142, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 30270492', '2026-02-19 04:25:05'),
-(143, 'admin', 'Eliminación de Afiliado y Citas', 'Se eliminó al afiliado: gregory perez (Cédula: 30270492) y todas las citas relacionadas.', '2026-02-19 04:31:13'),
-(144, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 30270492', '2026-02-19 04:31:30'),
-(145, NULL, 'Registro de Cita', ' Se ha registrado a un paciente del tipo Afiliado, para la fecha: 2026-02-19T11:03', '2026-02-19 15:03:28'),
-(146, NULL, 'Registro de Cita', ' Se ha registrado a un paciente del tipo Beneficiario, para la fecha: 2026-02-19T11:21', '2026-02-19 15:21:50'),
-(147, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 10505948', '2026-02-19 16:49:52'),
-(148, 'admin', 'Actualización de Beneficiario', 'Se actualizó al beneficiario con cédula 10505948 y nombre teresa perez', '2026-02-21 04:46:41'),
-(149, 'admin', 'Eliminación de Afiliado y Citas', 'Se eliminó al afiliado: teresa perez (Cédula: 10505948) y todas las citas relacionadas.', '2026-02-21 04:53:45'),
-(150, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 10505948', '2026-02-21 04:54:10'),
-(151, 'admin', 'Eliminación de Afiliado y Citas', 'Se eliminó al afiliado: teresa perez (Cédula: 10505948) y todas las citas relacionadas.', '2026-02-21 04:57:54'),
-(152, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 8012649', '2026-02-24 02:34:01'),
-(153, NULL, 'Registro de Cita', ' Se ha registrado a un paciente del tipo Afiliado, para la fecha: 2026-02-25T22:34', '2026-02-24 02:34:37'),
-(154, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: ewewewe (ID Cita: 19), Paciente: ZULEYMAaa NUÑEZ (Afiliado), Fecha: 2026-02-25 22:34:00, Especialidad: Imagenología', '2026-02-24 22:20:25'),
-(155, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-02-18T19:37', '2026-02-24 23:37:58'),
-(156, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-02-18T19:37', '2026-02-24 23:37:59'),
-(157, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-02-04T19:38', '2026-02-24 23:39:20'),
-(158, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-02-26T19:43', '2026-02-24 23:44:03'),
-(159, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: gfgfggf (ID Cita: 24), Paciente: No especificado (Desconocido), Fecha: 2026-02-26 19:43:00, Especialidad: Gastroenterología', '2026-02-24 23:45:08'),
-(160, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: sdds (ID Cita: 22), Paciente: No especificado (Desconocido), Fecha: 2026-02-04 19:38:00, Especialidad: Gastroenterología', '2026-02-24 23:46:40'),
-(161, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-02-24T19:54', '2026-02-24 23:54:59'),
-(162, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: sasdssd (ID Cita: 25), Paciente: No especificado (Desconocido), Fecha: 2026-02-24 19:54:00, Especialidad: Ginecología', '2026-02-24 23:57:15'),
-(163, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-02-19T19:59', '2026-02-24 23:59:21'),
-(164, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-02-11T20:46', '2026-02-25 00:46:40'),
-(165, 'admin', 'Actualización de Cita', 'Se actualizó una cita', '2026-02-25 01:33:23'),
-(166, 'admin', 'Actualización de Cita', 'Se actualizó una cita', '2026-02-25 01:34:38'),
-(167, 'admin', 'Actualización de Cita', 'Se modificó la cita ID: 18', '2026-02-25 01:39:19'),
-(168, 'admin', 'Actualización de Cita', 'Se modificó la cita ID: 26', '2026-02-25 01:39:29'),
-(169, 'admin', 'Actualización de Cita', 'Se modificó la cita ID: 26', '2026-02-25 01:39:39'),
-(170, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-02-12T21:50', '2026-02-25 01:50:42'),
-(171, 'admin', 'Actualización de Cita', 'Se modificó la cita ID: 28', '2026-02-25 01:50:51'),
-(172, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: si (ID Cita: 16), Paciente: GABRIELA  GARCÍA NUÑEZ (Afiliado), Fecha: 2025-05-22 01:08:00, Especialidad: Ginecología', '2026-02-25 01:51:49'),
-(173, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: sdds (ID Cita: 23), Paciente: ZULEYMAaa NUÑEZ (Afiliado), Fecha: 2026-02-04 19:38:00, Especialidad: Gastroenterología', '2026-02-25 01:51:59'),
-(174, 'admin', 'Pago Registrado', 'Se procesó pago de cita #26 por monto de 0 Bs.', '2026-02-27 05:03:27'),
-(175, 'admin', 'Pago Registrado', 'Se procesó pago de cita #26 por monto de 0 Bs.', '2026-02-27 05:03:33'),
-(176, 'admin', 'Pago Registrado', 'Se procesó pago de cita #26 por monto de 0 Bs.', '2026-02-27 05:03:36'),
-(177, 'admin', 'Pago Registrado', 'Se procesó pago de cita #26 por monto de 0 Bs.', '2026-02-27 05:03:37'),
-(178, 'admin', 'Pago Registrado', 'Se procesó pago de cita #26 por monto de 0 Bs.', '2026-02-27 05:03:38'),
-(179, 'admin', 'Pago Registrado', 'Se procesó pago de cita #26 por monto de 0 Bs.', '2026-02-27 05:03:42'),
-(180, 'admin', 'Pago Registrado', 'Se procesó pago de cita #26 por monto de 0 Bs.', '2026-02-27 05:05:52'),
-(181, 'admin', 'Pago Registrado', 'Se procesó pago de cita #26 por monto de 0 Bs.', '2026-02-27 05:05:52'),
-(182, 'admin', 'Pago Registrado', 'Se procesó pago de cita #26 por monto de 0 Bs.', '2026-02-27 05:07:03'),
-(183, 'admin', 'Pago Registrado', 'Se procesó pago de cita #28 por monto de 2000 Bs.', '2026-02-27 05:08:54'),
-(184, 'admin', 'Pago Registrado', 'Se procesó pago de cita #28 por monto de 20000 Bs.', '2026-02-27 05:08:55'),
-(185, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: asd (ID Cita: 18), Paciente: ZULEYMAaa NUÑEZ (Beneficiario), Fecha: 2026-02-19 11:21:00, Especialidad: Ginecología', '2026-02-27 05:16:55'),
-(186, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: sdsddssd (ID Cita: 26), Paciente: No especificado (Desconocido), Fecha: 2026-02-19 19:59:00, Especialidad: Ginecología', '2026-02-27 05:17:14'),
-(187, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-02-18T01:19', '2026-02-27 05:19:19'),
-(188, 'admin', 'Pago Registrado', 'Se procesó pago de cita #29 por monto de 2000 Bs.', '2026-02-27 05:19:32'),
-(189, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: wqewwe (ID Cita: 29), Paciente: No especificado (Desconocido), Fecha: 2026-02-18 01:19:00, Especialidad: Oftamología', '2026-02-27 05:27:54'),
-(190, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: sasassa (ID Cita: 28), Paciente: No especificado (Desconocido), Fecha: 2026-02-12 21:50:00, Especialidad: Ginecología', '2026-02-27 05:27:59'),
-(191, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-03-18T20:50', '2026-03-03 00:50:45'),
-(192, 'admin', 'Pago Registrado', 'Se procesó pago de cita #30 por monto de 0 Bs.', '2026-03-03 00:58:32'),
-(193, 'admin', 'Pago Registrado', 'Se procesó pago de cita #30 por monto de 0 Bs.', '2026-03-03 00:58:35'),
-(194, 'admin', 'Pago Registrado', 'Se procesó pago de cita #30 por monto de 0 Bs.', '2026-03-03 00:58:38'),
-(195, 'admin', 'Pago Registrado', 'Se procesó pago de cita #30 por monto de 0 Bs.', '2026-03-03 00:58:39'),
-(196, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-03-26T21:06', '2026-03-03 01:07:00'),
-(197, 'admin', 'Pago Registrado', 'Se procesó pago de cita #31 por 2000 Bs.', '2026-03-03 01:07:32'),
-(198, 'Admin', 'Eliminación de usuario', 'Se eliminó al usuario: flowernoni y sus respuestas de seguridad.', '2026-03-03 01:08:54'),
-(199, 'Admin', 'Eliminación de usuario', 'Se eliminó al usuario: Naomi y sus respuestas de seguridad.', '2026-03-03 01:09:05'),
-(200, 'admin', 'Edición de Afiliado', 'Se han actualizado los datos del afiliado con cédula: 8012649, Nombre: ZULEYMA, Apellido: NUÑEZ', '2026-03-03 01:14:16'),
-(201, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-03-19T21:24', '2026-03-03 01:24:52'),
-(202, 'admin', 'Pago Registrado', 'Se procesó pago de cita #32 por 500 Bs.', '2026-03-03 01:26:03'),
-(203, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-03-04T22:19', '2026-03-03 02:19:24'),
-(204, 'admin', 'Pago Registrado', 'Se procesó pago de cita #33 por  Bs.', '2026-03-03 02:45:29'),
-(205, 'admin', 'Edición de Comunidad UPTM', 'Se actualizaron los datos del externo C.I: 12913223 (José Perez)', '2026-03-03 03:39:16'),
-(206, 'admin', 'Edición de Afiliado', 'Se han actualizado los datos del afiliado con cédula: 31253521, Nombre: GABRIELA , Apellido: GARCÍA NUÑEZ', '2026-03-12 17:06:23'),
-(207, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 30960254', '2026-03-12 17:11:53'),
-(208, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 11955376', '2026-03-12 20:08:18'),
-(209, NULL, 'Registro de Beneficiario', 'Cédula: 14107471, Nombre: Maria, Apellido: Marquez', '2026-03-12 20:10:03'),
-(210, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Beneficiario para la fecha: 2026-03-12T16:10', '2026-03-12 20:11:09'),
-(211, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-04-30T09:30', '2026-03-12 20:20:52'),
-(212, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: sasa (ID Cita: 20), Paciente: GABRIELA  GARCÍA NUÑEZ (Afiliado), Fecha: 2026-02-18 19:37:00, Especialidad: Ginecología', '2026-03-12 20:21:03'),
-(213, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: sasa (ID Cita: 21), Paciente: GABRIELA  GARCÍA NUÑEZ (Afiliado), Fecha: 2026-02-18 19:37:00, Especialidad: Ginecología', '2026-03-12 20:21:43'),
-(214, 'admin', 'Edición de Comunidad UPTM', 'Se actualizaron los datos del externo C.I: 8765345 (Melanie Martinez)', '2026-03-13 03:31:31'),
-(215, 'medico2', 'Historia Ginecología', 'Paciente CI: 14107471 (beneficiario)', '2026-03-13 06:41:08'),
-(216, 'medico2', 'Eliminación de Historia Médica', 'Historia Ginecología ID: 1 — Paciente CI: 14107471', '2026-03-13 07:04:57'),
-(217, 'medico2', 'Historia Ginecología', 'Paciente CI: 14107471 (beneficiario)', '2026-03-13 07:18:14'),
-(218, 'medico', 'Registro de Historia', 'Paciente CI: 11955376 (afiliado)', '2026-03-13 18:00:47'),
-(219, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 32032832', '2026-03-13 21:18:39'),
-(220, NULL, 'Registro de Beneficiario', 'Cédula: si, Nombre: Estefania, Apellido: Garcia3232', '2026-03-13 21:23:40'),
-(221, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: sdagath (ID Cita: 35), Paciente: Juan Rojas (Afiliado), Fecha: 2026-04-30 09:30:00, Especialidad: Medicina interna', '2026-03-14 02:17:04'),
-(222, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: asd (ID Cita: 17), Paciente: gregory perez (Afiliado), Fecha: 2026-02-19 11:03:00, Especialidad: Oftamología', '2026-03-14 02:27:58'),
-(223, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: dfsdfs (ID Cita: 27), Paciente: gregory perez (Afiliado), Fecha: 2026-02-11 20:46:00, Especialidad: Gastroenterología', '2026-03-14 02:29:44'),
-(224, 'medico2', 'Eliminación de Historia Médica', 'Historia Ginecología ID: 2 — Paciente CI: 14107471', '2026-03-14 02:51:42'),
-(225, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-13T05:13', '2026-03-14 03:08:00'),
-(226, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: cita (ID Cita: 36), Paciente: gregory perez (Afiliado), Fecha: 2026-03-13 05:13:00, Especialidad: Medicina interna', '2026-03-14 03:26:04'),
-(227, 'admin', 'Eliminación de Beneficiario y Citas', 'Se eliminó al beneficiario: Estefania Garcia3232 (Cédula: 0) y todas las citas relacionadas.', '2026-03-19 16:20:54'),
-(228, NULL, 'Registro de Beneficiario', 'Cédula: 23456786, Nombre: Pepe, Apellido: Rojas', '2026-03-19 16:22:58'),
-(229, 'secretaria', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-04-09T10:50', '2026-03-19 17:54:31'),
-(230, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: cita (ID Cita: 37), Paciente: gregory perez (Afiliado), Fecha: 2026-04-09 10:50:00, Especialidad: Oftamología', '2026-03-19 18:35:27'),
-(231, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 12387654', '2026-03-19 18:49:39'),
-(232, 'admin', 'Registro de Historia', 'Paciente CI: 11955376 (afiliado)', '2026-03-22 16:17:34'),
-(233, 'admin', 'Registro de Historia', 'Paciente CI: 902322 (externo)', '2026-03-22 16:18:45'),
-(234, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-24T13:48', '2026-03-22 17:48:40'),
-(235, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-04-04T17:53', '2026-03-22 17:49:17'),
-(236, 'admin', 'Pago Registrado', 'Se procesó pago de cita #39 por  Bs.', '2026-03-22 17:55:57'),
-(237, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-03-28T20:19', '2026-03-23 00:19:44'),
-(238, 'admin', 'Pago Registrado', 'Se procesó pago de cita #40 por  Bs.', '2026-03-23 00:25:23'),
-(239, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-03-22T20:36', '2026-03-23 00:35:17'),
-(240, 'admin', 'Eliminación de Cita', 'Se eliminó la cita: asd (ID Cita: 38), Paciente: gregory perez (Afiliado), Fecha: 2026-03-24 13:48:00, Especialidad: Imagenología', '2026-03-23 02:28:10'),
-(241, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-27T14:34', '2026-03-23 02:30:13'),
-(242, 'admin', 'Pago Cita con Póliza', 'Cita #42 pagada mediante descuento de póliza por monto total de 20.00 $', '2026-03-23 02:30:51'),
-(243, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-23T22:33', '2026-03-23 02:32:54'),
-(244, 'admin', 'Pago Cita con Póliza', 'Cita #43 pagada mediante descuento de póliza por monto total de 20.00 $', '2026-03-23 02:33:19'),
-(245, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2029-11-30T13:40', '2026-03-23 02:37:45'),
-(246, 'admin', 'Pago Cita con Póliza', 'Cita #44 pagada mediante descuento de póliza por monto total de 20.00 $', '2026-03-23 02:38:07'),
-(247, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Beneficiario para la fecha: 2026-03-27T14:57', '2026-03-23 02:54:00'),
-(248, 'admin', 'Pago Cita con Póliza', 'Cita #45 pagada mediante descuento de póliza por monto total de 40.00 $', '2026-03-23 02:54:14'),
-(249, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 12308787', '2026-03-27 22:35:14'),
-(250, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-31T22:40', '2026-03-27 22:36:11'),
-(251, 'admin', 'Pago Cita con Póliza', 'Cita #46 pagada mediante descuento de póliza por monto total de 20.00 $', '2026-03-27 22:37:05'),
-(252, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-04-04T22:41', '2026-03-27 22:37:51'),
-(253, 'admin', 'Pago Cita con Póliza', 'Cita #47 pagada mediante descuento de póliza por monto total de 40.00 $', '2026-03-27 22:38:12'),
-(254, 'grego', 'Registro Integral', 'Afiliado y Plan creados: 30270492', '2026-03-28 00:58:32'),
-(255, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-28T23:05', '2026-03-28 01:00:24'),
-(256, 'grego', 'Pago Cita con Póliza', 'Cita #48 pagada mediante descuento de póliza por monto total de 35.00 $', '2026-03-28 01:01:07'),
-(257, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-28T10:20', '2026-03-28 01:52:57'),
-(258, 'grego', 'Pago Cita con Póliza', 'Cita #49 pagada mediante descuento de póliza por monto total de 50.00 $', '2026-03-28 01:53:38'),
-(259, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-30T10:25', '2026-03-28 02:23:37'),
-(260, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-29T10:26', '2026-03-28 02:56:22'),
-(261, 'grego', 'Pago Cita con Póliza', 'Cita #51 pagada mediante descuento de póliza. Monto original: 40.00 $, Monto descontado: 20.00 $.', '2026-03-28 02:57:28'),
-(262, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-04-04T12:30', '2026-03-28 03:07:52'),
-(263, NULL, 'Registro de Beneficiario', 'Cédula: 10505948, Nombre: Teresa, Apellido: Pérez', '2026-03-28 15:11:11'),
-(264, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-03-30T10:55', '2026-03-28 16:34:32'),
-(265, 'grego', 'Pago Cita con Póliza', 'Cita #53 pagada mediante descuento de póliza. Monto original: 105.00 $, Monto descontado: 105.00 $.', '2026-03-28 16:35:15'),
-(266, 'grego', 'Pago Cita con Póliza', 'Cita #52 pagada mediante descuento de póliza. Monto original: 20.00 $, Monto descontado: 12.00 $.', '2026-03-28 16:35:24'),
-(267, 'grego', 'Pago Cita con Póliza', 'Cita #50 pagada mediante descuento de póliza. Monto original: 20.00 $, Monto descontado: 20.00 $.', '2026-03-28 16:35:29'),
-(268, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-04-04T14:26', '2026-03-28 22:58:17'),
-(269, 'grego', 'Pago Cita con Póliza', 'Cita #54 pagada mediante descuento de póliza. Monto original: 20.00 $, Monto descontado: 20.00 $.', '2026-03-28 22:58:26'),
-(270, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-04-11T11:18', '2026-03-29 01:17:07'),
-(271, 'admin', 'Pago Cita con Póliza', 'Cita #55 pagada mediante descuento de póliza. Monto original: 40.00 $, Monto descontado: 20.00 $.', '2026-03-29 01:27:59'),
-(272, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Beneficiario para la fecha: 2026-05-02T10:20', '2026-04-06 21:13:59'),
-(273, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-04-10T10:20', '2026-04-06 21:16:27'),
-(274, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-04-30T12:20', '2026-04-06 21:43:00'),
-(275, 'grego', 'Pago Registrado', 'Se procesó pago de cita #57 por  Bs.', '2026-04-06 21:44:49'),
-(276, 'grego', 'Pago Registrado', 'Se procesó pago de cita #58 por  Bs.', '2026-04-06 21:46:57'),
-(277, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Comunidad UPTM (Externo) para la fecha: 2026-05-05T10:20', '2026-04-06 21:50:13'),
-(278, 'grego', 'Pago Registrado', 'Se procesó pago de cita #59 por 20 $.', '2026-04-06 21:50:35'),
-(279, 'grego', 'Pago Cita con Póliza', 'Cita #56 pagada mediante descuento de póliza. Monto original: 20.00 $, Monto descontado: 20.00 $.', '2026-04-06 21:51:35'),
-(280, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-04-30T10:20', '2026-04-06 22:02:12'),
-(281, 'grego', 'Pago Cita con Póliza', 'Cita #60 pagada mediante descuento de póliza. Monto original: 20.00 $, Monto descontado: 20.00 $.', '2026-04-06 22:03:39'),
-(282, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-04-24T10:20', '2026-04-06 22:05:54'),
-(283, 'grego', 'Cancelación de Cita', 'Se canceló la cita: asd (ID Cita: 61), Paciente: Gregory Pérez (Afiliado), Fecha: 2026-04-24 10:20:00, Especialidad: Imagenología', '2026-04-06 22:06:08'),
-(284, 'grego', 'Cancelación de Cita', 'Se canceló la cita: asd (ID Cita: 61), Paciente: Gregory Pérez (Afiliado), Fecha: 2026-04-24 10:20:00, Especialidad: Imagenología', '2026-04-06 22:06:08'),
-(285, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-04-08T10:20', '2026-04-06 23:11:58'),
-(286, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-04-08T10:20', '2026-04-06 23:13:43'),
-(287, 'grego', 'Registro de Cita', 'Se ha registrado una cita de tipo Beneficiario para la fecha: 2026-04-08T10:20', '2026-04-06 23:16:52'),
-(288, 'grego', 'Pago Cita con Póliza', 'Cita #64 pagada mediante descuento de póliza. Monto original: 50.00 $, Monto descontado: 50.00 $.', '2026-04-06 23:17:13');
+(1, NULL, 'Registro de Beneficiario', 'Cédula: 22657594, Nombre: Luis, Apellido: Mendoza', '2026-04-30 22:36:32');
 
 -- --------------------------------------------------------
 
@@ -283,29 +131,6 @@ CREATE TABLE `citas` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `citas`
---
-
-INSERT INTO `citas` (`id_cita`, `id_especialidad`, `fecha_cita`, `descripcion`, `estado_pago`, `estado`, `created_at`, `updated_at`) VALUES
-(48, 6, '2026-03-28 23:05:00', 'asd', 'Deducida de Póliza', 'activa', '2026-03-28 01:00:24', '2026-03-28 01:01:07'),
-(49, 5, '2026-03-28 10:20:00', 'asd', 'Deducida de Póliza', 'activa', '2026-03-28 01:52:57', '2026-03-28 01:53:38'),
-(50, 2, '2026-03-30 10:25:00', 'asd', 'Deducida de Póliza', 'activa', '2026-03-28 02:23:37', '2026-03-28 16:35:29'),
-(51, 4, '2026-03-29 10:26:00', 'ads', 'Deducida de Póliza', 'activa', '2026-03-28 02:56:22', '2026-03-28 02:57:28'),
-(52, 7, '2026-04-04 12:30:00', 'asd', 'Deducida de Póliza', 'activa', '2026-03-28 03:07:52', '2026-03-28 16:35:24'),
-(53, 6, '2026-03-30 10:55:00', 'asd', 'Deducida de Póliza', 'activa', '2026-03-28 16:34:32', '2026-03-28 16:35:15'),
-(54, 6, '2026-04-04 14:26:00', 'ad', 'Deducida de Póliza', 'activa', '2026-03-28 22:58:17', '2026-03-28 22:58:26'),
-(55, 4, '2026-04-11 11:18:00', 'asd', 'Deducida de Póliza', 'activa', '2026-03-29 01:17:07', '2026-03-29 01:27:59'),
-(56, 1, '2026-05-02 10:20:00', 'asd', 'Deducida de Póliza', 'activa', '2026-04-06 21:13:59', '2026-04-06 21:51:35'),
-(57, 6, '2026-04-10 10:20:00', 'asd', 'Pagada', 'activa', '2026-04-06 21:16:27', '2026-04-06 21:50:58'),
-(58, 5, '2026-04-30 12:20:00', 'asd', 'Pagada', 'activa', '2026-04-06 21:43:00', '2026-04-06 21:49:16'),
-(59, 2, '2026-05-05 10:20:00', 'asd', 'Pagada', 'activa', '2026-04-06 21:50:13', '2026-04-06 21:50:35'),
-(60, 5, '2026-04-30 10:20:00', 'asd', 'Deducida de Póliza', 'activa', '2026-04-06 22:02:12', '2026-04-06 22:03:39'),
-(61, 6, '2026-04-24 10:20:00', 'asd', 'Por Pagar', 'cancelada', '2026-04-06 22:05:54', '2026-04-06 22:06:08'),
-(62, 7, '2026-04-08 10:20:00', 'ads', 'Por Pagar', 'activa', '2026-04-06 23:11:58', '2026-04-06 23:11:58'),
-(63, 6, '2026-04-08 10:20:00', 'asd', 'Por Pagar', 'activa', '2026-04-06 23:13:43', '2026-04-06 23:13:43'),
-(64, 6, '2026-04-08 10:20:00', 'asd', 'Deducida de Póliza', 'activa', '2026-04-06 23:16:52', '2026-04-06 23:17:13');
-
 -- --------------------------------------------------------
 
 --
@@ -319,24 +144,6 @@ CREATE TABLE `citas_afil` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `citas_afil`
---
-
-INSERT INTO `citas_afil` (`id_citas_afil`, `idcita`, `id_afiliado`, `updated_at`, `created_at`) VALUES
-(26, 48, 52, '2026-03-28 01:00:24', '2026-03-28 01:00:24'),
-(27, 49, 52, '2026-03-28 01:52:57', '2026-03-28 01:52:57'),
-(28, 50, 52, '2026-03-28 02:23:37', '2026-03-28 02:23:37'),
-(29, 51, 52, '2026-03-28 02:56:22', '2026-03-28 02:56:22'),
-(30, 52, 52, '2026-03-28 03:07:52', '2026-03-28 03:07:52'),
-(31, 53, 52, '2026-03-28 16:34:32', '2026-03-28 16:34:32'),
-(32, 54, 52, '2026-03-28 22:58:17', '2026-03-28 22:58:17'),
-(33, 55, 52, '2026-03-29 01:17:07', '2026-03-29 01:17:07'),
-(34, 60, 52, '2026-04-06 22:02:12', '2026-04-06 22:02:12'),
-(35, 61, 52, '2026-04-06 22:05:54', '2026-04-06 22:05:54'),
-(36, 62, 52, '2026-04-06 23:11:58', '2026-04-06 23:11:58'),
-(37, 63, 52, '2026-04-06 23:13:43', '2026-04-06 23:13:43');
 
 -- --------------------------------------------------------
 
@@ -352,14 +159,6 @@ CREATE TABLE `citas_benef` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `citas_benef`
---
-
-INSERT INTO `citas_benef` (`id_citas_benef`, `idcita`, `id_beneficiario`, `updated_at`, `created_at`) VALUES
-(9, 56, 19, '2026-04-06 21:13:59', '2026-04-06 21:13:59'),
-(10, 64, 19, '2026-04-06 23:16:52', '2026-04-06 23:16:52');
-
 -- --------------------------------------------------------
 
 --
@@ -372,31 +171,6 @@ CREATE TABLE `citas_examenes` (
   `id_examen` int(11) NOT NULL,
   `precio_historico` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `citas_examenes`
---
-
-INSERT INTO `citas_examenes` (`id_cita_examen`, `id_cita`, `id_examen`, `precio_historico`) VALUES
-(7, 48, 6, 35.00),
-(8, 49, 12, 50.00),
-(9, 50, 5, 20.00),
-(10, 51, 2, 40.00),
-(11, 52, 13, 20.00),
-(12, 53, 6, 35.00),
-(13, 53, 7, 30.00),
-(14, 53, 8, 40.00),
-(15, 54, 11, 20.00),
-(16, 55, 2, 40.00),
-(17, 56, 1, 20.00),
-(18, 57, 6, 35.00),
-(19, 58, 12, 50.00),
-(20, 59, 5, 20.00),
-(21, 60, 4, 20.00),
-(22, 61, 9, 25.00),
-(23, 62, 13, 20.00),
-(24, 63, 11, 20.00),
-(25, 64, 10, 50.00);
 
 -- --------------------------------------------------------
 
@@ -411,15 +185,6 @@ CREATE TABLE `citas_uptm` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `citas_uptm`
---
-
-INSERT INTO `citas_uptm` (`id_citas_uptm`, `idcita`, `id_externo`, `created_at`, `updated_at`) VALUES
-(13, 57, 5, '2026-04-06 21:16:27', '2026-04-06 21:16:27'),
-(14, 58, 5, '2026-04-06 21:43:00', '2026-04-06 21:43:00'),
-(15, 59, 5, '2026-04-06 21:50:13', '2026-04-06 21:50:13');
 
 -- --------------------------------------------------------
 
@@ -470,7 +235,7 @@ CREATE TABLE `comunidad_uptm` (
 --
 
 INSERT INTO `comunidad_uptm` (`id`, `cedula`, `nombre`, `apellido`, `created_at`, `updated_at`, `deleted_at`, `id_tipo_ext`) VALUES
-(5, 22657594, 'Luis', 'Mendoza', '2026-04-06 21:16:27', '2026-04-06 21:50:13', NULL, NULL);
+(5, 22657594, 'Luis', 'Mendoza', '2026-04-06 21:16:27', '2026-04-09 01:24:22', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -489,28 +254,6 @@ CREATE TABLE `consumo_plan` (
   `monto_descontado` decimal(10,2) NOT NULL DEFAULT 0.00,
   `fecha_consumo` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `consumo_plan`
---
-
-INSERT INTO `consumo_plan` (`ID_consumo`, `ID_contrato_plan`, `id_cita`, `ID_persona_plan`, `ID_examen_plan`, `nombre_estudio_externo`, `id_categoria_externa`, `monto_descontado`, `fecha_consumo`) VALUES
-(7, 13, 48, 30270492, 6, NULL, NULL, 35.00, '2026-03-27 21:01:07'),
-(8, 13, 49, 30270492, 12, NULL, NULL, 50.00, '2026-03-27 21:53:38'),
-(9, 13, 51, 30270492, 2, NULL, NULL, 20.00, '2026-03-27 22:57:28'),
-(10, 13, NULL, 30270492, NULL, 'ecografia lateral', 3, 25.00, '2026-03-28 11:48:13'),
-(11, 13, NULL, 30270492, NULL, 'rayos x abdominal', 4, 30.00, '2026-03-28 11:48:13'),
-(12, 13, NULL, 10505948, NULL, 'consulta neurologica', 1, 80.00, '2026-03-28 11:53:56'),
-(13, 13, 53, 30270492, 6, NULL, NULL, 35.00, '2026-03-28 12:35:15'),
-(14, 13, 53, 30270492, 7, NULL, NULL, 30.00, '2026-03-28 12:35:15'),
-(15, 13, 53, 30270492, 8, NULL, NULL, 40.00, '2026-03-28 12:35:15'),
-(16, 13, 52, 30270492, 13, NULL, NULL, 12.00, '2026-03-28 12:35:24'),
-(17, 13, 50, 30270492, 5, NULL, NULL, 20.00, '2026-03-28 12:35:29'),
-(18, 13, 54, 30270492, 11, NULL, NULL, 20.00, '2026-03-28 18:58:26'),
-(19, 13, 55, 30270492, 2, NULL, NULL, 20.00, '2026-03-28 21:27:59'),
-(20, 13, 56, 10505948, 1, NULL, NULL, 20.00, '2026-04-06 17:51:35'),
-(21, 13, 60, 30270492, 4, NULL, NULL, 20.00, '2026-04-06 18:03:39'),
-(22, 13, 64, 10505948, 10, NULL, NULL, 50.00, '2026-04-06 19:17:13');
 
 -- --------------------------------------------------------
 
@@ -535,7 +278,7 @@ CREATE TABLE `contrato_plan` (
 --
 
 INSERT INTO `contrato_plan` (`ID_contrato`, `ID_planes_contrato`, `ID_afiliado_contrato`, `fecha_inicio`, `fecha_fin`, `monto_total`, `frecuencia_pago`, `dia_pago_mensual`, `estado_contrato`) VALUES
-(13, 6, 30270492, '2026-03-28', '2027-03-27', 180.00, 'Mensual', 29, 'Activo');
+(13, 6, 30270492, '2026-01-01', '2027-03-27', 180.00, 'Mensual', 29, 'Activo');
 
 -- --------------------------------------------------------
 
@@ -702,8 +445,16 @@ CREATE TABLE `pagos_contrato` (
   `monto_cuota` decimal(10,2) NOT NULL,
   `fecha_pago` date NOT NULL,
   `numero_cuota` int(11) DEFAULT NULL,
-  `metodo_pago` varchar(50) DEFAULT NULL
+  `metodo_pago` varchar(50) DEFAULT NULL,
+  `tipo_pago` varchar(20) NOT NULL DEFAULT 'Cuota'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `pagos_contrato`
+--
+
+INSERT INTO `pagos_contrato` (`ID_pago`, `ID_contrato`, `monto_cuota`, `fecha_pago`, `numero_cuota`, `metodo_pago`, `tipo_pago`) VALUES
+(23, 13, 60.00, '2026-01-21', NULL, 'transferencia', 'Pago inicial');
 
 -- --------------------------------------------------------
 
@@ -719,15 +470,6 @@ CREATE TABLE `pagos_externos` (
   `metodo_pago` varchar(50) DEFAULT 'Efectivo',
   `fecha_pago` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `pagos_externos`
---
-
-INSERT INTO `pagos_externos` (`id_pago_ext`, `id_cita`, `monto_base`, `monto_final`, `metodo_pago`, `fecha_pago`) VALUES
-(22, 57, 35.00, 35.00, 'Efectivo', '2026-04-06 21:44:49'),
-(23, 58, 50.00, 50.00, 'Efectivo', '2026-04-06 21:46:57'),
-(24, 59, 20.00, 20.00, 'Efectivo', '2026-04-06 21:50:35');
 
 -- --------------------------------------------------------
 
@@ -753,6 +495,7 @@ CREATE TABLE `persona` (
 
 INSERT INTO `persona` (`cedula`, `nombre`, `apellido`, `fechanacimiento`, `genero`, `telefono`, `correo`, `ocupacion`, `estado`) VALUES
 (10505948, 'Teresa', 'Pérez', '1974-03-21', 'Femenino', 2147483647, 'tere_34_11_3@gmail.com', 'Nada', ''),
+(22657594, 'Luis', 'Mendoza', '1980-03-23', 'Masculino', 465465465, 'adsdad@addasd', 'asd', ''),
 (30270492, 'Gregory', 'Pérez', '2002-08-31', 'Masculino', 46544, 'gps.3108@gmail.com', 'asdasd', '');
 
 -- --------------------------------------------------------
@@ -1109,13 +852,13 @@ ALTER TABLE `afiliados`
 -- AUTO_INCREMENT de la tabla `beneficiarios`
 --
 ALTER TABLE `beneficiarios`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `bitacora`
 --
 ALTER TABLE `bitacora`
-  MODIFY `idbitacora` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=289;
+  MODIFY `idbitacora` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `categorias_examenes`
@@ -1127,13 +870,13 @@ ALTER TABLE `categorias_examenes`
 -- AUTO_INCREMENT de la tabla `citas`
 --
 ALTER TABLE `citas`
-  MODIFY `id_cita` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+  MODIFY `id_cita` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
 
 --
 -- AUTO_INCREMENT de la tabla `citas_afil`
 --
 ALTER TABLE `citas_afil`
-  MODIFY `id_citas_afil` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id_citas_afil` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT de la tabla `citas_benef`
@@ -1145,13 +888,13 @@ ALTER TABLE `citas_benef`
 -- AUTO_INCREMENT de la tabla `citas_examenes`
 --
 ALTER TABLE `citas_examenes`
-  MODIFY `id_cita_examen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id_cita_examen` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT de la tabla `citas_uptm`
 --
 ALTER TABLE `citas_uptm`
-  MODIFY `id_citas_uptm` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id_citas_uptm` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT de la tabla `componentes_planes`
@@ -1169,7 +912,7 @@ ALTER TABLE `comunidad_uptm`
 -- AUTO_INCREMENT de la tabla `consumo_plan`
 --
 ALTER TABLE `consumo_plan`
-  MODIFY `ID_consumo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `ID_consumo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `contrato_plan`
@@ -1211,7 +954,7 @@ ALTER TABLE `medicos`
 -- AUTO_INCREMENT de la tabla `pagos_contrato`
 --
 ALTER TABLE `pagos_contrato`
-  MODIFY `ID_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `ID_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de la tabla `pagos_externos`

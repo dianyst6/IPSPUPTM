@@ -8,7 +8,7 @@ header('Content-Type: application/json'); // Indica que la respuesta será en fo
 
 // Verifica si todos los datos necesarios fueron proporcionados
 if (isset($_POST['cedula'], $_POST['nombre'], $_POST['apellido'],
-$_POST['fechanacimiento'], $_POST['genero'],
+$_POST['fechanacimiento'], $_POST['parentesco'], $_POST['genero'],
 $_POST['telefono'], $_POST['correo'], $_POST['ocupacion'])) {
 
     // Limpia los datos para prevenir inyección SQL
@@ -16,6 +16,7 @@ $_POST['telefono'], $_POST['correo'], $_POST['ocupacion'])) {
     $nombre = htmlspecialchars($_POST['nombre']);
     $apellido = htmlspecialchars($_POST['apellido']);
     $fechanacimiento = htmlspecialchars($_POST['fechanacimiento']);
+    $parentesco = htmlspecialchars($_POST['parentesco']);
     $genero = htmlspecialchars($_POST['genero']);
     $telefono = htmlspecialchars($_POST['telefono']);
     $correo = htmlspecialchars($_POST['correo']);
@@ -68,14 +69,14 @@ $_POST['telefono'], $_POST['correo'], $_POST['ocupacion'])) {
             throw new Exception("Error al preparar consulta para persona: " . $conn->error);
         }
 
-        // Actualizar datos en la tabla beneficiarios (solo el campo updated_at)
+        // Actualizar datos en la tabla beneficiarios
         $sql_beneficiarios = "UPDATE beneficiarios 
-                                    SET updated_at = NOW() 
+                                    SET parentesco = ?, updated_at = NOW() 
                                     WHERE cedula = ?";
         $stmt_beneficiarios = $conn->prepare($sql_beneficiarios);
-
+ 
         if ($stmt_beneficiarios) {
-            $stmt_beneficiarios->bind_param("s", $cedula);
+            $stmt_beneficiarios->bind_param("ss", $parentesco, $cedula);
 
             if (!$stmt_beneficiarios->execute()) {
                 throw new Exception("Error al actualizar en beneficiarios: " . $stmt_beneficiarios->error);

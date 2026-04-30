@@ -15,6 +15,7 @@ if (isset($_POST['cedula'])) {
                 p.ocupacion, 
                 b.created_at, 
                 b.updated_at, 
+                b.parentesco,
                 a.id AS id_afiliado, -- Incluimos el ID del afiliado
                 CONCAT(pa.nombre, ' ', pa.apellido) AS afiliado_nombre_completo
             FROM 

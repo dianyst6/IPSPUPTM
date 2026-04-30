@@ -56,6 +56,17 @@
                             <input type="date" name="fechanacimiento" id="fechanacimiento" class="form-control" required>
                         </div>
                         <div class="mb-3 col-md-6">
+                            <label for="parentesco" class="form-label">Parentesco</label>
+                            <select name="parentesco" id="parentesco" class="form-select" required>
+                                <option value=""> Seleccionar... </option>
+                                <option value="Hijo">Hijo</option>
+                                <option value="Esposo/a">Esposo/a</option>
+                                <option value="Padre">Padre</option>
+                                <option value="Madre">Madre</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 col-md-6">
                             <label for="genero" class="form-label">Género</label>
                             <select name="genero" id="genero" class="form-select" required>
                                 <option value=""> Seleccionar... </option>

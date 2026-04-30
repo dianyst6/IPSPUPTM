@@ -46,6 +46,27 @@ include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
                         </div>
                     </div>
 
+                    <!-- Indicador de progreso del Pago Inicial -->
+                    <div id="info_pago_inicial" class="alert alert-warning d-none mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span><i class="fas fa-piggy-bank"></i> Pago Inicial (30%):</span>
+                            <strong id="progreso_inicial">$ 0.00 / $ 0.00</strong>
+                        </div>
+                        <div class="progress mt-2" style="height: 8px;">
+                            <div class="progress-bar bg-success" id="barra_inicial" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <small class="text-muted mt-1 d-block" id="mensaje_inicial"></small>
+                    </div>
+
+                    <!-- Selector de Tipo de Pago -->
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de Pago</label>
+                        <select name="tipo_pago" id="tipo_pago_select" class="form-select" required onchange="cambiarTipoPago()">
+                            <option value="Pago Inicial">Pago Inicial (30%)</option>
+                            <option value="Cuota">Cuota Normal</option>
+                        </select>
+                    </div>
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Monto a Pagar ($)</label>
@@ -66,7 +87,7 @@ include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6 mb-3" id="contenedor_cuota">
                             <label class="form-label">Número de Cuota</label>
                             <input type="number" name="numero_cuota" id="input_cuota" class="form-control bg-light"
                                 placeholder="Seleccione un contrato..." readonly required>
@@ -94,6 +115,8 @@ include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
 
 <script>
 let tasaBCVAbsoluta = 0;
+// Variable global para guardar el estado del pago inicial
+let estadoPagoInicial = {};
 
 function formatearMonedaVE(valor) {
     return new Intl.NumberFormat('es-VE', { 
@@ -128,6 +151,22 @@ function calcularBolivares() {
     
     document.getElementById('monto_bs_label').innerText = formatearMonedaVE(montoBs) + ' Bs';
     document.getElementById('monto_bs_input').value = montoBs.toFixed(2);
+}
+
+function cambiarTipoPago() {
+    const tipoPago = document.getElementById('tipo_pago_select').value;
+    const inputCuota = document.getElementById('input_cuota');
+    const contenedorCuota = document.getElementById('contenedor_cuota');
+
+    if (tipoPago === 'Pago Inicial') {
+        inputCuota.value = 0;
+        contenedorCuota.style.display = 'none';
+    } else {
+        contenedorCuota.style.display = '';
+        if (estadoPagoInicial.proxima_cuota) {
+            inputCuota.value = estadoPagoInicial.proxima_cuota;
+        }
+    }
 }
 
 // Inicializar Select2 en el modal, asegúrate que jQuery esté cargado primero
@@ -165,9 +204,12 @@ function consultarSaldo(idContrato) {
     const spanMonto = document.getElementById('monto_pendiente');
     const inputCuota = document.getElementById('input_cuota');
     const btnGuardar = document.querySelector('button[type="submit"]');
+    const infoPagoInicial = document.getElementById('info_pago_inicial');
+    const tipoPagoSelect = document.getElementById('tipo_pago_select');
 
     if (!idContrato) {
         contenedor.classList.add('d-none');
+        infoPagoInicial.classList.add('d-none');
         inputCuota.value = "";
         return;
     }
@@ -181,20 +223,60 @@ function consultarSaldo(idContrato) {
     })
     .then(response => response.json())
     .then(data => {
-        // Asignamos el saldo y la cuota desde el JSON
+        // Guardar estado global
+        estadoPagoInicial = data;
+
+        // Mostrar saldo general
         spanMonto.innerText = '$ ' + data.saldo;
-        inputCuota.value = data.proxima_cuota;
         contenedor.classList.remove('d-none');
 
-        // Lógica de validación según el saldo calculado
+        // --- LÓGICA DE PAGO INICIAL ---
+        const progresoInicial = document.getElementById('progreso_inicial');
+        const barraInicial = document.getElementById('barra_inicial');
+        const mensajeInicial = document.getElementById('mensaje_inicial');
+        const contenedorCuota = document.getElementById('contenedor_cuota');
+
+        // Mostrar progreso del pago inicial
+        progresoInicial.innerText = '$ ' + data.pago_inicial_pagado + ' / $ ' + data.pago_inicial_requerido;
+        const porcentaje = (parseFloat(data.pago_inicial_pagado) / parseFloat(data.pago_inicial_requerido)) * 100;
+        barraInicial.style.width = Math.min(porcentaje, 100) + '%';
+        infoPagoInicial.classList.remove('d-none');
+
         if (parseFloat(data.saldo) <= 0) {
+            // Plan totalmente solventado
             contenedor.className = "alert alert-success mb-3";
             spanMonto.innerText = "¡Plan Solventado!";
             inputCuota.value = ""; 
-            btnGuardar.disabled = true; // Bloquea el botón si no debe nada
-        } else {
+            btnGuardar.disabled = true;
+            infoPagoInicial.classList.add('d-none');
+
+        } else if (data.pago_inicial_completo) {
+            // Ya completó el 30%: solo puede pagar cuotas normales
+            infoPagoInicial.className = 'alert alert-success mb-3';
+            mensajeInicial.innerText = '✅ Pago inicial completado. Puede registrar cuotas normales.';
+            
+            tipoPagoSelect.value = 'Cuota';
+            tipoPagoSelect.querySelector('option[value="Pago Inicial"]').disabled = true;
+            tipoPagoSelect.querySelector('option[value="Cuota"]').disabled = false;
+            
+            inputCuota.value = data.proxima_cuota;
+            contenedorCuota.style.display = '';
+            btnGuardar.disabled = false;
             contenedor.className = "alert alert-warning mb-3";
-            btnGuardar.disabled = false; // Habilita el botón si hay deuda
+
+        } else {
+            // NO ha completado el 30%: solo puede pagar "Pago Inicial"
+            infoPagoInicial.className = 'alert alert-warning mb-3';
+            mensajeInicial.innerText = '⚠️ Debe completar el pago inicial antes de registrar cuotas.';
+            
+            tipoPagoSelect.value = 'Pago Inicial';
+            tipoPagoSelect.querySelector('option[value="Cuota"]').disabled = true;
+            tipoPagoSelect.querySelector('option[value="Pago Inicial"]').disabled = false;
+            
+            inputCuota.value = 0;
+            contenedorCuota.style.display = 'none';
+            btnGuardar.disabled = false;
+            contenedor.className = "alert alert-warning mb-3";
         }
     })
     .catch(error => console.error('Error:', error));

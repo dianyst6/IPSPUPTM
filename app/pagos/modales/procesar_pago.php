@@ -11,14 +11,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fecha_pago   = $_POST['fecha_pago'];
     $numero_cuota = $_POST['numero_cuota'];
     $metodo_pago  = $_POST['metodo_pago'];
+    $tipo_pago    = $_POST['tipo_pago'] ?? 'Cuota';
 
     // 3. Validamos que los campos esenciales no estén vacíos
-    if (!empty($id_contrato) && !empty($monto_cuota) && !empty($numero_cuota)) {
+    if (!empty($id_contrato) && !empty($monto_cuota)) {
         
-        // 4. Preparamos la consulta SQL
-        // Según tu base de datos: ID_contrato, monto_cuota, fecha_pago, numero_cuota, metodo_pago
-        $sql = "INSERT INTO pagos_contrato (ID_contrato, monto_cuota, fecha_pago, numero_cuota, metodo_pago) 
-                VALUES (?, ?, ?, ?, ?)";
+        // 4. Preparamos la consulta SQL con tipo_pago
+        $sql = "INSERT INTO pagos_contrato (ID_contrato, monto_cuota, fecha_pago, numero_cuota, metodo_pago, tipo_pago) 
+                VALUES (?, ?, ?, ?, ?, ?)";
         
         $stmt = mysqli_prepare($conn, $sql);
         
@@ -29,8 +29,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                s = string (fecha_pago)
                i = entero (numero_cuota)
                s = string (metodo_pago)
+               s = string (tipo_pago)
             */
-            mysqli_stmt_bind_param($stmt, "idsis", $id_contrato, $monto_cuota, $fecha_pago, $numero_cuota, $metodo_pago);
+            mysqli_stmt_bind_param($stmt, "idsiss", $id_contrato, $monto_cuota, $fecha_pago, $numero_cuota, $metodo_pago, $tipo_pago);
 
             // 5. Ejecutamos la consulta
             if (mysqli_stmt_execute($stmt)) {

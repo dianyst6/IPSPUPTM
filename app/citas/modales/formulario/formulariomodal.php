@@ -99,9 +99,14 @@
                 <option value="" selected disabled>Escriba para buscar...</option>
                 <?php
                 $sql_pacientes = "
-                SELECT a.id AS id_pac_val, p.cedula, CONCAT(p.nombre, ' ', p.apellido, ' - (Afiliado)') AS nombre_completo FROM afiliados a JOIN persona p ON a.cedula = p.cedula
+                SELECT a.id AS id_pac_val, p.cedula, CONCAT(p.nombre, ' ', p.apellido, ' - (Afiliado)') AS nombre_completo 
+                FROM afiliados a 
+                JOIN persona p ON a.cedula = p.cedula
                 UNION
-                SELECT b.id AS id_pac_val, p.cedula, CONCAT(p.nombre, ' ', p.apellido, ' - (Beneficiario)') AS nombre_completo FROM beneficiarios b JOIN persona p ON b.cedula = p.cedula
+                SELECT b.id AS id_pac_val, p.cedula, CONCAT(p.nombre, ' ', p.apellido, ' - (Beneficiario)') AS nombre_completo 
+                FROM beneficiarios b 
+                JOIN persona p ON b.cedula = p.cedula
+                WHERE NOT (b.parentesco = 'Hijo' AND TIMESTAMPDIFF(YEAR, p.fechanacimiento, CURDATE()) >= 25)
                 ORDER BY nombre_completo ASC";
                 $result_pacientes = $conn->query($sql_pacientes);
                 while ($row = $result_pacientes->fetch_assoc()) {
@@ -335,8 +340,9 @@ window.abrirModalNuevoExamen = function() {
                     .then(data => {
                         alertaSaldo.classList.remove('alert-info');
                         if (data.success) {
-                            const saldo = data.afiliado.saldo_disponible;
-                            const plan = data.afiliado.plan;
+                            const afil = data.afiliado;
+                            const saldo = afil.saldo_disponible;
+                            const plan = afil.plan;
                             
                             const contSaldo = document.getElementById('cont-saldo-disponible-cita');
                             const valSaldo = document.getElementById('saldo-disponible-cita');
@@ -346,6 +352,27 @@ window.abrirModalNuevoExamen = function() {
                                 contSaldo.classList.add(saldo > 0 ? 'text-success' : 'text-danger');
                             }
                             
+                            // 1. Verificar Pago Inicial
+                            if (!afil.pago_inicial_ok) {
+                                alertaSaldo.classList.add('alert-danger');
+                                tituloAlerta.innerHTML = '<i class="fas fa-hand-holding-usd me-2"></i>Póliza Inactiva';
+                                textoAlerta.innerHTML = `<strong>Debe realizar el pago inicial (30%)</strong> para activar los beneficios del plan "${plan}".<br><span class="fw-bold fs-6">No es posible agendar citas hasta completar este pago.</span>`;
+                                btnGuardarCita.disabled = true;
+                                if (selectEspecialidad) selectEspecialidad.disabled = true;
+                                return;
+                            }
+
+                            // 2. Verificar Solvencia (Deuda)
+                            if (!afil.solvente) {
+                                alertaSaldo.classList.add('alert-danger');
+                                tituloAlerta.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>Paciente Insolvente';
+                                textoAlerta.innerHTML = `El afiliado tiene una deuda de <strong>${afil.meses_deuda} meses</strong>.<br><span class="fw-bold fs-6">Debe ponerse al día (máximo 2 meses de deuda) para usar el plan "${plan}".</span>`;
+                                btnGuardarCita.disabled = true;
+                                if (selectEspecialidad) selectEspecialidad.disabled = true;
+                                return;
+                            }
+
+                            // 3. Verificar Saldo Disponible
                             if (saldo <= 0) {
                                 alertaSaldo.classList.add('alert-danger');
                                 tituloAlerta.innerHTML = '<i class="fas fa-ban me-2"></i>Póliza Agotada';
