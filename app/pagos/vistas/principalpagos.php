@@ -79,7 +79,7 @@ $mes_actual_es = $meses_es[date('n') - 1];
                         <i class="fa-solid fa-hand-holding-medical fs-1"></i>
                     </div>
                     
-                    <h3 class="h4 fw-bold mb-2" style="color: #1e293b;">Pagos por Cobertura</h3>
+                    <h3 class="h4 fw-bold mb-2" style="color: #1e293b;">Pagos de Citas</h3> 
                     <p class="text-secondary mb-4 flex-grow-1" style="font-size: 0.95rem;">Descuento automático de cobertura para Afiliados y Beneficiarios registrados.</p>
                     
                     <div class="mb-4">

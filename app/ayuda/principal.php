@@ -4,6 +4,16 @@
         <p class="mb-3">Esta sección te guiará en el uso de la aplicación, diseñada para simplificar la gestión de datos de
             la institución.</p>
 
+        <div class="mb-4">
+            <a href="/IPSPUPTM/app/reportes/pdf/manual_pdf.php" class="btn btn-danger shadow-sm me-2">
+                <i class="fas fa-file-pdf me-2"></i> Descargar Manual (PDF)
+            </a>
+            <a href="/IPSPUPTM/app/reportes/word/manual_word.php" class="btn btn-primary shadow-sm">
+                <i class="fas fa-file-word me-2"></i> Descargar Manual (Word)
+            </a>
+        </div>
+
+
         <h2>Módulos Principales</h2>
         <p class="mb-3">El sistema se organiza en tres módulos principales para la gestión: <strong>Afiliados</strong>,
             <strong>Beneficiarios</strong> y <strong>Citas</strong>. A continuación, te explicamos cómo interactuar con cada
