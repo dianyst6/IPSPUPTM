@@ -46,7 +46,13 @@ try {
             -- Aquí buscamos en la tabla comunidad_uptm (com)
             WHEN cuptm.idcita IS NOT NULL THEN CONCAT(com.nombre, ' ', com.apellido)
             ELSE 'Paciente no encontrado'
-        END AS nombre_paciente
+        END AS nombre_paciente,
+        CASE 
+            WHEN ca.idcita IS NOT NULL THEN p_a.cedula
+            WHEN cb.idcita IS NOT NULL THEN p_b.cedula
+            WHEN cuptm.idcita IS NOT NULL THEN com.cedula
+            ELSE 'N/A'
+        END AS cedula_paciente
     FROM citas c
     -- 1. Relación Afiliados
     LEFT JOIN citas_afil ca ON c.id_cita = ca.idcita
@@ -85,8 +91,7 @@ try {
     $totalRows = $totalRowsResult->fetch_assoc()['total'];
     $totalPages = ceil($totalRows / $rowsPerPage);
 
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     // Manejo de errores
     echo "Ocurrió un error: " . $e->getMessage();
     exit();
@@ -97,13 +102,13 @@ catch (Exception $e) {
         <div class="card-body" style="margin-left: 0;">
             <!-- Elimina el margen izquierdo -->
             <div class="mt-3 m-3 text-justify">
-                 <h1 class="fw-bold text-center" style="color: #062974;">Citas</h1>
-            <hr class="mx-auto" style="width: 50px; height: 3px; background-color: #062974;">
+                <h1 class="fw-bold text-center" style="color: #062974;">Citas</h1>
+                <hr class="mx-auto" style="width: 50px; height: 3px; background-color: #062974;">
 
                 </h1>
                 <br>
 
- 
+
                 <div class="row mt-3">
                     <div class="col-auto">
                         <!-- Botón Agregar Cita -->
@@ -112,47 +117,50 @@ catch (Exception $e) {
                         </a>
                     </div>
                     <div class="col-auto">
-                            <select id="filterTipo" class="form-select w-auto">
-                           <option value="todos">Todos los Tipos</option>
-                         <option value="Afiliado">Afiliados</option>
-                           <option value="Beneficiario">Beneficiarios</option>
-                             <option value="Comunidad UPTM">Comunidad UPTM</option>
-                       </select>
-    </div>
+                        <select id="filterTipo" class="form-select w-auto">
+                            <option value="todos">Todos los Tipos</option>
+                            <option value="Afiliado">Afiliados</option>
+                            <option value="Beneficiario">Beneficiarios</option>
+                            <option value="Comunidad UPTM">Comunidad UPTM</option>
+                        </select>
+                    </div>
                     <div class="col text-end mt-2">
                         <!-- Input de búsqueda alineado a la derecha -->
                         <input type="text" id="search" class="form-control w-auto d-inline-block"
                             placeholder="Buscar cita...">
                     </div>
                 </div>
-                               <!-- Pestañas de Filtrado -->
+                <!-- Pestañas de Filtrado -->
                 <ul class="nav nav-tabs mb-4 shadow-sm rounded-top" id="citasTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link <?= ($currentTab == 'activas') ? 'active fw-bold' : '' ?>" 
-                           href="?vista=citas&tab=activas">
-                           <i class="fas fa-calendar-check me-2"></i>Citas Activas (Por Pagar)
+                        <a class="nav-link <?= ($currentTab == 'activas') ? 'active fw-bold' : '' ?>"
+                            href="?vista=citas&tab=activas">
+                            <i class="fas fa-calendar-check me-2"></i>Citas Activas (Por Pagar)
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?= ($currentTab == 'pagadas') ? 'active fw-bold text-success' : '' ?>" 
-                           href="?vista=citas&tab=pagadas">
-                           <i class="fas fa-file-invoice-dollar me-2"></i>Citas Pagadas
+                        <a class="nav-link <?= ($currentTab == 'pagadas') ? 'active fw-bold text-success' : '' ?>"
+                            href="?vista=citas&tab=pagadas">
+                            <i class="fas fa-file-invoice-dollar me-2"></i>Citas Pagadas
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?= ($currentTab == 'canceladas') ? 'active fw-bold text-danger' : '' ?>" 
-                           href="?vista=citas&tab=canceladas">
-                           <i class="fas fa-calendar-times me-2"></i>Citas Canceladas
+                        <a class="nav-link <?= ($currentTab == 'canceladas') ? 'active fw-bold text-danger' : '' ?>"
+                            href="?vista=citas&tab=canceladas">
+                            <i class="fas fa-calendar-times me-2"></i>Citas Canceladas
                         </a>
                     </li>
                 </ul>
 
 
                 <h4>
-                    <?php 
-                        if($currentTab == 'pagadas') echo "Citas Pagadas / Deducidas";
-                        elseif($currentTab == 'canceladas') echo "Citas Canceladas";
-                        else echo "Citas Pendientes de Pago";
+                    <?php
+                    if ($currentTab == 'pagadas')
+                        echo "Citas Pagadas / Deducidas";
+                    elseif ($currentTab == 'canceladas')
+                        echo "Citas Canceladas";
+                    else
+                        echo "Citas Pendientes de Pago";
                     ?>
                 </h4>
                 <div class="table-responsive mt-3">
@@ -160,6 +168,7 @@ catch (Exception $e) {
                     <table class="table table-sm table-striped table-hover mx-auto">
                         <thead class="table-dark">
                             <tr>
+                                <th>Cédula</th>
                                 <th>Nombre del Paciente</th>
                                 <th>Tipo de Paciente</th>
                                 <th>Especialidad</th>
@@ -169,61 +178,61 @@ catch (Exception $e) {
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                       <tbody>
-    <?php if ($citas->num_rows > 0) { ?>
-        <?php while ($row = $citas->fetch_assoc()) { ?>
-            <tr data-tipo="<?php echo $row['tipo_paciente']; ?>">
-                <td><?php echo htmlspecialchars($row['nombre_paciente']); ?></td>
-                <td><?php echo htmlspecialchars($row['tipo_paciente']); ?></td>
-                <td><?php echo htmlspecialchars($row['nombre_especialidad']); ?></td>
-                <td><?php echo htmlspecialchars($row['descripcion']); ?></td>
-                <td><?php echo date('d-m-Y H:i', strtotime($row['fecha_cita'])); ?></td>
-                <td>
-                    <?php if($row['estado'] == 'activa'): ?>
-                        <?php if($row['estado_pago'] == 'Por Pagar'): ?>
-                            <span class="badge bg-success">Activa / Por Pagar</span>
-                        <?php else: ?>
-                            <span class="badge bg-primary"><?php echo $row['estado_pago']; ?></span>
-                        <?php endif; ?>
-                    <?php else: ?>
-                        <span class="badge bg-danger">Cancelada</span>
-                    <?php endif; ?>
-                </td>
-                <td class="text-center">
-                    <a href="#" class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                        data-bs-target="#editmodal"
-                        data-bs-idcita="<?= htmlspecialchars($row['id_cita']); ?>">
-                        <i class="fas fa-edit"></i> Editar
-                    </a>
-                    <a href="#" class="btn btn-danger btn-sm <?php echo ($row['estado'] == 'cancelada') ? 'disabled' : ''; ?>" data-bs-toggle="modal"
-                        data-bs-target="#eliminamodal"
-                        data-bs-idcita="<?= htmlspecialchars($row['id_cita']); ?>">
-                        <i class="fas fa-ban"></i> Cancelar
-                    </a>
-                </td>
-            </tr>
-        <?php
-    }?>
-    <?php
-}
-else { ?>
-        <tr>
-            <td colspan="6" class="text-center">No se encontraron citas registradas.</td>
-        </tr>
-             <?php
-}?>
-           </tbody>
+                        <tbody>
+                            <?php if ($citas->num_rows > 0) { ?>
+                                <?php while ($row = $citas->fetch_assoc()) { ?>
+                                    <tr data-tipo="<?php echo $row['tipo_paciente']; ?>">
+                                        <td><?php echo htmlspecialchars($row['cedula_paciente']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['nombre_paciente']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['tipo_paciente']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['nombre_especialidad']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['descripcion']); ?></td>
+                                        <td><?php echo date('d-m-Y H:i', strtotime($row['fecha_cita'])); ?></td>
+                                        <td>
+                                            <?php if ($row['estado'] == 'activa'): ?>
+                                                <?php if ($row['estado_pago'] == 'Por Pagar'): ?>
+                                                    <span class="badge bg-success">Activa / Por Pagar</span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-primary"><?php echo $row['estado_pago']; ?></span>
+                                                <?php endif; ?>
+                                            <?php else: ?>
+                                                <span class="badge bg-danger">Cancelada</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="#" class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#editmodal"
+                                                data-bs-idcita="<?= htmlspecialchars($row['id_cita']); ?>">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </a>
+                                            <a href="#"
+                                                class="btn btn-danger btn-sm <?php echo ($row['estado'] == 'cancelada') ? 'disabled' : ''; ?>"
+                                                data-bs-toggle="modal" data-bs-target="#eliminamodal"
+                                                data-bs-idcita="<?= htmlspecialchars($row['id_cita']); ?>">
+                                                <i class="fas fa-ban"></i> Cancelar
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                } ?>
+                                <?php
+                            } else { ?>
+                                <tr>
+                                    <td colspan="8" class="text-center">No se encontraron citas registradas.</td>
+                                </tr>
+                                <?php
+                            } ?>
+                        </tbody>
                     </table>
                 </div>
-
                 <div class="d-flex justify-content-center mt-3">
                     <?php for ($i = 1; $i <= $totalPages; $i++) { ?>
-                    <a href="?vista=citas&page=<?php echo $i; ?>&tab=<?php echo $currentTab; ?>"
-                        class="btn btn-sm <?php echo($i == $currentPage) ? 'btn-secondary' : 'btn-primary'; ?> mx-1">
-                        <?php echo $i; ?>
-                    </a>
-                    <?php
-}?>
+                        <a href="?vista=citas&page=<?php echo $i; ?>&tab=<?php echo $currentTab; ?>"
+                            class="btn btn-sm <?php echo ($i == $currentPage) ? 'btn-secondary' : 'btn-primary'; ?> mx-1">
+                            <?php echo $i; ?>
+                        </a>
+                        <?php
+                    } ?>
                 </div>
             </div>
         </div>

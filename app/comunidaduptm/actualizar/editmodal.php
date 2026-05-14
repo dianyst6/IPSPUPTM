@@ -19,7 +19,7 @@
 
             <div class="mb-3">
               <label for="nombre" class="form-label fw-bold">Nombre</label>
-              <input type="text" id="nombre" name="nombre" class="form-control bg-light" >
+              <input type="text" id="nombre" name="nombre" class="form-control bg-light" maxlength="50">
             </div>
 
             <div class="mb-3">

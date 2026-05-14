@@ -1,6 +1,6 @@
-<?php 
+<?php
 include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
-include 'C:/xampp/htdocs/IPSPUPTM/config/alertify.php'; 
+include 'C:/xampp/htdocs/IPSPUPTM/config/alertify.php';
 
 
 $rowsPerPage = 15; // Número de registros por página
@@ -20,7 +20,7 @@ $sqlAfiliados = "
 ";
 $afiliados = $conn->query($sqlAfiliados);
 
-$totalRowsResult = $conn->query ("SELECT COUNT(*) AS total FROM afiliados");
+$totalRowsResult = $conn->query("SELECT COUNT(*) AS total FROM afiliados");
 $totalRows = $totalRowsResult->fetch_assoc()['total'];
 $totalPages = ceil($totalRows / $rowsPerPage);
 
@@ -28,8 +28,8 @@ $totalPages = ceil($totalRows / $rowsPerPage);
 <div class="card shadow-lg">
     <div class="mt-3 m-3 text-justify">
 
-         <h1 class="fw-bold text-center" style="color: #062974;">Afiliados</h1>
-            <hr class="mx-auto" style="width: 50px; height: 3px; background-color: #062974;">
+        <h1 class="fw-bold text-center" style="color: #062974;">Afiliados</h1>
+        <hr class="mx-auto" style="width: 50px; height: 3px; background-color: #062974;">
 
         <!-- Contenedor para el botón y el input de búsqueda -->
         <div class="row mt-4 align-items-center">
@@ -62,42 +62,37 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                 </thead>
                 <tbody>
                     <?php while ($row = $afiliados->fetch_assoc()) { ?>
-                    <tr>
-                        <td><?php echo $row['cedula']; ?></td>
-                        <td><?php echo $row['nombre']; ?></td>
-                        <td><?php echo $row['apellido']; ?></td>
-                        <td class="text-center">
-                            <!-- Botón Ver Información -->
-                            <a href="#" class="btn btn-primary-custom btn-sm" data-bs-toggle="modal" data-bs-target="#vermodal"
-                                data-bs-cedula="<?= $row['cedula']; ?>">
-                                <i class="fas fa-eye"></i> Ver información
-                            </a>
-                            <button class="btn btn-sm btn-primary text-white" title="Ver Consumo"
-                                onclick="verResumenConsumo('<?php echo $row['cedula']; ?>', '<?php echo $row['nombre'].' '.$row['apellido']; ?>')">
-                                <i class="fas fa-eye"></i> Ver Plan
-                            </button>
-                            <!-- Botón Editar -->
-                            <a href="#" class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#editmodal" data-bs-cedula="<?= $row['cedula']; ?>">
-                                <i class="fas fa-edit"></i>Editar
-                            </a>
-                            <!-- Botón Eliminar -->
-                            <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#eliminamodal" data-bs-cedula="<?= $row['cedula']; ?>">
-                                <i class="fas fa-trash"></i> Eliminar
-                            </a>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td><?php echo $row['cedula']; ?></td>
+                            <td><?php echo $row['nombre']; ?></td>
+                            <td><?php echo $row['apellido']; ?></td>
+                            <td class="text-center">
+                                <!-- Botón Ver Información -->
+                                <a href="#" class="btn btn-primary-custom btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#vermodal" data-bs-cedula="<?= $row['cedula']; ?>">
+                                    <i class="fas fa-eye"></i> Ver información
+                                </a>
+                                <button class="btn btn-sm btn-primary text-white" title="Ver Consumo"
+                                    onclick="verResumenConsumo('<?php echo $row['cedula']; ?>', '<?php echo $row['nombre'] . ' ' . $row['apellido']; ?>')">
+                                    <i class="fas fa-eye"></i> Ver Plan
+                                </button>
+                                <!-- Botón Editar -->
+                                <a href="#" class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#editmodal" data-bs-cedula="<?= $row['cedula']; ?>">
+                                    <i class="fas fa-edit"></i>Editar
+                                </a>
+                            </td>
+                        </tr>
                     <?php } ?>
                 </tbody>
             </table>
         </div>
         <div class="d-flex justify-content mt-3">
             <?php for ($i = 1; $i <= $totalPages; $i++) { ?>
-            <a href="?page=<?php echo $i; ?>"
-                class="btn btn-sm <?php echo ($i == $currentPage) ? 'btn-secondary' : 'btn-primary'; ?> mx-1">
-                <?php echo $i; ?>
-            </a>
+                <a href="?page=<?php echo $i; ?>"
+                    class="btn btn-sm <?php echo ($i == $currentPage) ? 'btn-secondary' : 'btn-primary'; ?> mx-1">
+                    <?php echo $i; ?>
+                </a>
             <?php } ?>
         </div>
 

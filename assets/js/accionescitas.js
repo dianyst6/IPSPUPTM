@@ -126,22 +126,16 @@ function cargarDatosModal(modal, id_cita) {
             // --- INICIO DE LA LÓGICA DE VISIBILIDAD ---
             const divInternos = modal.querySelector('#campos_internos_editar');
             const divExternos = modal.querySelector('#campos_externos_editar');
-            const selectPaciente = modal.querySelector('#id_paciente_editar');
+            const inputIdPaciente = modal.querySelector('#id_paciente_editar');
 
             if (cita.tipo_origen === 'externo') {
-                // Si es externo: mostramos campos de texto, ocultamos el select
+                // Si es externo: mostramos campos de texto, ocultamos sección interna
                 if (divExternos) divExternos.style.display = 'block';
                 if (divInternos) divInternos.style.display = 'none';
-                
-                // Quitamos el 'required' al select para que no bloquee el envío
-                if (selectPaciente) selectPaciente.removeAttribute('required');
             } else {
-                // Si es interno: mostramos el select, ocultamos campos de texto
+                // Si es interno: mostramos el campo de texto readonly, ocultamos campos externos
                 if (divExternos) divExternos.style.display = 'none';
                 if (divInternos) divInternos.style.display = 'block';
-                
-                // Aseguramos que el select sea obligatorio
-                if (selectPaciente) selectPaciente.setAttribute('required', 'required');
             }
             // --- FIN DE LA LÓGICA DE VISIBILIDAD ---
 
@@ -149,9 +143,17 @@ function cargarDatosModal(modal, id_cita) {
             const inputId = modal.querySelector('#id_cita_editar');
             if (inputId) inputId.value = cita.id_cita;
 
-            // 2. Selección del paciente (Solo si es interno)
-            if (selectPaciente && cita.tipo_origen !== 'externo') {
-                selectPaciente.value = cita.id_paciente;
+            // 2. Paciente interno: tres campos readonly + id oculto
+            if (cita.tipo_origen !== 'externo') {
+                const fNombre = modal.querySelector('#nombre_int_editar');
+                const fApellido = modal.querySelector('#apellido_int_editar');
+                const fCedula = modal.querySelector('#cedula_int_editar');
+                const badge = modal.querySelector('#tipo_int_badge');
+                if (fNombre)   fNombre.value   = cita.nombre_int   || '';
+                if (fApellido) fApellido.value = cita.apellido_int || '';
+                if (fCedula)   fCedula.value   = cita.cedula_int   || '';
+                if (badge)     badge.textContent = cita.tipo_int    || '';
+                if (inputIdPaciente) inputIdPaciente.value = cita.id_paciente || '';
             }
 
             // 3. Selección de la especialidad

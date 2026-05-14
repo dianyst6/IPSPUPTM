@@ -49,7 +49,7 @@
             </div>
             <div class="mb-3 col-md-6"> 
                 <label for="nombre" class="form-label">Nombre</label>
-                <input type="text" name="nombre" id="nombre" class="form-control" required>
+                <input type="text" name="nombre" id="nombre" class="form-control" maxlength="50" required>
             </div>
             <div class="mb-3 col-md-6"> 
                 <label for="apellido" class="form-label">Apellido</label>

@@ -16,26 +16,28 @@
                             <select name="cedula_afil" id="cedula_afil" class="form-select" required>
                                 <option value="" selected disabled>Seleccionar afiliado...</option>
                                 <?php
-                                // Consulta para cargar afiliados existentes
-                                $sql_afiliados = "
+// Consulta para cargar afiliados existentes
+$sql_afiliados = "
                                 SELECT a.id AS cedula_afil, CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo
                                 FROM afiliados a
                                 JOIN persona p ON a.cedula = p.cedula
                                 ORDER BY p.nombre ASC";
-                                $result_afiliados = $conn->query($sql_afiliados);
+$result_afiliados = $conn->query($sql_afiliados);
 
-                                if ($result_afiliados) {
-                                    if ($result_afiliados->num_rows > 0) {
-                                        while ($row_afiliado = $result_afiliados->fetch_assoc()) {
-                                            echo '<option value="' . $row_afiliado['cedula_afil'] . '">' . $row_afiliado['nombre_completo'] . '</option>';
-                                        }
-                                    } else {
-                                        echo '<option value="">No hay afiliados disponibles</option>';
-                                    }
-                                } else {
-                                    echo '<option value="">Error al cargar afiliados</option>';
-                                }
-                                ?>
+if ($result_afiliados) {
+    if ($result_afiliados->num_rows > 0) {
+        while ($row_afiliado = $result_afiliados->fetch_assoc()) {
+            echo '<option value="' . $row_afiliado['cedula_afil'] . '">' . $row_afiliado['nombre_completo'] . '</option>';
+        }
+    }
+    else {
+        echo '<option value="">No hay afiliados disponibles</option>';
+    }
+}
+else {
+    echo '<option value="">Error al cargar afiliados</option>';
+}
+?>
                             </select>
                         </div>
                         <div class="mb-3 col-md-6">
@@ -45,7 +47,7 @@
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="nombre" class="form-label">Nombre</label>
-                            <input type="text" name="nombre" id="nombre" class="form-control" required>
+                            <input type="text" name="nombre" id="nombre" class="form-control" maxlength="50" required>
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="apellido" class="form-label">Apellido</label>
@@ -53,7 +55,9 @@
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="fechanacimiento" class="form-label">Fecha de Nacimiento</label>
-                            <input type="date" name="fechanacimiento" id="fechanacimiento" class="form-control" required>
+                            <input type="date" name="fechanacimiento" id="fechanacimiento" class="form-control" required
+                              min="<?php echo date('Y-m-d', strtotime('-110 years')); ?>"
+                              max="<?php echo date('Y-m-d'); ?>">
                         </div>
                         <div class="mb-3 col-md-6">
                             <label for="parentesco" class="form-label">Parentesco</label>

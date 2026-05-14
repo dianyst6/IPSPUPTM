@@ -21,7 +21,7 @@
               </div>
               <div class="col-md-6 col-12">
                 <label for="nombre" class="form-label">Nombre</label>
-                <input type="text" name="nombre" id="nombre" class="form-control" required>
+                <input type="text" name="nombre" id="nombre" class="form-control" maxlength="50" required>
               </div>
             </div>
 

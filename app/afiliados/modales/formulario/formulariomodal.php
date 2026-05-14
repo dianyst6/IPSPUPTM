@@ -18,7 +18,7 @@
               </div>
               <div class="col-md-6 col-12">
                 <label for="nombre" class="form-label">Nombre</label>
-                <input type="text" name="nombre" id="nombre" class="form-control" required>
+                <input type="text" name="nombre" id="nombre" class="form-control" maxlength="50" required>
               </div>
             </div>
             <div class="row mb-3">
@@ -28,7 +28,9 @@
               </div>
               <div class="col-md-6 col-12">
                 <label for="fechanacimiento" class="form-label">Fecha de Nacimiento</label>
-                <input type="date" name="fechanacimiento" id="fechanacimiento" class="form-control" required>
+                <input type="date" name="fechanacimiento" id="fechanacimiento" class="form-control" required
+                  min="<?php echo date('Y-m-d', strtotime('-110 years')); ?>"
+                  max="<?php echo date('Y-m-d'); ?>">
               </div>
             </div>
             <div class="row mb-3">
@@ -86,7 +88,7 @@ while ($p = mysqli_fetch_assoc($planes)) {
               </div>
               <div class="col-md-6 col-12">
                 <label for="fecha_fin" class="form-label">Fecha de Finalización</label>
-                <input type="date" name="fecha_fin" id="fecha_fin" class="form-control" required>
+                <input type="date" name="fecha_fin" id="fecha_fin" class="form-control" required value="<?php echo date('Y') . '-12-31'; ?>">
               </div>
             </div>
 

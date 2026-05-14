@@ -1,7 +1,8 @@
 <div class="card shadow-lg">
     <div class="mt-3 m-3 text-justify">
         <h1>Ayuda para el Uso de la Aplicación</h1>
-        <p class="mb-3">Esta sección te guiará en el uso de la aplicación, diseñada para simplificar la gestión de datos de
+        <p class="mb-3">Esta sección te guiará en el uso de la aplicación, diseñada para simplificar la gestión de datos
+            de
             la institución.</p>
 
         <div class="mb-4">
@@ -16,8 +17,10 @@
 
         <h2>Módulos Principales</h2>
         <p class="mb-3">El sistema se organiza en tres módulos principales para la gestión: <strong>Afiliados</strong>,
-            <strong>Beneficiarios</strong> y <strong>Citas</strong>. A continuación, te explicamos cómo interactuar con cada
-            uno.</p>
+            <strong>Beneficiarios</strong> y <strong>Citas</strong>. A continuación, te explicamos cómo interactuar con
+            cada
+            uno.
+        </p>
 
         <h3>Estructura General de los Módulos</h3>
         <p class="mb-3">Al ingresar a cualquiera de los módulos que requiera una organización de los datos (Afiliados,
@@ -43,14 +46,16 @@
                         <td>Ejemplo 2</td>
                         <td>Ejemplo 3</td>
                         <td class="text-center">
-                            <a href="#" class="btn btn-info btn-sm me-1" data-bs-toggle="modal" data-bs-target="#vermodal">
+                            <a href="#" class="btn btn-info btn-sm me-1" data-bs-toggle="modal"
+                                data-bs-target="#vermodal">
                                 <i class="fas fa-eye"></i> Ver información
                             </a>
                             <a href="#" class="btn btn-warning btn-sm me-1" data-bs-toggle="modal"
                                 data-bs-target="#formulariomodal">
                                 <i class="fas fa-edit"></i> Editar
                             </a>
-                            <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <a href="#" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#deleteModal">
                                 <i class="fas fa-trash"></i> Eliminar
                             </a>
                         </td>
@@ -62,21 +67,26 @@
         <h3>Acciones Disponibles</h3>
         <p class="mb-3">En la tabla de cada módulo, encontrarás las siguientes acciones:</p>
         <ul class="mb-3">
-            <li><i class="fas fa-plus-circle text-primary me-2"></i> <strong>Agregar:</strong> Al hacer clic en este botón,
+            <li><i class="fas fa-plus-circle text-primary me-2"></i> <strong>Agregar:</strong> Al hacer clic en este
+                botón,
                 se abrirá un formulario para ingresar nueva información al módulo correspondiente.</li>
-            <li><i class="fas fa-eye text-info me-2"></i> <strong>Ver información:</strong> Este botón te permitirá ver los
+            <li><i class="fas fa-eye text-info me-2"></i> <strong>Ver información:</strong> Este botón te permitirá ver
+                los
                 detalles completos del registro seleccionado en una ventana modal.</li>
             <li><i class="fas fa-edit text-warning me-2"></i> <strong>Editar:</strong> Al seleccionar esta opción, se
                 mostrará un formulario modal con los datos del registro, listo para ser modificado.</li>
-            <li><i class="fas fa-trash text-danger me-2"></i> <strong>Eliminar:</strong> Este botón abrirá una ventana de
+            <li><i class="fas fa-trash text-danger me-2"></i> <strong>Eliminar:</strong> Este botón abrirá una ventana
+                de
                 confirmación para eliminar el registro seleccionado.</li>
         </ul>
 
-        <p class="mb-3">Al realizar las acciones de "Agregar" o "Editar", aparecerá un formulario que deberás completar con
+        <p class="mb-3">Al realizar las acciones de "Agregar" o "Editar", aparecerá un formulario que deberás completar
+            con
             la información solicitada.</p>
 
         <h2>Formulario para agregar afiliado o beneficiario</h2>
-        <p class="mb-3"> Ambos formularios mantienen una estructura similar, los campos que se requieren son los siguientes:
+        <p class="mb-3"> Ambos formularios mantienen una estructura similar, los campos que se requieren son los
+            siguientes:
         </p>
         <div class="mt-4 mb-4">
             <div class="card shadow p-4">
@@ -134,8 +144,10 @@
             </div>
         </div>
 
-        <h4 class="mb-4"><i class="fas fa-exclamation-circle text-warning me-2"></i> <strong>Nota importante:</strong> En el
-            caso de beneficiarios, se debe seleccionar el afiliado al cual está asociado. La cédula y el género no se pueden
+        <h4 class="mb-4"><i class="fas fa-exclamation-circle text-warning me-2"></i> <strong>Nota importante:</strong>
+            En el
+            caso de beneficiarios, se debe seleccionar el afiliado al cual está asociado. La cédula y el género no se
+            pueden
             cambiar luego de su registro en el sistema.</h4>
 
         <h2> Formulario de citas </h2>
@@ -207,38 +219,44 @@
                         </div>
                         <div class="mb-3">
                             <label for="fecha_cita" class="form-label">Fecha y Hora</label>
-                            <input type="datetime-local" name="fecha_cita" id="fecha_cita" class="form-control" required>
+                            <input type="datetime-local" name="fecha_cita" id="fecha_cita" class="form-control"
+                                required>
                         </div>
                         <div class="mb-3">
                             <label for="descripcion" class="form-label">Descripción</label>
-                            <textarea name="descripcion" id="descripcion" class="form-control" rows="3" required></textarea>
+                            <textarea name="descripcion" id="descripcion" class="form-control" rows="3"
+                                required></textarea>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
 
-        <h5 class="mb-3"> La tabla de la vista principal se actualizará con los registros que se vayan agregando conforme el
-            paso del tiempo. Así mismo, dependiendo de si las acciones de editar o eliminar se realizaron correctamente se
+        <h5 class="mb-3"> La tabla de la vista principal se actualizará con los registros que se vayan agregando
+            conforme el
+            paso del tiempo. Así mismo, dependiendo de si las acciones de editar o eliminar se realizaron correctamente
+            se
             mostrarán alertas que indicarán esto mismo. Haga click en los botones para tener una visualización de las
             alertas.</h5>
         <button id="botonExito" class="btn btn-success me-2 mb-2">Éxito</button>
         <button id="botonError" class="btn btn-danger mb-2">Error</button>
 
         <script>
-        document.getElementById('botonExito').addEventListener('click', function() {
-            alertify.success('Edición/Eliminar se ha realizado correctamente');
-        });
+            document.getElementById('botonExito').addEventListener('click', function () {
+                alertify.success('Edición/Eliminar se ha realizado correctamente');
+            });
 
-        document.getElementById('botonError').addEventListener('click', function() {
-            alertify.error('Ha ocurrido un error');
-        });
+            document.getElementById('botonError').addEventListener('click', function () {
+                alertify.error('Ha ocurrido un error');
+            });
         </script>
 
         <p class="mb-4"><strong> Nota: El error puede variar. </strong></p>
 
-        <h3> El sistema también tiene la opción de gestionar reportes, a través de esta misma podrás descargar los reportes
-            de lo registrado en el sistema con distintos formatos y según lo que necesites en el momento. Al dar click en el
+        <h3> El sistema también tiene la opción de gestionar reportes, a través de esta misma podrás descargar los
+            reportes
+            de lo registrado en el sistema con distintos formatos y según lo que necesites en el momento. Al dar click
+            en el
             módulo, aparecerán los siguientes íconos</h3>
 
         <div class="row mb-4">
@@ -251,7 +269,8 @@
             </div>
 
             <div class="col-md-4 mb-3">
-                <button class="btn btn-success btn-lg w-100 d-flex flex-column align-items-center justify-content-center"
+                <button
+                    class="btn btn-success btn-lg w-100 d-flex flex-column align-items-center justify-content-center"
                     onclick="showExcelOptions()" style="height: 150px;">
                     <i class="fas fa-file-excel fa-3x mb-2"></i>
                     <p class="mt-2">Descargar Excel</p>
@@ -259,7 +278,8 @@
             </div>
 
             <div class="col-md-4 mb-3">
-                <button class="btn btn-primary btn-lg w-100 d-flex flex-column align-items-center justify-content-center"
+                <button
+                    class="btn btn-primary btn-lg w-100 d-flex flex-column align-items-center justify-content-center"
                     onclick="showWordOptions()" style="height: 150px;">
                     <i class="fas fa-file-word fa-3x mb-2"></i>
                     <p class="mt-2">Descargar Word</p>
@@ -272,7 +292,8 @@
             Estos botones permiten descargar el reporte de afiliados, de beneficiarios, de citas y de especialidades.
             Los reportes se descargan según el formato elegido. Al descargar aparecerá una alerta. </h5>
 
-        <h3> La sección de configuración está únicamente disponible para los administradores. En esta sección, al dar click
+        <h3> La sección de configuración está únicamente disponible para los administradores. En esta sección, al dar
+            click
             en el módulo apareceran los siguientes botones</h3>
 
         <div class="mt-4 d-flex flex-column align-items-center w-50 mx-auto">
@@ -303,17 +324,22 @@
         </div>
 
         <h5 class="mt-4 mb-3"> Al dar click a <strong> generar respaldo</strong> se descargará un archivo en formato
-            <strong>SQL</strong>. Este archivo se guardará en la carpeta que se tenga predeterminada para los archivos que
-            se descargan en el computador.</h5>
+            <strong>SQL</strong>. Este archivo se guardará en la carpeta que se tenga predeterminada para los archivos
+            que
+            se descargan en el computador.
+        </h5>
         <h5 class="mb-3"> Dicho archivo se puede importar a un gestor de base de datos, garantizando su integridad.</H5>
 
-        <h5 class="mb-3"> Por otro lado, la <strong> bitacora </strong> permite al administrador llevar un registro de los
+        <h5 class="mb-3"> Por otro lado, la <strong> bitacora </strong> permite al administrador llevar un registro de
+            los
             movimientos que se han registrado en el sistema.
             La bitácora muestra un formato de tabla similar a las que ahí en los demás módulos. La bitácora se puede
             <strong> descargar en PDF </strong> o <strong> eliminar</strong> según
-            lo que necesite el administrador</h5>
+            lo que necesite el administrador
+        </h5>
 
-        <h5 class="mb-3"> Por último, la gestión de usuarios permite, tal como lo dice, controlar los usuarios que tienen
+        <h5 class="mb-3"> Por último, la gestión de usuarios permite, tal como lo dice, controlar los usuarios que
+            tienen
             acceso a la app. Como se mencionó al principio de esta sección, se maneja igualmente por una tabla donde
             muestran los datos. El formulario en el que se puede registrar un usuario es el siguiente:</h5>
 
@@ -344,13 +370,14 @@
                     <select class="form-select" id="pregunta_seguridad_id1" name="pregunta_seguridad_id1" required>
                         <option value="">Selecciona una pregunta</option>
                         <?php foreach ($preguntas as $id => $pregunta): ?>
-                        <option value="<?php echo $id; ?>"><?php echo htmlspecialchars($pregunta); ?></option>
+                            <option value="<?php echo $id; ?>"><?php echo htmlspecialchars($pregunta); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="respuesta_seguridad1" class="form-label">Respuesta de seguridad 1</label>
-                    <input type="text" class="form-control" id="respuesta_seguridad1" name="respuesta_seguridad1" required>
+                    <input type="text" class="form-control" id="respuesta_seguridad1" name="respuesta_seguridad1"
+                        required>
                 </div>
 
                 <div class="mb-3">
@@ -358,13 +385,14 @@
                     <select class="form-select" id="pregunta_seguridad_id2" name="pregunta_seguridad_id2" required>
                         <option value="">Selecciona una pregunta</option>
                         <?php foreach ($preguntas as $id => $pregunta): ?>
-                        <option value="<?php echo $id; ?>"><?php echo htmlspecialchars($pregunta); ?></option>
+                            <option value="<?php echo $id; ?>"><?php echo htmlspecialchars($pregunta); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="respuesta_seguridad2" class="form-label">Respuesta de seguridad 2</label>
-                    <input type="text" class="form-control" id="respuesta_seguridad2" name="respuesta_seguridad2" required>
+                    <input type="text" class="form-control" id="respuesta_seguridad2" name="respuesta_seguridad2"
+                        required>
                 </div>
 
             </form>
@@ -372,9 +400,10 @@
 
 
         <div class="mt-3">
-            <h3> Todos los formularios al final van a tener la acción de guardar o cancelar. Las preguntas de seguridad del
+            <h3> Todos los formularios al final van a tener la acción de guardar o cancelar. Las preguntas de seguridad
+                del
                 formulario de usuario sirven para la recuperación de contraseña del mismo. </h3>
         </div>
         <h3> <strong> Fin de la sección de ayuda. </strong></h3>
-    </div>    
+    </div>
 </div>

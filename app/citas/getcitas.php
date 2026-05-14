@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
 
 if (isset($_POST['id_cita'])) {
-    $id_cita = intval($_POST['id_cita']); 
+    $id_cita = intval($_POST['id_cita']);
     $sql = "
         SELECT
             c.id_cita,
@@ -19,17 +19,40 @@ if (isset($_POST['id_cita'])) {
             u.nombre AS nombre_ext,
             u.apellido AS apellido_ext,
             u.cedula AS cedula_ext,
-            -- ID para el select de internos (si aplica)
+            -- ID del paciente interno (si aplica)
             CASE
                 WHEN ca.idcita IS NOT NULL THEN a.id
                 WHEN cb.idcita IS NOT NULL THEN b.id
                 ELSE NULL
-            END AS id_paciente
+            END AS id_paciente,
+            -- Datos separados del paciente interno
+            CASE
+                WHEN ca.idcita IS NOT NULL THEN pa.nombre
+                WHEN cb.idcita IS NOT NULL THEN pb.nombre
+                ELSE NULL
+            END AS nombre_int,
+            CASE
+                WHEN ca.idcita IS NOT NULL THEN pa.apellido
+                WHEN cb.idcita IS NOT NULL THEN pb.apellido
+                ELSE NULL
+            END AS apellido_int,
+            CASE
+                WHEN ca.idcita IS NOT NULL THEN pa.cedula
+                WHEN cb.idcita IS NOT NULL THEN pb.cedula
+                ELSE NULL
+            END AS cedula_int,
+            CASE
+                WHEN ca.idcita IS NOT NULL THEN 'Afiliado'
+                WHEN cb.idcita IS NOT NULL THEN 'Beneficiario'
+                ELSE NULL
+            END AS tipo_int
         FROM citas c
         LEFT JOIN citas_afil ca ON c.id_cita = ca.idcita
         LEFT JOIN afiliados a ON ca.id_afiliado = a.id
+        LEFT JOIN persona pa ON a.cedula = pa.cedula
         LEFT JOIN citas_benef cb ON c.id_cita = cb.idcita
         LEFT JOIN beneficiarios b ON cb.id_beneficiario = b.id
+        LEFT JOIN persona pb ON b.cedula = pb.cedula
         LEFT JOIN citas_uptm cu ON c.id_cita = cu.idcita
         -- El JOIN correcto usando 'id' como confirmaste
         LEFT JOIN comunidad_uptm u ON cu.id_externo = u.id 
