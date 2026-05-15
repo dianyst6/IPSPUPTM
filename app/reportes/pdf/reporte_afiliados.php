@@ -19,15 +19,23 @@ class PDF_Afiliados extends FPDF {
     function Header() {
         $logo_ipsp = 'C:/xampp/htdocs/IPSPUPTM/recursos/img/IPSPUPTMlogo.png';
         $logo_uptm = 'C:/xampp/htdocs/IPSPUPTM/recursos/img/UPTM_logo.png';
-        if (file_exists($logo_ipsp))  $this->Image($logo_ipsp, 10, 6, 28);
-        if (file_exists($logo_uptm))  $this->Image($logo_uptm, 245, 6, 28);
+        if (file_exists($logo_ipsp))  $this->Image($logo_ipsp, 10, 4, 25);
+        if (file_exists($logo_uptm))  $this->Image($logo_uptm, 245, 4, 25);
 
         $this->SetFont('Arial', 'B', 11);
-        $this->SetY(8);
-        $this->MultiCell(0, 6, utf8_decode("Instituto de Previsión Social de los Profesores de la\nUniversidad Politécnica Territorial Kléber Ramirez del Estado Mérida"), 0, 'C');
+        $this->SetY(12);
+        $this->SetTextColor(51, 51, 51);
+        $this->SetX(45);
+        $this->MultiCell(200, 5, utf8_decode("Instituto de Previsión Social de los Profesores de la\nUniversidad Politécnica Territorial Kléber Ramirez del Estado Mérida"), 0, 'C');
         $this->SetFont('Arial', 'B', 13);
-        $this->Cell(0, 8, utf8_decode($this->titulo), 0, 1, 'C');
-        $this->Ln(3);
+        $this->SetX(45);
+        $this->Cell(200, 8, utf8_decode($this->titulo), 0, 1, 'C');
+        
+        $this->SetY(33);
+        $this->SetDrawColor(6, 41, 116);
+        $this->SetLineWidth(1.5);
+        $this->Line(10, $this->GetY(), $this->GetPageWidth() - 10, $this->GetY());
+        $this->Ln(6);
     }
 
     function Footer() {
@@ -54,33 +62,44 @@ $pdf->AddPage();
 // Cabecera de tabla
 $pdf->SetFillColor(6, 41, 116);
 $pdf->SetTextColor(255);
-$pdf->SetFont('Arial', 'B', 7);
-$w = [18, 28, 28, 22, 18, 22, 52, 28, 32];
+$pdf->SetFont('Arial', 'B', 8);
+$w = [20, 30, 30, 25, 20, 25, 50, 25, 30]; // Sum: 255
+$pageWidth = $pdf->GetPageWidth();
+$tableWidth = array_sum($w);
+$marginLeft = ($pageWidth - $tableWidth) / 2;
+
+$pdf->SetX($marginLeft);
 $headers = ['Cédula', 'Nombre', 'Apellido', 'F. Nacimiento', 'Género', 'Teléfono', 'Correo', 'Ocupación', 'Fecha Registro'];
 foreach ($headers as $i => $h)
-    $pdf->Cell($w[$i], 7, utf8_decode($h), 1, 0, 'C', true);
+    $pdf->Cell($w[$i], 9, utf8_decode($h), 0, 0, 'C', true);
 $pdf->Ln();
 
-$pdf->SetFillColor(224, 235, 255);
-$pdf->SetTextColor(0);
-$pdf->SetFont('Arial', '', 7);
+$pdf->SetFillColor(235, 242, 250);
+$pdf->SetTextColor(30, 30, 30);
+$pdf->SetDrawColor(150, 150, 150);
+$pdf->SetLineWidth(0.3);
+$pdf->SetFont('Arial', '', 8);
 $fill = false;
 if ($resultado) {
     while ($row = $resultado->fetch_assoc()) {
-        $pdf->Cell($w[0], 6, $row['cedula'], 'LR', 0, 'C', $fill);
-        $pdf->Cell($w[1], 6, utf8_decode($row['nombre']), 'LR', 0, 'L', $fill);
-        $pdf->Cell($w[2], 6, utf8_decode($row['apellido']), 'LR', 0, 'L', $fill);
-        $pdf->Cell($w[3], 6, date('d-m-Y', strtotime($row['fechanacimiento'])), 'LR', 0, 'C', $fill);
-        $pdf->Cell($w[4], 6, utf8_decode($row['genero']), 'LR', 0, 'C', $fill);
-        $pdf->Cell($w[5], 6, $row['telefono'], 'LR', 0, 'C', $fill);
-        $pdf->Cell($w[6], 6, $row['correo'], 'LR', 0, 'L', $fill);
-        $pdf->Cell($w[7], 6, utf8_decode($row['ocupacion']), 'LR', 0, 'L', $fill);
-        $pdf->Cell($w[8], 6, date('d-m-Y', strtotime($row['created_at'])), 'LR', 0, 'C', $fill);
+        $pdf->SetX($marginLeft);
+        $pdf->Cell($w[0], 8, $row['cedula'], 'B', 0, 'C', $fill);
+        $nombre = utf8_decode(mb_strimwidth($row['nombre'], 0, 18, "...", 'UTF-8'));
+        $pdf->Cell($w[1], 8, $nombre, 'B', 0, 'L', $fill);
+        $apellido = utf8_decode(mb_strimwidth($row['apellido'], 0, 18, "...", 'UTF-8'));
+        $pdf->Cell($w[2], 8, $apellido, 'B', 0, 'L', $fill);
+        $pdf->Cell($w[3], 8, date('d-m-Y', strtotime($row['fechanacimiento'])), 'B', 0, 'C', $fill);
+        $pdf->Cell($w[4], 8, utf8_decode($row['genero']), 'B', 0, 'C', $fill);
+        $pdf->Cell($w[5], 8, $row['telefono'], 'B', 0, 'C', $fill);
+        $correo = mb_strimwidth($row['correo'], 0, 25, "...");
+        $pdf->Cell($w[6], 8, $correo, 'B', 0, 'L', $fill);
+        $ocupacion = utf8_decode(mb_strimwidth($row['ocupacion'], 0, 15, "...", 'UTF-8'));
+        $pdf->Cell($w[7], 8, $ocupacion, 'B', 0, 'L', $fill);
+        $pdf->Cell($w[8], 8, date('d-m-Y', strtotime($row['created_at'])), 'B', 0, 'C', $fill);
         $pdf->Ln();
         $fill = !$fill;
     }
 }
-$pdf->Cell(array_sum($w), 0, '', 'T');
 
 $pdf->Output('D', 'reporte_afiliados_' . date('Ymd') . '.pdf');
 ?>

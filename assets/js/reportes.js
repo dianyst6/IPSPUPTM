@@ -1,32 +1,33 @@
-function showPDFOptions() {
-  document.getElementById('initialIcons').classList.add('d-none'); // Ocultar íconos iniciales
-  document.getElementById('pdfOptions').classList.remove('d-none'); // Mostrar opciones de PDF
-}
 
-function showExcelOptions() {
-  document.getElementById('initialIcons').classList.add('d-none'); // Ocultar íconos iniciales
-  document.getElementById('excelOptions').classList.remove('d-none'); // Mostrar opciones de Excel
-}
-
-function showWordOptions() {
-  document.getElementById('initialIcons').classList.add('d-none'); // Ocultar íconos iniciales
-  document.getElementById('wordOptions').classList.remove('d-none'); // Mostrar opciones de Excel
-}
 
 function mostrarAlertaDescarga(formato, reporte) {
   alertify.message(`Se está descargando el reporte de ${reporte} en formato ${formato}.`, 2, function(){});
 }
 
-function generarReportePago(tipo) {
-  const fechaInicio = document.getElementById('fecha_inicio_pago').value;
-  const fechaFin = document.getElementById('fecha_fin_pago').value;
+function generarReporte(tipoReporte, formato) {
+  const fechaInicio = document.getElementById(`fecha_inicio_${tipoReporte}_${formato}`).value;
+  const fechaFin = document.getElementById(`fecha_fin_${tipoReporte}_${formato}`).value;
   
-  let url = `/IPSPUPTM/app/reportes/pdf/reporte_pagos.php?tipo_pago=${tipo}`;
+  let url = `/IPSPUPTM/app/reportes/${formato}/reporte_${tipoReporte}.php?tipo_reporte=personalizado`;
   
   if (fechaInicio && fechaFin) {
     url += `&fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`;
   }
   
-  mostrarAlertaDescarga('PDF', tipo === 'contrato' ? 'Pagos de Contratos' : 'Pagos Externos');
+  mostrarAlertaDescarga(formato.toUpperCase(), tipoReporte.charAt(0).toUpperCase() + tipoReporte.slice(1));
+  window.location.href = url;
+}
+
+function generarReportePago(tipoPago, formato) {
+  const fechaInicio = document.getElementById(`fecha_inicio_pagos_${formato}`).value;
+  const fechaFin = document.getElementById(`fecha_fin_pagos_${formato}`).value;
+  
+  let url = `/IPSPUPTM/app/reportes/${formato}/reporte_pagos.php?tipo_pago=${tipoPago}`;
+  
+  if (fechaInicio && fechaFin) {
+    url += `&fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`;
+  }
+  
+  mostrarAlertaDescarga(formato.toUpperCase(), tipoPago === 'contrato' ? 'Pagos de Contratos' : 'Pagos Externos');
   window.location.href = url;
 }

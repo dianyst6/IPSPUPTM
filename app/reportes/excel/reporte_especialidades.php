@@ -10,28 +10,36 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 
 // Parámetros: se espera recibir el tipo de reporte vía GET
-$tipo_reporte = isset($_GET['tipo_reporte']) && in_array($_GET['tipo_reporte'], ['semanal', 'quincenal', 'mensual']) ? $_GET['tipo_reporte'] : 'semanal';
+$tipo_reporte = isset($_GET['tipo_reporte']) ? $_GET['tipo_reporte'] : 'semanal';
 $titulo_base = "Reporte de Especialidades Más Solicitadas";
-$interval = '';
+$condicion_fecha = "";
 $titulo = '';
 
-// Adaptar la consulta y el título según el tipo de reporte
-switch ($tipo_reporte) {
-    case 'semanal':
-        $interval = 'INTERVAL 1 WEEK';
-        $titulo = $titulo_base . " - Semanal";
-        break;
-    case 'quincenal':
-        $interval = 'INTERVAL 2 WEEK';
-        $titulo = $titulo_base . " - Quincenal";
-        break;
-    case 'mensual':
-        $interval = 'INTERVAL 1 MONTH';
-        $titulo = $titulo_base . " - Mensual";
-        break;
-    default:
-        echo "Tipo de reporte inválido.";
-        exit;
+if ($tipo_reporte === 'personalizado' && isset($_GET['fecha_inicio']) && isset($_GET['fecha_fin'])) {
+    $fecha_inicio = $conn->real_escape_string($_GET['fecha_inicio']);
+    $fecha_fin = $conn->real_escape_string($_GET['fecha_fin']);
+    $condicion_fecha = "c.fecha_cita BETWEEN '$fecha_inicio' AND '$fecha_fin'";
+    $titulo = "$titulo_base - Del " . date('d/m/Y', strtotime($fecha_inicio)) . " al " . date('d/m/Y', strtotime($fecha_fin));
+} else {
+    switch ($tipo_reporte) {
+        case 'semanal':
+            $interval = 'INTERVAL 1 WEEK';
+            $titulo = $titulo_base . " - Semanal";
+            break;
+        case 'quincenal':
+            $interval = 'INTERVAL 2 WEEK';
+            $titulo = $titulo_base . " - Quincenal";
+            break;
+        case 'mensual':
+            $interval = 'INTERVAL 1 MONTH';
+            $titulo = $titulo_base . " - Mensual";
+            break;
+        default:
+            $interval = 'INTERVAL 1 WEEK';
+            $titulo = $titulo_base . " - Semanal";
+            break;
+    }
+    $condicion_fecha = "c.fecha_cita >= DATE_SUB(CURDATE(), $interval)";
 }
 
 $query = "
@@ -40,7 +48,7 @@ $query = "
         COUNT(c.id_especialidad) AS total_solicitudes
     FROM especialidades e
     JOIN citas c ON e.id_especialidad = c.id_especialidad
-    WHERE c.fecha_cita >= DATE_SUB(CURDATE(), $interval)
+    WHERE $condicion_fecha
     GROUP BY e.nombre_especialidad
     ORDER BY total_solicitudes DESC
 ";

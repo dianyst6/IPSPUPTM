@@ -12,6 +12,17 @@ $tipo_pago = $_GET['tipo_pago'] ?? 'contrato';
 $titulo_base = "Reporte de Pagos";
 $titulo = ($tipo_pago == 'contrato') ? "$titulo_base de Contratos" : "$titulo_base Externos";
 
+$condicion_fecha_contrato = "";
+$condicion_fecha_externo = "";
+
+if (isset($_GET['fecha_inicio']) && isset($_GET['fecha_fin'])) {
+    $fecha_inicio = $conn->real_escape_string($_GET['fecha_inicio']);
+    $fecha_fin = $conn->real_escape_string($_GET['fecha_fin']);
+    $condicion_fecha_contrato = "WHERE pc.fecha_pago BETWEEN '$fecha_inicio' AND '$fecha_fin'";
+    $condicion_fecha_externo = "WHERE p.fecha_pago BETWEEN '$fecha_inicio' AND '$fecha_fin'";
+    $titulo .= " - Del " . date('d/m/Y', strtotime($fecha_inicio)) . " al " . date('d/m/Y', strtotime($fecha_fin));
+}
+
 class PDF extends FPDF {
     protected $titulo;
     protected $logo_ipspuptm;
@@ -28,22 +39,30 @@ class PDF extends FPDF {
     function Header() {
         // Logos
         if (file_exists($this->logo_ipspuptm)) {
-            $this->Image($this->logo_ipspuptm, 10, 8, 33);
+            $this->Image($this->logo_ipspuptm, 10, 4, 25);
         }
         if (file_exists($this->logo_uptm)) {
-            $this->Image($this->logo_uptm, 170, 8, 33);
+            $this->Image($this->logo_uptm, 175, 4, 25);
         }
         
         // Arial bold 12
         $this->SetFont('Arial', 'B', 12);
         // Título
         $this->SetY(10);
-        $this->MultiCell(0, 7, utf8_decode("Instituto de Previsión Social de los Profesores de la\nUniversidad Politécnica Territorial Kléber Ramirez del\nEstado Mérida"), 0, 'C');
+        $this->SetTextColor(51, 51, 51);
+        $this->SetX(40);
+        $this->MultiCell(135, 5, utf8_decode("Instituto de Previsión Social de los Profesores de la\nUniversidad Politécnica Territorial Kléber Ramirez del\nEstado Mérida"), 0, 'C');
         
-        $this->Ln(5);
+        $this->Ln(3);
         $this->SetFont('Arial', 'B', 14);
-        $this->Cell(0, 10, utf8_decode($this->titulo), 0, 1, 'C');
-        $this->Ln(5);
+        $this->SetX(40);
+        $this->Cell(135, 8, utf8_decode($this->titulo), 0, 1, 'C');
+        
+        $this->SetY(33);
+        $this->SetDrawColor(6, 41, 116);
+        $this->SetLineWidth(1.5);
+        $this->Line(10, $this->GetY(), $this->GetPageWidth() - 10, $this->GetY());
+        $this->Ln(6);
     }
 
     // Pie de página
@@ -63,36 +82,45 @@ class PDF extends FPDF {
         $this->SetFont('', 'B', 9);
         
         if ($tipo_pago == 'contrato') {
-            $w = array(25, 60, 45, 20, 25, 20);
+            $w = array(20, 55, 45, 20, 25, 25); // Sum: 190
         } else {
-            $w = array(25, 65, 55, 25, 25);
+            $w = array(20, 65, 55, 25, 25); // Sum: 190
         }
         
+        $pageWidth = $this->GetPageWidth();
+        $tableWidth = array_sum($w);
+        $marginLeft = ($pageWidth - $tableWidth) / 2;
+
+        $this->SetX($marginLeft);
         for($i=0;$i<count($header);$i++)
-            $this->Cell($w[$i], 7, utf8_decode($header[$i]), 1, 0, 'C', true);
+            $this->Cell($w[$i], 9, utf8_decode($header[$i]), 0, 0, 'C', true);
         $this->Ln();
         
-        $this->SetFillColor(224, 235, 255);
-        $this->SetTextColor(0);
+        $this->SetFillColor(235, 242, 250);
+        $this->SetTextColor(30, 30, 30);
+        $this->SetDrawColor(150, 150, 150);
+        $this->SetLineWidth(0.3);
         $this->SetFont('Arial', '', 8);
         
         $fill = false;
         foreach($data as $row) {
-            $this->Cell($w[0], 6, date('d-m-Y', strtotime($row['fecha'])), 'LR', 0, 'C', $fill);
-            $this->Cell($w[1], 6, utf8_decode($row['paciente']), 'LR', 0, 'L', $fill);
-            $this->Cell($w[2], 6, utf8_decode($row['referencia']), 'LR', 0, 'L', $fill);
+            $this->SetX($marginLeft);
+            $this->Cell($w[0], 8, date('d-m-Y', strtotime($row['fecha'])), 'B', 0, 'C', $fill);
+            $paciente = utf8_decode(mb_strimwidth($row['paciente'], 0, 30, "...", 'UTF-8'));
+            $this->Cell($w[1], 8, $paciente, 'B', 0, 'L', $fill);
+            $referencia = utf8_decode(mb_strimwidth($row['referencia'], 0, 25, "...", 'UTF-8'));
+            $this->Cell($w[2], 8, $referencia, 'B', 0, 'L', $fill);
             if ($tipo_pago == 'contrato') {
-                $this->Cell($w[3], 6, "Cuota #" . $row['cuota'], 'LR', 0, 'C', $fill);
-                $this->Cell($w[4], 6, number_format($row['monto'], 2) . " Bs", 'LR', 0, 'R', $fill);
-                $this->Cell($w[5], 6, utf8_decode($row['metodo']), 'LR', 0, 'C', $fill);
+                $this->Cell($w[3], 8, "Cuota #" . $row['cuota'], 'B', 0, 'C', $fill);
+                $this->Cell($w[4], 8, number_format($row['monto'], 2) . " Bs", 'B', 0, 'R', $fill);
+                $this->Cell($w[5], 8, utf8_decode($row['metodo']), 'B', 0, 'C', $fill);
             } else {
-                $this->Cell($w[3], 6, number_format($row['monto'], 2) . " Bs", 'LR', 0, 'R', $fill);
-                $this->Cell($w[4], 6, utf8_decode($row['metodo']), 'LR', 0, 'C', $fill);
+                $this->Cell($w[3], 8, number_format($row['monto'], 2) . " Bs", 'B', 0, 'R', $fill);
+                $this->Cell($w[4], 8, utf8_decode($row['metodo']), 'B', 0, 'C', $fill);
             }
             $this->Ln();
             $fill = !$fill;
         }
-        $this->Cell(array_sum($w), 0, '', 'T');
     }
 }
 
@@ -111,6 +139,7 @@ if ($tipo_pago == 'contrato') {
             INNER JOIN afiliados af ON cp.ID_afiliado_contrato = af.cedula
             INNER JOIN persona p ON af.cedula = p.cedula
             INNER JOIN planes pl ON cp.ID_planes_contrato = pl.ID_planes
+            $condicion_fecha_contrato
             ORDER BY pc.fecha_pago DESC";
     $header = array('Fecha', 'Paciente', 'Plan', 'Cuota', 'Monto', 'Método');
 } else {
@@ -125,6 +154,7 @@ if ($tipo_pago == 'contrato') {
             INNER JOIN citas_uptm h ON c.id_cita = h.idcita
             INNER JOIN comunidad_uptm u ON h.id_externo = u.id
             INNER JOIN especialidades e ON c.id_especialidad = e.id_especialidad
+            $condicion_fecha_externo
             ORDER BY p.fecha_pago DESC";
     $header = array('Fecha', 'Paciente', 'Especialidad', 'Monto', 'Método');
 }

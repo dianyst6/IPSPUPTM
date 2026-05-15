@@ -10,29 +10,37 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 
 // Obtener el tipo de reporte desde un parámetro GET
-$tipo_reporte = $_GET['tipo_reporte'] ?? 'semanal'; // 'semanal' por defecto
+$tipo_reporte = $_GET['tipo_reporte'] ?? 'semanal';
 
 $titulo_base = "Reporte de Citas";
-$interval = '';
-$titulo = '';
+$condicion_fecha = "";
+$titulo = "";
 
-// Adaptar la consulta y el título según el tipo de reporte
-switch ($tipo_reporte) {
-    case 'semanal':
-        $interval = 'INTERVAL 1 WEEK';
-        $titulo = $titulo_base . " - Semanal";
-        break;
-    case 'quincenal':
-        $interval = 'INTERVAL 2 WEEK';
-        $titulo = $titulo_base . " - Quincenal";
-        break;
-    case 'mensual':
-        $interval = 'INTERVAL 1 MONTH';
-        $titulo = $titulo_base . " - Mensual";
-        break;
-    default:
-        echo "Tipo de reporte inválido.";
-        exit;
+if ($tipo_reporte === 'personalizado' && isset($_GET['fecha_inicio']) && isset($_GET['fecha_fin'])) {
+    $fecha_inicio = $conn->real_escape_string($_GET['fecha_inicio']);
+    $fecha_fin = $conn->real_escape_string($_GET['fecha_fin']);
+    $condicion_fecha = "c.fecha_cita BETWEEN '$fecha_inicio' AND '$fecha_fin'";
+    $titulo = "$titulo_base - Del " . date('d/m/Y', strtotime($fecha_inicio)) . " al " . date('d/m/Y', strtotime($fecha_fin));
+} else {
+    switch ($tipo_reporte) {
+        case 'semanal':
+            $interval = 'INTERVAL 1 WEEK';
+            $titulo = $titulo_base . " - Semanal";
+            break;
+        case 'quincenal':
+            $interval = 'INTERVAL 2 WEEK';
+            $titulo = $titulo_base . " - Quincenal";
+            break;
+        case 'mensual':
+            $interval = 'INTERVAL 1 MONTH';
+            $titulo = $titulo_base . " - Mensual";
+            break;
+        default:
+            $interval = 'INTERVAL 1 WEEK';
+            $titulo = $titulo_base . " - Semanal";
+            break;
+    }
+    $condicion_fecha = "c.fecha_cita >= DATE_SUB(CURDATE(), $interval)";
 }
 
 $query_citas = "
@@ -61,7 +69,7 @@ $query_citas = "
     LEFT JOIN beneficiarios b ON cb.id_beneficiario = b.id
     LEFT JOIN persona p_b ON b.cedula = p_b.cedula
     LEFT JOIN especialidades e ON c.id_especialidad = e.id_especialidad
-    WHERE c.fecha_cita >= DATE_SUB(CURDATE(), $interval)
+    WHERE $condicion_fecha
     ORDER BY c.fecha_cita DESC
 ";
 

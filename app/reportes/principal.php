@@ -1,186 +1,221 @@
 <div class="card shadow-lg">
-    <div id="cont-general m-3" class="container-fluid mt-5 text-center ">
-         <h1 class="fw-bold text-center" style="color: #062974;">Reportes</h1>
-            <hr class="mx-auto" style="width: 50px; height: 3px; background-color: #062974;">
-        <h2 class="text-center mb-4">Esta es la sección de reportes, puedes elegir si descargar estos mismos en formato
-            PDF, Word o Excel. Dale click al ícono del formato en que deseas descargar el reporte</h2>
-        <br>
-        <div class="row text-center" id="initialIcons">
-            <div class="col-md-6 mb-4">
-                <button class="btn btn-danger btn-lg" onclick="showPDFOptions()">
-                    <i class="fas fa-file-pdf fa-5x"></i>
-                    <p class="mt-3">Descargar PDF</p>
-                </button>
-            </div>
+    <div class="mt-3 m-3 text-justify">
+        <h1 class="fw-bold text-center" style="color: #062974;">Reportes</h1>
+        <hr class="mx-auto" style="width: 50px; height: 3px; background-color: #062974;">
+        
+        <p class="text-center text-muted mb-4 mt-3">Seleccione el formato y el tipo de reporte que desea generar.</p>
 
-            <div class="col-md-6 mb-4">
-                <button class="btn btn-success btn-lg" onclick="showExcelOptions()">
-                    <i class="fas fa-file-excel fa-5x"></i>
-                    <p class="mt-3">Descargar Excel</p>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs justify-content-center mb-4" id="reportesTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active fs-5" id="pdf-tab" data-bs-toggle="tab" data-bs-target="#pdf" type="button" role="tab" aria-controls="pdf" aria-selected="true">
+                    <i class="fas fa-file-pdf text-danger"></i> Formato PDF
                 </button>
-            </div>
-        </div>
-        <div id="pdfOptions" class="d-none d-flex flex-column align-items-center">
-            <div class="mb-3 w-50 text-center">
-                <button class="btn btn-primary btn-lg w-100" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#afiliadosOptionsPDF" aria-expanded="false" aria-controls="afiliadosOptions">
-                    Descargar reporte de Afiliados (PDF)
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fs-5" id="excel-tab" data-bs-toggle="tab" data-bs-target="#excel" type="button" role="tab" aria-controls="excel" aria-selected="false">
+                    <i class="fas fa-file-excel text-success"></i> Formato Excel
                 </button>
-                <div class="collapse mt-2 w-100" id="afiliadosOptionsPDF">
-                    <div class="d-flex justify-content-center">
-                        <a href="/IPSPUPTM/app/reportes/pdf/reporte_afiliados.php"
-                            class="btn btn-outline-primary btn-lg"
-                            onclick="mostrarAlertaDescarga('PDF', 'Afiliados')">Ver Reporte</a>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content" id="reportesTabsContent">
+            <!-- PDF Pane -->
+            <div class="tab-pane fade show active" id="pdf" role="tabpanel" aria-labelledby="pdf-tab">
+                <div class="row g-4 justify-content-center">
+                    
+                    <!-- Reporte de Afiliados -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 border-danger shadow-sm text-center">
+                            <div class="card-body d-flex flex-column">
+                                <i class="fas fa-users fa-3x text-danger mb-3 mt-3"></i>
+                                <h5 class="card-title fw-bold">Afiliados</h5>
+                                <p class="card-text text-muted mb-4">Listado completo de todos los afiliados registrados en el sistema.</p>
+                                <div class="mt-auto">
+                                    <a href="/IPSPUPTM/app/reportes/pdf/reporte_afiliados.php" class="btn btn-outline-danger w-100" onclick="mostrarAlertaDescarga('PDF', 'Afiliados')"><i class="fas fa-download"></i> Descargar Reporte</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="mb-3 w-50 text-center">
-                <button class="btn btn-primary btn-lg w-100" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#beneficiariosOptionsPDF" aria-expanded="false"
-                    aria-controls="beneficiariosOptions">
-                    Descargar reporte de Beneficiarios por Afiliado (PDF)
-                </button>
-                <div class="collapse mt-2 w-100" id="beneficiariosOptionsPDF">
-                    <div class="d-flex justify-content-center">
-                        <a href="/IPSPUPTM/app/reportes/pdf/reporte_beneficiarios.php"
-                            class="btn btn-outline-primary btn-lg"
-                            onclick="mostrarAlertaDescarga('PDF', 'Beneficiarios')">Ver Reporte</a>
+                    <!-- Reporte de Beneficiarios -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 border-danger shadow-sm text-center">
+                            <div class="card-body d-flex flex-column">
+                                <i class="fas fa-user-friends fa-3x text-danger mb-3 mt-3"></i>
+                                <h5 class="card-title fw-bold">Beneficiarios</h5>
+                                <p class="card-text text-muted mb-4">Listado de los beneficiarios asociados a los afiliados.</p>
+                                <div class="mt-auto">
+                                    <a href="/IPSPUPTM/app/reportes/pdf/reporte_beneficiarios.php" class="btn btn-outline-danger w-100" onclick="mostrarAlertaDescarga('PDF', 'Beneficiarios')"><i class="fas fa-download"></i> Descargar Reporte</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="mb-3 w-50 text-center">
-                <button class="btn btn-primary btn-lg w-100" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#citasOptionsPDF" aria-expanded="false" aria-controls="citasOptions">
-                    Descargar reporte de Citas (PDF)
-                </button>
-                <div class="collapse mt-2 w-100" id="citasOptionsPDF">
-                    <div class="d-flex justify-content-center flex-column align-items-center">
-                        <a href="/IPSPUPTM/app/reportes/pdf/reporte_citas.php?tipo_reporte=semanal"
-                            class="btn btn-outline-primary btn-lg mb-2"
-                            onclick="mostrarAlertaDescarga('PDF', 'Citas Semanal')">Semanal</a>
-                        <a href="/IPSPUPTM/app/reportes/pdf/reporte_citas.php?tipo_reporte=quincenal"
-                            class="btn btn-outline-primary btn-lg mb-2"
-                            onclick="mostrarAlertaDescarga('PDF', 'Citas Quincenal')">Quincenal</a>
-                        <a href="/IPSPUPTM/app/reportes/pdf/reporte_citas.php?tipo_reporte=mensual"
-                            class="btn btn-outline-primary btn-lg"
-                            onclick="mostrarAlertaDescarga('PDF', 'Citas Mensual')">Mensual</a>
+                    <!-- Reporte de Citas -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 border-danger shadow-sm text-center">
+                            <div class="card-body d-flex flex-column">
+                                <i class="fas fa-calendar-check fa-3x text-danger mb-3 mt-3"></i>
+                                <h5 class="card-title fw-bold">Citas</h5>
+                                <p class="card-text text-muted">Historial de citas médicas en un periodo específico.</p>
+                                <div class="mt-auto">
+                                    <div class="row px-2">
+                                        <div class="col-6 mb-2 text-start">
+                                            <label class="form-label form-label-sm mb-0">Desde:</label>
+                                            <input type="date" id="fecha_inicio_citas_pdf" class="form-control form-control-sm">
+                                        </div>
+                                        <div class="col-6 mb-3 text-start">
+                                            <label class="form-label form-label-sm mb-0">Hasta:</label>
+                                            <input type="date" id="fecha_fin_citas_pdf" class="form-control form-control-sm">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline-danger w-100" onclick="generarReporte('citas', 'pdf')"><i class="fas fa-download"></i> Generar Reporte</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="mb-3 w-50 text-center">
-                <button class="btn btn-primary btn-lg w-100" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#especialidadesOptionsPDF" aria-expanded="false"
-                    aria-controls="especialidadesOptions">
-                    Descargar reporte de Especialidades (PDF)
-                </button>
-                <div class="collapse mt-2 w-100" id="especialidadesOptionsPDF">
-                    <div class="d-flex justify-content-center flex-column align-items-center">
-                        <a href="/IPSPUPTM/app/reportes/pdf/reporte_especialidades.php?tipo_reporte=semanal"
-                            class="btn btn-outline-primary btn-lg mb-2"
-                            onclick="mostrarAlertaDescarga('PDF', 'Especialidades Semanal')">Semanal</a>
-                        <a href="/IPSPUPTM/app/reportes/pdf/reporte_especialidades.php?tipo_reporte=quincenal"
-                            class="btn btn-outline-primary btn-lg mb-2"
-                            onclick="mostrarAlertaDescarga('PDF', 'Especialidades Quincenal')">Quincenal</a>
-                        <a href="/IPSPUPTM/app/reportes/pdf/reporte_especialidades.php?tipo_reporte=mensual"
-                            class="btn btn-outline-primary btn-lg"
-                            onclick="mostrarAlertaDescarga('PDF', 'Especialidades Mensual')">Mensual</a>
+                    <!-- Reporte de Especialidades -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 border-danger shadow-sm text-center">
+                            <div class="card-body d-flex flex-column">
+                                <i class="fas fa-stethoscope fa-3x text-danger mb-3 mt-3"></i>
+                                <h5 class="card-title fw-bold">Especialidades</h5>
+                                <p class="card-text text-muted">Estadísticas de especialidades más solicitadas por fecha.</p>
+                                <div class="mt-auto">
+                                    <div class="row px-2">
+                                        <div class="col-6 mb-2 text-start">
+                                            <label class="form-label form-label-sm mb-0">Desde:</label>
+                                            <input type="date" id="fecha_inicio_especialidades_pdf" class="form-control form-control-sm">
+                                        </div>
+                                        <div class="col-6 mb-3 text-start">
+                                            <label class="form-label form-label-sm mb-0">Hasta:</label>
+                                            <input type="date" id="fecha_fin_especialidades_pdf" class="form-control form-control-sm">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline-danger w-100" onclick="generarReporte('especialidades', 'pdf')"><i class="fas fa-download"></i> Generar Reporte</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="mb-3 w-50 text-center">
-                <button class="btn btn-primary btn-lg w-100" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#pagosOptionsPDF" aria-expanded="false" aria-controls="pagosOptions">
-                    Descargar reporte de Pagos (PDF)
-                </button>
-                <div class="collapse mt-2 w-100" id="pagosOptionsPDF">
-                    <div class="d-flex justify-content-center flex-column align-items-center">
-                        <a href="/IPSPUPTM/app/reportes/pdf/reporte_pagos.php?tipo_pago=contrato"
-                            class="btn btn-outline-primary btn-lg mb-2"
-                            onclick="mostrarAlertaDescarga('PDF', 'Pagos de Contratos')">Pagos de Contratos</a>
-                        <a href="/IPSPUPTM/app/reportes/pdf/reporte_pagos.php?tipo_pago=externo"
-                            class="btn btn-outline-primary btn-lg"
-                            onclick="mostrarAlertaDescarga('PDF', 'Pagos Externos')">Pagos Externos</a>
+                    <!-- Reporte de Pagos -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 border-danger shadow-sm text-center">
+                            <div class="card-body d-flex flex-column">
+                                <i class="fas fa-file-invoice-dollar fa-3x text-danger mb-3 mt-3"></i>
+                                <h5 class="card-title fw-bold">Pagos</h5>
+                                <p class="card-text text-muted">Registro de pagos de contratos y pagos externos por fecha.</p>
+                                <div class="mt-auto">
+                                    <div class="row px-2">
+                                        <div class="col-6 mb-2 text-start">
+                                            <label class="form-label form-label-sm mb-0">Desde:</label>
+                                            <input type="date" id="fecha_inicio_pagos_pdf" class="form-control form-control-sm">
+                                        </div>
+                                        <div class="col-6 mb-3 text-start">
+                                            <label class="form-label form-label-sm mb-0">Hasta:</label>
+                                            <input type="date" id="fecha_fin_pagos_pdf" class="form-control form-control-sm">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-outline-danger w-50" onclick="generarReportePago('contrato', 'pdf')" title="Pagos de Contratos">Contratos</button>
+                                        <button class="btn btn-outline-danger w-50" onclick="generarReportePago('externo', 'pdf')" title="Pagos Externos">Externos</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </div>
-        </div>
 
+            <!-- Excel Pane -->
+            <div class="tab-pane fade" id="excel" role="tabpanel" aria-labelledby="excel-tab">
+                <div class="row g-4 justify-content-center">
+                    
+                    <!-- Reporte de Afiliados -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 border-success shadow-sm text-center">
+                            <div class="card-body d-flex flex-column">
+                                <i class="fas fa-users fa-3x text-success mb-3 mt-3"></i>
+                                <h5 class="card-title fw-bold">Afiliados</h5>
+                                <p class="card-text text-muted mb-4">Listado completo de todos los afiliados registrados en el sistema.</p>
+                                <div class="mt-auto">
+                                    <a href="/IPSPUPTM/app/reportes/excel/reporte_afiliados.php" class="btn btn-outline-success w-100" onclick="mostrarAlertaDescarga('Excel', 'Afiliados')"><i class="fas fa-download"></i> Descargar Reporte</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-    </div>
+                    <!-- Reporte de Beneficiarios -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 border-success shadow-sm text-center">
+                            <div class="card-body d-flex flex-column">
+                                <i class="fas fa-user-friends fa-3x text-success mb-3 mt-3"></i>
+                                <h5 class="card-title fw-bold">Beneficiarios</h5>
+                                <p class="card-text text-muted mb-4">Listado de los beneficiarios asociados a los afiliados.</p>
+                                <div class="mt-auto">
+                                    <a href="/IPSPUPTM/app/reportes/excel/reporte_beneficiarios.php" class="btn btn-outline-success w-100" onclick="mostrarAlertaDescarga('Excel', 'Beneficiarios')"><i class="fas fa-download"></i> Descargar Reporte</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-    <div id="excelOptions" class="d-none d-flex flex-column align-items-center">
-        <div class="mb-3 w-50 text-center">
-            <button class="btn btn-primary btn-lg w-100" type="button" data-bs-toggle="collapse"
-                data-bs-target="#afiliadosOptionsExcel" aria-expanded="false" aria-controls="afiliadosOptions">
-                Descargar reporte de Afiliados (EXCEL)
-            </button>
-            <div class="collapse mt-2" id="afiliadosOptionsExcel">
-                <div class="d-grid gap-2">
-                    <a href="/IPSPUPTM/app/reportes/excel/reporte_afiliados.php" class="btn btn-outline-primary btn-lg"
-                        onclick="mostrarAlertaDescarga('Excel', 'Afiliados')">Ver Reporte</a>
+                    <!-- Reporte de Citas -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 border-success shadow-sm text-center">
+                            <div class="card-body d-flex flex-column">
+                                <i class="fas fa-calendar-check fa-3x text-success mb-3 mt-3"></i>
+                                <h5 class="card-title fw-bold">Citas</h5>
+                                <p class="card-text text-muted">Historial de citas médicas en un periodo específico.</p>
+                                <div class="mt-auto">
+                                    <div class="row px-2">
+                                        <div class="col-6 mb-2 text-start">
+                                            <label class="form-label form-label-sm mb-0">Desde:</label>
+                                            <input type="date" id="fecha_inicio_citas_excel" class="form-control form-control-sm">
+                                        </div>
+                                        <div class="col-6 mb-3 text-start">
+                                            <label class="form-label form-label-sm mb-0">Hasta:</label>
+                                            <input type="date" id="fecha_fin_citas_excel" class="form-control form-control-sm">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline-success w-100" onclick="generarReporte('citas', 'excel')"><i class="fas fa-download"></i> Generar Reporte</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reporte de Especialidades -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 border-success shadow-sm text-center">
+                            <div class="card-body d-flex flex-column">
+                                <i class="fas fa-stethoscope fa-3x text-success mb-3 mt-3"></i>
+                                <h5 class="card-title fw-bold">Especialidades</h5>
+                                <p class="card-text text-muted">Estadísticas de especialidades más solicitadas por fecha.</p>
+                                <div class="mt-auto">
+                                    <div class="row px-2">
+                                        <div class="col-6 mb-2 text-start">
+                                            <label class="form-label form-label-sm mb-0">Desde:</label>
+                                            <input type="date" id="fecha_inicio_especialidades_excel" class="form-control form-control-sm">
+                                        </div>
+                                        <div class="col-6 mb-3 text-start">
+                                            <label class="form-label form-label-sm mb-0">Hasta:</label>
+                                            <input type="date" id="fecha_fin_especialidades_excel" class="form-control form-control-sm">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline-success w-100" onclick="generarReporte('especialidades', 'excel')"><i class="fas fa-download"></i> Generar Reporte</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-        </div>
-
-        <div class="mb-3 w-50 test-center">
-            <button class="btn btn-primary btn-lg w-100" type="button" data-bs-toggle="collapse"
-                data-bs-target="#beneficiariosOptionsExcel" aria-expanded="false" aria-controls="beneficiariosOptions">
-                Descargar reporte de Beneficiarios por Afiliado (EXCEL)
-            </button>
-            <div class="collapse mt-2" id="beneficiariosOptionsExcel">
-                <div class="d-grid gap-2">
-                    <a href="/IPSPUPTM/app/reportes/excel/reporte_beneficiarios.php"
-                        class="btn btn-outline-primary btn-lg"
-                        onclick="mostrarAlertaDescarga('Excel', 'Beneficiarios')">Ver Reporte</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="mb-3 w-50 text-center">
-            <button class="btn btn-primary btn-lg w-100" type="button" data-bs-toggle="collapse"
-                data-bs-target="#citasOptionsExcel" aria-expanded="false" aria-controls="citasOptions">
-                Descargar reporte de Citas (EXCEL)
-            </button>
-            <div class="collapse mt-2" id="citasOptionsExcel">
-                <div class="d-grid gap-2">
-                    <a href="/IPSPUPTM/app/reportes/excel/reporte_citas.php?tipo_reporte=semanal"
-                        class="btn btn-outline-primary btn-lg"
-                        onclick="mostrarAlertaDescarga('Excel', 'Citas Semanal')">Semanal</a>
-                    <a href="/IPSPUPTM/app/reportes/excel/reporte_citas.php?tipo_reporte=quincenal"
-                        class="btn btn-outline-primary btn-lg"
-                        onclick="mostrarAlertaDescarga('Excel', 'Citas Quincenal')">Quincenal</a>
-                    <a href="/IPSPUPTM/app/reportes/excel/reporte_citas.php?tipo_reporte=mensual"
-                        class="btn btn-outline-primary btn-lg"
-                        onclick="mostrarAlertaDescarga('Excel', 'Citas Mensual')">Mensual</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="mb-3 w-50 text-center">
-            <button class="btn btn-primary btn-lg w-100" type="button" data-bs-toggle="collapse"
-                data-bs-target="#especialidadesOptionsExcel" aria-expanded="false"
-                aria-controls="especialidadesOptions">
-                Descargar reporte de Especialidades (EXCEL)
-            </button>
-            <div class="collapse mt-2" id="especialidadesOptionsExcel">
-                <div class="d-grid gap-2">
-                    <a href="/IPSPUPTM/app/reportes/excel/reporte_especialidades.php?tipo_reporte=semanal"
-                        class="btn btn-outline-primary btn-lg"
-                        onclick="mostrarAlertaDescarga('Excel', 'Especialidades Semanal')">Semanal</a>
-                    <a href="/IPSPUPTM/app/reportes/excel/reporte_especialidades.php?tipo_reporte=quincenal"
-                        class="btn btn-outline-primary btn-lg"
-                        onclick="mostrarAlertaDescarga('Excel', 'Especialidades Quincenal')">Quincenal</a>
-                    <a href="/IPSPUPTM/app/reportes/excel/reporte_especialidades.php?tipo_reporte=mensual"
-                        class="btn btn-outline-primary btn-lg"
-                        onclick="mostrarAlertaDescarga('Excel', 'Especialidades Mensual')">Mensual</a>
-                </div>
-            </div>
+            
         </div>
     </div>
 </div>
-</div>
+
 <script src="/IPSPUPTM/assets/js/reportes.js"></script>
