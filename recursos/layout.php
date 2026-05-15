@@ -39,7 +39,7 @@
         'usuarios' => 'manual_usuarios.pdf'
     ];
     $archivo_ayuda = isset($manuales_pdf[$vista]) ? $manuales_pdf[$vista] : 'manual_general.pdf';
-    $ruta_ayuda = "/IPSPUPTM/assets/manuales/" . $archivo_ayuda;
+    $ruta_ayuda = "/IPSPUPTM/recursos/manuales/" . $archivo_ayuda;
     ?>
 
     <!-- Botón flotante de ayuda dinámica -->
