@@ -12,7 +12,7 @@ include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
                 <h5 class="modal-title" id="labelPago">Nuevo Pago de Cuota</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="/IPSPUPTM/app/pagos/modales/procesar_pago.php" method="POST">
+            <form action="/IPSPUPTM/app/pagos/modales/procesar_pago.php" method="POST" onsubmit="return validarPagoInicial()">
                 <div class="modal-body">
 
                     <div class="mb-3">
@@ -157,16 +157,42 @@ function cambiarTipoPago() {
     const tipoPago = document.getElementById('tipo_pago_select').value;
     const inputCuota = document.getElementById('input_cuota');
     const contenedorCuota = document.getElementById('contenedor_cuota');
+    const inputMonto = document.getElementById('monto_cuota_input');
 
     if (tipoPago === 'Pago Inicial') {
         inputCuota.value = 0;
         contenedorCuota.style.display = 'none';
+        if (estadoPagoInicial && estadoPagoInicial.pago_inicial_pendiente) {
+            inputMonto.setAttribute('max', estadoPagoInicial.pago_inicial_pendiente);
+        }
     } else {
         contenedorCuota.style.display = '';
-        if (estadoPagoInicial.proxima_cuota) {
+        inputMonto.removeAttribute('max');
+        if (estadoPagoInicial && estadoPagoInicial.proxima_cuota) {
             inputCuota.value = estadoPagoInicial.proxima_cuota;
         }
     }
+}
+
+function validarPagoInicial() {
+    const tipoPago = document.getElementById('tipo_pago_select').value;
+    const inputMonto = document.getElementById('monto_cuota_input');
+    const montoIngresado = parseFloat(inputMonto.value) || 0;
+
+    if (tipoPago === 'Pago Inicial' && estadoPagoInicial && estadoPagoInicial.pago_inicial_pendiente !== undefined) {
+        const montoPendiente = parseFloat(estadoPagoInicial.pago_inicial_pendiente);
+        
+        if (montoIngresado > montoPendiente) {
+            if (typeof alertify !== 'undefined') {
+                alertify.error('El monto no puede superar el pago inicial pendiente ($' + montoPendiente.toFixed(2) + ').');
+            } else {
+                alert('El monto no puede superar el pago inicial pendiente ($' + montoPendiente.toFixed(2) + ').');
+            }
+            inputMonto.focus();
+            return false;
+        }
+    }
+    return true;
 }
 
 // Inicializar Select2 en el modal, asegúrate que jQuery esté cargado primero
@@ -249,6 +275,7 @@ function consultarSaldo(idContrato) {
             inputCuota.value = ""; 
             btnGuardar.disabled = true;
             infoPagoInicial.classList.add('d-none');
+            document.getElementById('monto_cuota_input').removeAttribute('max');
 
         } else if (data.pago_inicial_completo) {
             // Ya completó el 30%: solo puede pagar cuotas normales
@@ -263,6 +290,7 @@ function consultarSaldo(idContrato) {
             contenedorCuota.style.display = '';
             btnGuardar.disabled = false;
             contenedor.className = "alert alert-warning mb-3";
+            document.getElementById('monto_cuota_input').removeAttribute('max');
 
         } else {
             // NO ha completado el 30%: solo puede pagar "Pago Inicial"
@@ -277,6 +305,7 @@ function consultarSaldo(idContrato) {
             contenedorCuota.style.display = 'none';
             btnGuardar.disabled = false;
             contenedor.className = "alert alert-warning mb-3";
+            document.getElementById('monto_cuota_input').setAttribute('max', data.pago_inicial_pendiente);
         }
     })
     .catch(error => console.error('Error:', error));

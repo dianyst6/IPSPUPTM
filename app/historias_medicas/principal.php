@@ -19,7 +19,7 @@ if (isset($_SESSION['user_id'])) {
         if ($rowEsp) {
             $ci_medico_logueado = $rowEsp['ci_medico'];
             $es_ginecologo = (strtolower($rowEsp['nombre_especialidad']) === 'ginecología'
-                           || strtolower($rowEsp['nombre_especialidad']) === 'ginecologia');
+                || strtolower($rowEsp['nombre_especialidad']) === 'ginecologia');
         }
         $stmtEsp->close();
     }
@@ -33,6 +33,8 @@ try {
     // La consulta cambia según la especialidad del médico
     if ($es_ginecologo) {
         // Ginecólogo: solo ve sus propias historias de ginecología
+        $whereClause = !empty($ci_medico_logueado) ? "WHERE g.ci_medico = '$ci_medico_logueado'" : "";
+
         $sqlHistorias = "
             SELECT
                 g.id_historia_g AS id_historia,
@@ -52,12 +54,14 @@ try {
             LEFT JOIN beneficiarios b ON g.ci_paciente = b.cedula
             LEFT JOIN persona p_b ON b.cedula = p_b.cedula
             LEFT JOIN comunidad_uptm ext ON g.ci_paciente = ext.cedula
+            $whereClause
             ORDER BY g.fecha DESC
             LIMIT $rowsPerPage OFFSET $offset
         ";
-        $totalRowsResult = $conn->query("SELECT COUNT(*) AS total FROM historias_medicas_gine");
+        $totalRowsResult = $conn->query("SELECT COUNT(*) AS total FROM historias_medicas_gine g $whereClause");
     } else {
-        // Otros médicos: solo ven las historias generales
+        // Otros médicos: solo ven las historias generales (filtradas por su cédula)
+        $whereClause = !empty($ci_medico_logueado) ? "WHERE h.ci_medico = '$ci_medico_logueado'" : "";
         $sqlHistorias = "
             SELECT
                 h.id_historia,
@@ -79,10 +83,11 @@ try {
             LEFT JOIN comunidad_uptm ext ON h.ci_paciente = ext.cedula
             LEFT JOIN medicos m ON h.ci_medico = m.ci_medico
             LEFT JOIN especialidades esp ON m.especialidad = esp.id_especialidad
+            $whereClause
             ORDER BY h.fecha DESC
             LIMIT $rowsPerPage OFFSET $offset
         ";
-        $totalRowsResult = $conn->query("SELECT COUNT(*) AS total FROM historias_medicas");
+        $totalRowsResult = $conn->query("SELECT COUNT(*) AS total FROM historias_medicas h $whereClause");
     }
 
     $historias = $conn->query($sqlHistorias);
@@ -96,9 +101,11 @@ try {
 ?>
 
 <div class="mt-3 m-2">
-    <h1 class="fw-bold text-center" style="color: #062974;">Historias Médicas</h1>
+    <h1 class="fw-bold text-center" style="color: #062974;">
+        Historias Médicas <?= $es_ginecologo ? 'Ginecología' : '' ?>
+    </h1>
     <hr class="mx-auto" style="width: 50px; height: 3px; background-color: #062974;">
-    
+
     <div class="row mt-4 mb-3">
         <div class="col-auto">
             <?php
@@ -117,7 +124,8 @@ try {
             </select>
         </div>
         <div class="col text-end">
-            <input type="text" id="search" class="form-control w-auto d-inline-block border-primary" placeholder="Buscar por nombre o CI...">
+            <input type="text" id="search" class="form-control w-auto d-inline-block border-primary"
+                placeholder="Buscar por nombre o CI...">
         </div>
     </div>
 
@@ -140,9 +148,9 @@ try {
                             <td class="text-center fw-bold"><?= htmlspecialchars($row['ci_paciente']); ?></td>
                             <td><?= htmlspecialchars($row['nombre_paciente']); ?></td>
                             <td class="text-center">
-                                <?php 
-                                    $tipo = strtolower($row['tipo_paciente']);
-                                    $badgeClass = ($tipo == 'afiliado') ? 'bg-success' : (($tipo == 'beneficiario') ? 'bg-primary' : 'bg-info');
+                                <?php
+                                $tipo = strtolower($row['tipo_paciente']);
+                                $badgeClass = ($tipo == 'afiliado') ? 'bg-success' : (($tipo == 'beneficiario') ? 'bg-primary' : 'bg-info');
                                 ?>
                                 <span class="badge <?= $badgeClass ?>"><?= ucfirst($tipo); ?></span>
                             </td>
@@ -150,21 +158,15 @@ try {
                             <td class="text-center"><?= date('d-m-Y', strtotime($row['fecha_historia'])); ?></td>
                             <td class="text-center">
                                 <div class="btn-group">
-                                    <button
-                                        class="btn btn-sm btn-outline-primary btn-ver-historia"
-                                        title="Ver Historia"
+                                    <button class="btn btn-sm btn-outline-primary btn-ver-historia" title="Ver Historia"
                                         data-id="<?= $row['id_historia'] ?>"
-                                        data-tabla="<?= $es_ginecologo ? 'ginecologia' : 'general' ?>"
-                                        data-bs-toggle="modal"
+                                        data-tabla="<?= $es_ginecologo ? 'ginecologia' : 'general' ?>" data-bs-toggle="modal"
                                         data-bs-target="#vermodal">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button
-                                        class="btn btn-sm btn-outline-danger btn-eliminar-historia"
-                                        title="Eliminar"
+                                    <button class="btn btn-sm btn-outline-danger btn-eliminar-historia" title="Eliminar"
                                         data-id="<?= $row['id_historia'] ?>"
-                                        data-tabla="<?= $es_ginecologo ? 'ginecologia' : 'general' ?>"
-                                        data-bs-toggle="modal"
+                                        data-tabla="<?= $es_ginecologo ? 'ginecologia' : 'general' ?>" data-bs-toggle="modal"
                                         data-bs-target="#eliminamodal">
                                         <i class="fas fa-trash"></i>
                                     </button>
@@ -173,7 +175,9 @@ try {
                         </tr>
                     <?php endwhile; ?>
                 <?php else: ?>
-                    <tr><td colspan="6" class="text-center">No hay registros médicos encontrados.</td></tr>
+                    <tr>
+                        <td colspan="6" class="text-center">No hay registros médicos encontrados.</td>
+                    </tr>
                 <?php endif; ?>
             </tbody>
         </table>
@@ -189,31 +193,31 @@ if ($es_ginecologo) {
 ?>
 
 <script>
-// Filtros y Buscador
-document.getElementById('filterTipo').addEventListener('change', function() {
-    const filtro = this.value.toLowerCase();
-    const filas = document.querySelectorAll('#tablaHistorias tbody tr');
-    filas.forEach(f => {
-        const tipoRow = f.getAttribute('data-tipo');
-        f.style.display = (filtro === 'todos' || tipoRow === filtro) ? '' : 'none';
+    // Filtros y Buscador
+    document.getElementById('filterTipo').addEventListener('change', function () {
+        const filtro = this.value.toLowerCase();
+        const filas = document.querySelectorAll('#tablaHistorias tbody tr');
+        filas.forEach(f => {
+            const tipoRow = f.getAttribute('data-tipo');
+            f.style.display = (filtro === 'todos' || tipoRow === filtro) ? '' : 'none';
+        });
     });
-});
 
-document.getElementById('search').addEventListener('keyup', function() {
-    const term = this.value.toLowerCase();
-    const filas = document.querySelectorAll('#tablaHistorias tbody tr');
-    filas.forEach(f => {
-        f.style.display = f.innerText.toLowerCase().includes(term) ? '' : 'none';
+    document.getElementById('search').addEventListener('keyup', function () {
+        const term = this.value.toLowerCase();
+        const filas = document.querySelectorAll('#tablaHistorias tbody tr');
+        filas.forEach(f => {
+            f.style.display = f.innerText.toLowerCase().includes(term) ? '' : 'none';
+        });
     });
-});
 
-// Pasar id e indicador de tabla al modal de confirmación de eliminación
-document.addEventListener('click', function (e) {
-    const btn = e.target.closest('.btn-eliminar-historia');
-    if (!btn) return;
-    document.getElementById('elim_id_historia').value = btn.getAttribute('data-id');
-    document.getElementById('elim_tipo_tabla').value  = btn.getAttribute('data-tabla');
-});
+    // Pasar id e indicador de tabla al modal de confirmación de eliminación
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('.btn-eliminar-historia');
+        if (!btn) return;
+        document.getElementById('elim_id_historia').value = btn.getAttribute('data-id');
+        document.getElementById('elim_tipo_tabla').value = btn.getAttribute('data-tabla');
+    });
 </script>
 
 <?php include 'C:/xampp/htdocs/IPSPUPTM/app/historias_medicas/modales/eliminar/eliminarmodal.php'; ?>
