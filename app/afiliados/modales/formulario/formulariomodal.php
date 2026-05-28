@@ -13,19 +13,19 @@
             <div class="row mb-3">
               <div class="col-md-6 col-12">
                 <label for="cedula" class="form-label">Cédula</label>
-                <input type="text" name="cedula" id="cedula" class="form-control" required>
+                <input type="text" name="cedula" id="cedula" class="form-control" pattern="[0-9]+" title="Solo se permiten números" required>
                 <div id="cedulaFeedback" class="text-danger mt-1" style="display:none; font-size: 0.875em;">La cédula ya
                   está registrada como beneficiario.</div>
               </div>
               <div class="col-md-6 col-12">
                 <label for="nombre" class="form-label">Nombre</label>
-                <input type="text" name="nombre" id="nombre" class="form-control" maxlength="50" required>
+                <input type="text" name="nombre" id="nombre" class="form-control" maxlength="50" pattern="[a-zA-ZáéíóúüñÑÁÉÍÓÚÜÑ\s]+" title="Solo se permiten letras" required>
               </div>
             </div>
             <div class="row mb-3">
               <div class="col-md-6 col-12">
                 <label for="apellido" class="form-label">Apellido</label>
-                <input type="text" name="apellido" id="apellido" class="form-control" required>
+                <input type="text" name="apellido" id="apellido" class="form-control" maxlength="50" pattern="[a-zA-ZáéíóúüñÑÁÉÍÓÚÜÑ\s]+" title="Solo se permiten letras" required>
               </div>
               <div class="col-md-6 col-12">
                 <label for="fechanacimiento" class="form-label">Fecha de Nacimiento</label>
@@ -44,17 +44,17 @@
               </div>
               <div class="col-md-6 col-12">
                 <label for="telefono" class="form-label">Teléfono</label>
-                <input type="text" name="telefono" id="telefono" class="form-control" required>
+                <input type="text" name="telefono" id="telefono" maxlength="20" class="form-control" pattern="[0-9]+" title="Solo se permiten números" required>
               </div>
             </div>
             <div class="row mb-3">
               <div class="col-md-6 col-12">
                 <label for="correo" class="form-label">Correo Electrónico</label>
-                <input type="email" name="correo" id="correo" class="form-control" required>
+                <input type="email" name="correo" id="correo" maxlength="100" class="form-control" required>
               </div>
               <div class="col-md-6 col-12">
                 <label for="ocupacion" class="form-label">Ocupación</label>
-                <input type="text" name="ocupacion" id="ocupacion" class="form-control" required>
+                <input type="text" name="ocupacion" id="ocupacion" maxlength="50" class="form-control" pattern="[a-zA-ZáéíóúüñÑÁÉÍÓÚÜÑ\s]+" title="Solo se permiten letras" required>
               </div>
             </div>
 
@@ -137,8 +137,12 @@
 
   // Usar delegación de eventos para asegurar que funcione incluso si el modal se carga dinámicamente
   document.body.addEventListener('input', function (event) {
-    if (event.target && event.target.id === 'cedula') {
+    if (!event.target) return;
+
+    // Validación y sanitización del campo cédula (solo números)
+    if (event.target.id === 'cedula') {
       let cedulaInput = event.target;
+      cedulaInput.value = cedulaInput.value.replace(/\D/g, '');
       let cedula = cedulaInput.value.trim();
       const feedback = document.getElementById('cedulaFeedback');
       const btnRegistrar = document.getElementById('btnRegistrar');
@@ -177,6 +181,18 @@
         btnRegistrar.disabled = false;
         cedulaInput.classList.remove('is-invalid');
       }
+    }
+
+    // Validación y sanitización de los campos Nombre, Apellido y Ocupación (solo letras y espacios, máx 50 caracteres)
+    if (event.target.id === 'nombre' || event.target.id === 'apellido' || event.target.id === 'ocupacion') {
+      let input = event.target;
+      input.value = input.value.replace(/[^a-zA-ZáéíóúüñÑÁÉÍÓÚÜÑ\s]/g, '');
+    }
+
+    // Validación y sanitización del campo teléfono (solo números, máx 20 caracteres)
+    if (event.target.id === 'telefono') {
+      let input = event.target;
+      input.value = input.value.replace(/\D/g, '');
     }
   });
 </script>

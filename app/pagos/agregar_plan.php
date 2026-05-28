@@ -12,15 +12,15 @@ include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
             <div class="row mb-4">
                 <div class="col-md-6">
                     <label class="form-label">Nombre del Plan</label>
-                    <input type="text" name="nombre_plan" class="form-control" placeholder="Ej: Plan Platino 2026" required>
+                    <input type="text" name="nombre_plan" class="form-control" maxlength="100" placeholder="Ej: Plan Platino 2026" required>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Precio Plan ($)</label>
-                    <input type="number" step="0.01" name="precio" class="form-control" required>
+                    <input type="number" min="0.00" max="99999999.99" step="0.01" name="precio" class="form-control" placeholder="Ej: 100.00" required>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Cobertura Póliza ($)</label>
-                    <input type="number" step="0.01" name="monto_cobertura" class="form-control" placeholder="Ej: 500.00" required>
+                    <input type="number" min="0.00" max="99999999.99" step="0.01" name="monto_cobertura" class="form-control" placeholder="Ej: 500.00" required>
                 </div>
                 <div class="col-md-12 mt-3">
                     <label class="form-label">Descripción</label>
@@ -238,6 +238,28 @@ include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
         
         // Asegurar moldes al cargar
         asegurarMoldes();
+
+        // Validación en tiempo real para inputs decimal(10,2) con delegación de eventos
+        document.body.addEventListener('input', function(event) {
+            const target = event.target;
+            if (target && target.tagName === 'INPUT' && target.type === 'number' && target.getAttribute('step') === '0.01') {
+                let val = target.value;
+                if (val.includes('.')) {
+                    let parts = val.split('.');
+                    if (parts[0].length > 8) {
+                        parts[0] = parts[0].slice(0, 8);
+                    }
+                    if (parts[1].length > 2) {
+                        parts[1] = parts[1].slice(0, 2);
+                    }
+                    target.value = parts.join('.');
+                } else {
+                    if (val.length > 8) {
+                        target.value = val.slice(0, 8);
+                    }
+                }
+            }
+        });
     });
 
     // 3. Funciones auxiliares

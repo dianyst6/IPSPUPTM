@@ -11,7 +11,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Nombre del Examen</label>
-                        <input type="text" name="nombre_examen" class="form-control" required>
+                        <input type="text" name="nombre_examen" maxlength="150" pattern="[a-zA-ZáéíóúüñÑÁÉÍÓÚÜÑ\s]+" title="Solo se permiten letras" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Especialidad Asociada</label>

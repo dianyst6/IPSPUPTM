@@ -133,20 +133,15 @@
             <div class="row">
               <div class="col-md-4 mb-3">
                 <label for="cedula_ext" class="form-label">Cédula</label>
-               <input type="text" 
-              name="cedula_ext" 
-               id="cedula_ext" 
-               class="form-control" 
-               oninput="this.value = this.value.replace(/[^0-9]/g, '')" 
-               placeholder="Ej: 25123456">
+                <input type="text" name="cedula_ext" id="cedula_ext" class="form-control" maxlength="20" pattern="[0-9]+" title="Solo se permiten números" placeholder="Ej: 25123456">
               </div>
               <div class="col-md-4 mb-3">
                 <label for="nombre_ext" class="form-label">Nombre</label>
-                <input type="text" name="nombre_ext" id="nombre_ext" class="form-control">
+                <input type="text" name="nombre_ext" id="nombre_ext" class="form-control" maxlength="50" pattern="[a-zA-ZáéíóúüñÑÁÉÍÓÚÜÑ\s]+" title="Solo se permiten letras">
               </div>
               <div class="col-md-4 mb-3">
                 <label for="apellido_ext" class="form-label">Apellido</label>
-                <input type="text" name="apellido_ext" id="apellido_ext" class="form-control">
+                <input type="text" name="apellido_ext" id="apellido_ext" class="form-control" maxlength="50" pattern="[a-zA-ZáéíóúüñÑÁÉÍÓÚÜÑ\s]+" title="Solo se permiten letras">
               </div>
             </div>
           </div>
@@ -567,6 +562,23 @@ window.abrirModalNuevoExamen = function() {
                         })
                         .catch(err => console.error("Error buscando externo:", err));
                 }
+            });
+        }
+
+        // Sanitización en tiempo real para externos
+        if (inputCedula) {
+            inputCedula.addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '');
+            });
+        }
+        if (inputNombre) {
+            inputNombre.addEventListener('input', function() {
+                this.value = this.value.replace(/[^a-zA-ZáéíóúüñÑÁÉÍÓÚÜÑ\s]/g, '');
+            });
+        }
+        if (inputApellido) {
+            inputApellido.addEventListener('input', function() {
+                this.value = this.value.replace(/[^a-zA-ZáéíóúüñÑÁÉÍÓÚÜÑ\s]/g, '');
             });
         }
  
