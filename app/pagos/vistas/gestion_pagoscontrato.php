@@ -2,23 +2,37 @@
     <div class="cont-general">
         <div class="card-body">
             <div class="mt-3 m-3">
-                 <h1 class="fw-bold text-center" style="color: #062974;">Gestión de Pagos</h1>
-            <hr class="mx-auto" style="width: 50px; height: 3px; background-color: #062974;">
-                <br>
+                <div class="row align-items-center mb-4">
+                    <!-- Botón Volver Atrás (Izquierda) -->
+                    <div class="col-auto col-md-3 text-start">
+                        <button onclick="window.history.back();" class="btn" style="color: white; background-color: #002750; border: none; border-radius: 8px; padding: 8px 16px;"> 
+                            <i class="fas fa-arrow-left me-1"></i> Volver atrás
+                        </button>
+                    </div>
+                    
+                    <!-- Título Centrado (Centro) -->
+                    <div class="col col-md-6 text-center">
+                        <h1 class="fw-bold mb-0" style="color: #062974; font-size: 2.25rem;">Gestión de Pagos</h1>
+                        <hr class="mx-auto mt-2 mb-0" style="width: 50px; height: 3px; background-color: #062974; opacity: 1;">
+                    </div>
+                    
+                    <!-- Espaciador derecho para mantener simetría -->
+                    <div class="col-auto col-md-3 text-end"></div>
+                </div>
 
-                <div class="row mt-3">
+                <div class="row mt-3 align-items-center">
                     <div class="col-auto">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#modalPago">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPago" style="border-radius: 8px; padding: 8px 16px;">
                             <i class="fas fa-plus-circle"></i> Registrar Pago
                         </button>
                     </div>
-                    <div class="col text-end mt-2">
+            
+                    <div class="col text-end">
                         <input type="text" id="searchPagos" class="form-control w-auto d-inline-block"
                             placeholder="Buscar paciente...">
                     </div>
                 </div>
-
+                <br>
                 <h4>Pagos Registrados</h4>
                 <div class="table-responsive mt-3">
                     <table class="table table-sm table-striped table-hover mx-auto">

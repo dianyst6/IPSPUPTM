@@ -1,12 +1,58 @@
+<?php
+include_once 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
+
+$rowsPerPage = 15;
+$currentPage = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$offset = ($currentPage - 1) * $rowsPerPage;
+
+// Calcular total de páginas
+$totalQuery = "SELECT COUNT(*) as total FROM examenes";
+$totalResult = mysqli_query($conn, $totalQuery);
+$totalRows = mysqli_fetch_assoc($totalResult)['total'];
+$totalPages = ceil($totalRows / $rowsPerPage);
+?>
+<style>
+.pagination .page-link {
+    color: #062974;
+    border-color: #dee2e6;
+}
+.pagination .page-link:hover {
+    color: #002750;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+.pagination .page-item.active .page-link {
+    background-color: #062974;
+    border-color: #062974;
+    color: white;
+}
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+}
+</style>
 <div class="card shadow-lg">
     <div class="card-body">
-        <div class="d-flex justify-content-between align-items-center">
-            <h1 class="fw-bold m-0" style="color: #062974;">Gestión de Exámenes y Precios</h1>
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalNuevoExamen">
-                <i class="fas fa-plus-circle me-1"></i> Agregar Examen
-            </button>
+        <div class="row align-items-center mb-4">
+            <!-- Botón Volver Atrás (Izquierda) -->
+            <div class="col-auto col-md-3 text-start">
+                <a href="/IPSPUPTM/home.php?vista=gestionplanes" class="btn" style="color: white; background-color: #002750; border: none; border-radius: 8px; padding: 8px 16px;"> 
+                    <i class="fas fa-arrow-left me-1"></i> Volver atrás
+                </a>
+            </div>
+            
+            <!-- Título Centrado (Centro) -->
+            <div class="col col-md-6 text-center">
+                <h1 class="fw-bold mb-0" style="color: #062974; font-size: 2.25rem;">Gestión de Exámenes y Precios</h1>
+                <hr class="mx-auto mt-2 mb-0" style="width: 50px; height: 3px; background-color: #062974; opacity: 1;">
+            </div>
+            
+            <!-- Botón Agregar Examen (Derecha) -->
+            <div class="col-auto col-md-3 text-end">
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalNuevoExamen" style="border-radius: 8px; padding: 8px 16px;">
+                    <i class="fas fa-plus-circle me-1"></i> Agregar Examen
+                </button>
+            </div>
         </div>
-        <hr class="mx-auto" style="width: 50px; height: 3px; background-color: #062974;">
         
         <div class="table-responsive mt-4">
             <table class="table table-striped table-hover">
@@ -22,12 +68,13 @@
                 </thead>
                 <tbody>
                     <?php
-                    include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
+                    include_once 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
                     $sql = "SELECT e.*, esp.nombre_especialidad, cat.nombre_categoria 
                             FROM examenes e 
                             INNER JOIN especialidades esp ON e.ID_especialidad_examenes = esp.id_especialidad 
                             LEFT JOIN categorias_examenes cat ON e.id_categoria = cat.id_categoria
-                            ORDER BY e.estado ASC, esp.nombre_especialidad ASC";
+                            ORDER BY e.estado ASC, esp.nombre_especialidad ASC
+                            LIMIT $rowsPerPage OFFSET $offset";
                     $res = mysqli_query($conn, $sql);
                     while($row = mysqli_fetch_assoc($res)):
                     ?>
@@ -81,6 +128,25 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Paginación -->
+        <?php if ($totalPages > 1): ?>
+        <nav aria-label="Navegación de exámenes" class="mt-4">
+            <ul class="pagination justify-content-center pagination-sm">
+                <li class="page-item <?= ($currentPage <= 1) ? 'disabled' : '' ?>">
+                    <a class="page-link" href="?vista=gestionexamenes&page=<?= $currentPage - 1 ?>">Anterior</a>
+                </li>
+                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                <li class="page-item <?= ($i == $currentPage) ? 'active' : '' ?>">
+                    <a class="page-link" href="?vista=gestionexamenes&page=<?= $i ?>"><?= $i ?></a>
+                </li>
+                <?php endfor; ?>
+                <li class="page-item <?= ($currentPage >= $totalPages) ? 'disabled' : '' ?>">
+                    <a class="page-link" href="?vista=gestionexamenes&page=<?= $currentPage + 1 ?>">Siguiente</a>
+                </li>
+            </ul>
+        </nav>
+        <?php endif; ?>
     </div>
 </div>
 

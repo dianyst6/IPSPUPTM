@@ -191,9 +191,9 @@ document.addEventListener("DOMContentLoaded", function() {
     new Chart(ctx, {
         type: 'pie',
         data: {
-            labels: ['Afiliados', 'Beneficiarios', 'Comunidad'],
+            labels: ['Afiliados Activos', 'Beneficiarios Activos', 'Comunidad UPTM'],
             datasets: [{
-                data: [<?php echo $total_citas_afil; ?>, <?php echo $total_citas_benef; ?>, <?php echo $total_citas_uptm; ?>],
+                data: [<?php echo $total_afiliados_activos; ?>, <?php echo $total_beneficiarios_activos; ?>, <?php echo $total_comunidad_uptm; ?>],
                 backgroundColor: ['#0e213d', '#062974', '#27b1f1'],
                 borderWidth: 0
             }]

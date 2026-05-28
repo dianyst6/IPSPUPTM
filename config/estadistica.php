@@ -10,6 +10,9 @@ $total_citas_mes = 0;
 $total_citas_uptm = 0;
 $total_citas_afil = 0;
 $total_citas_benef = 0;
+$total_afiliados_activos = 0;
+$total_beneficiarios_activos = 0;
+$total_comunidad_uptm = 0;
 
 // Carga del periodo desde GET (default: anio)
 $periodo = isset($_GET['periodo']) ? $_GET['periodo'] : 'anio';
@@ -121,6 +124,30 @@ if ($result_especialidades && $result_especialidades->num_rows > 0) {
             $citas_imagenologia = $total;
         }
     }
+}
+
+
+// --- NUEVO: Estadísticas para la torta de distribución absoluta de personas ---
+
+// 1. Cantidad de afiliados con contrato activo
+$sql_afiliados_activos = "SELECT COUNT(*) AS total FROM afiliados a WHERE EXISTS (SELECT 1 FROM contrato_plan cp WHERE cp.ID_afiliado_contrato = a.cedula AND cp.estado_contrato = 'Activo')";
+$result_afiliados_activos = $conn->query($sql_afiliados_activos);
+if ($result_afiliados_activos && $result_afiliados_activos->num_rows > 0) {
+    $total_afiliados_activos = $result_afiliados_activos->fetch_assoc()['total'];
+}
+
+// 2. Cantidad de beneficiarios con contrato activo (titular con contrato activo)
+$sql_beneficiarios_activos = "SELECT COUNT(*) AS total FROM beneficiarios b JOIN afiliados a ON b.cedula_afil = a.ID WHERE EXISTS (SELECT 1 FROM contrato_plan cp WHERE cp.ID_afiliado_contrato = a.cedula AND cp.estado_contrato = 'Activo')";
+$result_beneficiarios_activos = $conn->query($sql_beneficiarios_activos);
+if ($result_beneficiarios_activos && $result_beneficiarios_activos->num_rows > 0) {
+    $total_beneficiarios_activos = $result_beneficiarios_activos->fetch_assoc()['total'];
+}
+
+// 3. Cantidad de personas de la comunidad UPTM
+$sql_comunidad_uptm = "SELECT COUNT(*) AS total FROM comunidad_uptm";
+$result_comunidad_uptm = $conn->query($sql_comunidad_uptm);
+if ($result_comunidad_uptm && $result_comunidad_uptm->num_rows > 0) {
+    $total_comunidad_uptm = $result_comunidad_uptm->fetch_assoc()['total'];
 }
 
 // Cerrar la conexión a la base de datos

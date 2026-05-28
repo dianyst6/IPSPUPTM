@@ -50,9 +50,24 @@ $totalPages = ceil($totalRows / $rowsPerPage);
 
 <div class="card shadow-lg">
     <div class="card-body p-4">
-        <h1 class="fw-bold text-center" style="color: #062974;">Gestión de Pagos Externos</h1>
-        <hr class="mx-auto" style="width: 50px; height: 3px; background-color: #062974;">
-
+        <div class="row align-items-center mb-4">
+            <!-- Botón Volver Atrás (Izquierda) -->
+            <div class="col-auto col-md-3 text-start">
+                <button onclick="window.history.back();" class="btn" style="color: white; background-color: #002750; border: none; border-radius: 8px; padding: 8px 16px;"> 
+                    <i class="fas fa-arrow-left me-1"></i> Volver atrás
+                </button>
+            </div>
+            
+            <!-- Título Centrado (Centro) -->
+            <div class="col col-md-6 text-center">
+                <h1 class="fw-bold mb-0" style="color: #062974; font-size: 2.25rem;">Gestión de Pagos Externos</h1>
+                <hr class="mx-auto mt-2 mb-0" style="width: 50px; height: 3px; background-color: #062974; opacity: 1;">
+            </div>
+            
+            <!-- Espaciador derecho para mantener simetría -->
+            <div class="col-auto col-md-3 text-end"></div>
+        </div>
+        
         <div class="row mt-4 align-items-center">
             <div class="col-auto">
                 <div class="btn-group" role="group">
@@ -71,6 +86,7 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                 <input type="text" id="search" class="form-control w-auto d-inline-block" placeholder="Buscar paciente...">
             </div>
         </div>
+        <br>
 
         <h4 class="mb-3">
             <?php echo ($filtro == 'pendientes') ? 'Citas por Cobrar' : 'Registro Histórico de Pagos'; ?>

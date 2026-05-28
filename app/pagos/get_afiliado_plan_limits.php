@@ -38,13 +38,13 @@ if ($tipo == 'Beneficiario') {
     $res_titular = mysqli_query($conn, $sql_titular);
     $id_titular_vinculo = mysqli_fetch_assoc($res_titular)['cedula_afil'];
     
-    $sql_contrato = "SELECT cp.ID_contrato, cp.fecha_inicio, p.nombre_plan, p.ID_planes, p.monto_cobertura 
+    $sql_contrato = "SELECT cp.ID_contrato, cp.fecha_inicio, cp.monto_total, p.nombre_plan, p.ID_planes, p.monto_cobertura 
                      FROM contrato_plan cp 
                      JOIN planes p ON cp.ID_planes_contrato = p.ID_planes 
                      JOIN afiliados a ON cp.ID_afiliado_contrato = a.cedula
                      WHERE a.ID = '$id_titular_vinculo' AND cp.estado_contrato = 'Activo'";
 } else {
-    $sql_contrato = "SELECT cp.ID_contrato, cp.fecha_inicio, p.nombre_plan, p.ID_planes, p.monto_cobertura 
+    $sql_contrato = "SELECT cp.ID_contrato, cp.fecha_inicio, cp.monto_total, p.nombre_plan, p.ID_planes, p.monto_cobertura 
                      FROM contrato_plan cp 
                      JOIN planes p ON cp.ID_planes_contrato = p.ID_planes 
                      WHERE cp.ID_afiliado_contrato = '$cedula' AND cp.estado_contrato = 'Activo'";
@@ -63,27 +63,56 @@ $id_plan = $contrato['ID_planes'];
 $fecha_inicio = $contrato['fecha_inicio'];
 
 // 2.1 Verificar Pago Inicial y Solvencia
-// A. Pago Inicial (30%)
-$sql_pago_inicial = "SELECT COUNT(*) as cuenta FROM pagos_contrato WHERE ID_contrato = '$id_contrato' AND tipo_pago = 'Pago Inicial'";
-$res_pago_inicial = mysqli_query($conn, $sql_pago_inicial);
-$pago_inicial_ok = (mysqli_fetch_assoc($res_pago_inicial)['cuenta'] > 0);
 
-// B. Solvencia (Meses de deuda)
-// Calculamos cuántos meses han pasado desde la fecha de inicio hasta hoy
-$start = new DateTime($fecha_inicio);
-$end = new DateTime();
-$interval = $start->diff($end);
-$meses_transcurridos = ($interval->y * 12) + $interval->m + 1; // +1 porque el mes de inicio cuenta
+// Verificar si el plan está totalmente pagado
+$sql_pagos_totales = "SELECT SUM(monto_cuota) as total_pagado FROM pagos_contrato WHERE ID_contrato = '$id_contrato'";
+$res_pagos_totales = mysqli_query($conn, $sql_pagos_totales);
+$total_pagado = mysqli_fetch_assoc($res_pagos_totales)['total_pagado'] ?? 0;
+$monto_total_contrato = $contrato['monto_total'] ?? 0;
 
-// Contamos cuántas cuotas ha pagado
-$sql_cuotas = "SELECT COUNT(*) as cuenta FROM pagos_contrato WHERE ID_contrato = '$id_contrato' AND tipo_pago = 'Cuota'";
-$res_cuotas = mysqli_query($conn, $sql_cuotas);
-$cuotas_pagadas = mysqli_fetch_assoc($res_cuotas)['cuenta'];
+$plan_solventado = ($monto_total_contrato > 0 && floatval($total_pagado) >= floatval($monto_total_contrato));
 
-$meses_deuda = $meses_transcurridos - $cuotas_pagadas;
-if ($meses_deuda < 0) $meses_deuda = 0;
+if ($plan_solventado) {
+    $pago_inicial_ok = true;
+    $solvente = true;
+    $meses_deuda = 0;
+} else {
+    // A. Pago Inicial (30%)
+    $sql_pago_inicial = "SELECT COUNT(*) as cuenta FROM pagos_contrato WHERE ID_contrato = '$id_contrato' AND tipo_pago = 'Pago Inicial'";
+    $res_pago_inicial = mysqli_query($conn, $sql_pago_inicial);
+    $pago_inicial_ok = (mysqli_fetch_assoc($res_pago_inicial)['cuenta'] > 0);
 
-$solvente = ($meses_deuda <= 2); // Máximo 2 meses de deuda permitidos
+    // B. Solvencia (Meses de deuda)
+    // El conteo de cuotas empieza 3 meses después de la fecha de inicio del contrato
+    $fecha_inicio_cuotas = new DateTime($fecha_inicio);
+    $fecha_inicio_cuotas->modify('+3 months');
+    $hoy = new DateTime();
+
+    // Si todavía no han pasado 3 meses desde el inicio, no hay cuotas pendientes
+    if ($hoy <= $fecha_inicio_cuotas) {
+        $meses_transcurridos = 0;
+    } else {
+        $interval = $fecha_inicio_cuotas->diff($hoy);
+        $meses_transcurridos = ($interval->y * 12) + $interval->m + 1; // +1 porque el mes actual cuenta
+    }
+
+    // Contamos cuántas cuotas ha pagado
+    $sql_cuotas = "SELECT COUNT(*) as cuenta FROM pagos_contrato WHERE ID_contrato = '$id_contrato' AND tipo_pago = 'Cuota'";
+    $res_cuotas = mysqli_query($conn, $sql_cuotas);
+    $cuotas_pagadas = mysqli_fetch_assoc($res_cuotas)['cuenta'];
+
+    $meses_deuda = $meses_transcurridos - $cuotas_pagadas;
+    if ($meses_deuda < 0) $meses_deuda = 0;
+
+    // Si ya venció el periodo de gracia (meses_transcurridos > 0) pero no ha pagado NINGUNA cuota,
+    // se le bloquea de inmediato (cero tolerancia si nunca ha empezado a pagar).
+    // Si ya tiene al menos una cuota pagada, se le permite la tolerancia normal de hasta 2 meses de deuda.
+    if ($meses_transcurridos > 0 && $cuotas_pagadas == 0) {
+        $solvente = false;
+    } else {
+        $solvente = ($meses_deuda <= 2); // Máximo 2 meses de deuda permitidos
+    }
+}
 
 // 3. Obtener límites de categorías y consumo actual
 $sql_categorias = "SELECT c.id_categoria, c.nombre_categoria, cp_comp.monto_maximo 

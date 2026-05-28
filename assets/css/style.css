@@ -416,7 +416,7 @@ a:hover {
     right: 30px;
     width: 55px;
     height: 55px;
-    background-color: #062974;
+    background-color: #1cbeb1;  
     color: white !important;
     border-radius: 50%;
     display: flex;
@@ -431,7 +431,7 @@ a:hover {
 }
 
 .btn-help-floating:hover {
-    background-color: #0e3791;
+    background-color: #1cbeb1;  
     transform: scale(1.1);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     color: #fff !important;

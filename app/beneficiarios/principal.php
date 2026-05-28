@@ -5,6 +5,15 @@ $rowsPerPage = 15; // Número de registros por página
 $currentPage = isset($_GET['page']) ? intval($_GET['page']) : 1; // Página actual
 $offset = ($currentPage - 1) * $rowsPerPage;
 
+$filtro = isset($_GET['filtro']) ? $_GET['filtro'] : 'activos';
+
+$whereClause = "";
+if ($filtro === 'activos') {
+    $whereClause = "WHERE EXISTS (SELECT 1 FROM contrato_plan cp WHERE cp.ID_afiliado_contrato = a.cedula AND cp.estado_contrato = 'Activo')";
+} elseif ($filtro === 'inactivos') {
+    $whereClause = "WHERE NOT EXISTS (SELECT 1 FROM contrato_plan cp WHERE cp.ID_afiliado_contrato = a.cedula AND cp.estado_contrato = 'Activo')";
+}
+
 try {
     // Consulta para obtener datos de beneficiarios junto con información de personas y afiliados
     $sqlBeneficiarios = "
@@ -16,11 +25,13 @@ try {
             p_b.fechanacimiento,
             CONCAT(p_a.nombre, ' ', p_a.apellido) AS nombre_afiliado, 
             b.created_at, 
-            b.updated_at 
+            b.updated_at,
+            EXISTS (SELECT 1 FROM contrato_plan cp WHERE cp.ID_afiliado_contrato = a.cedula AND cp.estado_contrato = 'Activo') as tiene_activo
         FROM beneficiarios b
         JOIN persona p_b ON b.cedula = p_b.cedula -- Datos del beneficiario
         JOIN afiliados a ON b.cedula_afil = a.ID -- Relación entre beneficiarios y afiliados
         JOIN persona p_a ON a.cedula = p_a.cedula -- Datos del afiliado
+        $whereClause
         LIMIT $rowsPerPage OFFSET $offset
     ";
     $beneficiarios = $conn->query($sqlBeneficiarios);
@@ -42,7 +53,7 @@ try {
     }
 
     // Obtener el total de filas para calcular páginas
-    $totalRowsResult = $conn->query("SELECT COUNT(*) AS total FROM beneficiarios");
+    $totalRowsResult = $conn->query("SELECT COUNT(*) AS total FROM beneficiarios b JOIN afiliados a ON b.cedula_afil = a.ID $whereClause");
     if (!$totalRowsResult) {
         throw new Exception("Error en la consulta del total de beneficiarios: " . $conn->error);
     }
@@ -97,6 +108,12 @@ try {
                     </a>
                 </div>
                 <div class="col text-end mt-2">
+                    <!-- Select dinámico para filtrar por estado de póliza -->
+                    <select id="filtro_estado" class="form-select w-auto d-inline-block me-2" onchange="let u = new URLSearchParams(window.location.search); u.set('filtro', this.value); u.delete('page'); window.location.search = u.toString();">
+                        <option value="activos" <?= ($filtro == 'activos') ? 'selected' : '' ?>>Titular Con Contrato Activo</option>
+                        <option value="inactivos" <?= ($filtro == 'inactivos') ? 'selected' : '' ?>>Titular Sin Contrato / Inactivo</option>    
+                        <option value="todos" <?= ($filtro == 'todos') ? 'selected' : '' ?>>Todos los Beneficiarios</option>
+                    </select>
                     <!-- Input de búsqueda alineado a la derecha -->
                     <input type="text" id="search" class="form-control w-auto d-inline-block"
                         placeholder="Buscar beneficiario...">
@@ -114,6 +131,7 @@ try {
                             <th>Apellido</th>
                             <th>Parentesco</th>
                             <th>Afiliado</th> <!-- Nueva columna -->
+                            <th>Estado Póliza Titular</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -133,6 +151,13 @@ try {
                                 <?php endif; ?>
                             </td>
                             <td><?php echo $row['nombre_afiliado']; ?></td> <!-- Nombre del afiliado relacionado -->
+                            <td>
+                                <?php if ($row['tiene_activo']) { ?>
+                                    <span class="badge bg-success">Activo</span>
+                                <?php } else { ?>
+                                    <span class="badge bg-danger">Inactivo / Sin Plan</span>
+                                <?php } ?>
+                            </td>
                             <td class="text-center">
                                 <!-- Botón Ver Información -->
                                 <a href="#" class="btn btn-primary-custom btn-sm" data-bs-toggle="modal"
@@ -160,8 +185,13 @@ try {
                 </table>
             </div>
             <div class="d-flex justify-content-center mt-3">
-                <?php for ($i = 1; $i <= $totalPages; $i++) { ?>
-                <a href="?page=<?php echo $i; ?>"
+                <?php for ($i = 1; $i <= $totalPages; $i++) { 
+                    $qParams = $_GET;
+                    $qParams['page'] = $i;
+                    $qParams['filtro'] = $filtro;
+                    $qStr = http_build_query($qParams);
+                ?>
+                <a href="?<?php echo $qStr; ?>"
                     class="btn btn-sm <?php echo ($i == $currentPage) ? 'btn-secondary' : 'btn-primary'; ?> mx-1">
                     <?php echo $i; ?>
                 </a>

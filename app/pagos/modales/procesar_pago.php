@@ -16,31 +16,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // 3. Validamos que los campos esenciales no estén vacíos
     if (!empty($id_contrato) && !empty($monto_cuota)) {
         
-        // 4. Preparamos la consulta SQL con tipo_pago
         $sql = "INSERT INTO pagos_contrato (ID_contrato, monto_cuota, fecha_pago, numero_cuota, metodo_pago, tipo_pago) 
                 VALUES (?, ?, ?, ?, ?, ?)";
-        
         $stmt = mysqli_prepare($conn, $sql);
         
         if ($stmt) {
-            /* Tipos de datos para bind_param:
-               i = entero (ID_contrato)
-               d = doble/decimal (monto_cuota)
-               s = string (fecha_pago)
-               i = entero (numero_cuota)
-               s = string (metodo_pago)
-               s = string (tipo_pago)
-            */
-            mysqli_stmt_bind_param($stmt, "idsiss", $id_contrato, $monto_cuota, $fecha_pago, $numero_cuota, $metodo_pago, $tipo_pago);
+            $exito = true;
+            
+            if ($tipo_pago === 'Abonos') {
+                $cuotas = $_POST['cuotas_abono'] ?? [];
+                $cantidad_cuotas = count($cuotas);
+                
+                if ($cantidad_cuotas > 0) {
+                    // Dividimos el monto total entre las cuotas seleccionadas
+                    $monto_individual = $monto_cuota / $cantidad_cuotas;
+                    $tipo_registro = 'Cuota'; // En la BD se registran como cuotas individuales
+                    
+                    foreach ($cuotas as $num_cuota) {
+                        mysqli_stmt_bind_param($stmt, "idsiss", $id_contrato, $monto_individual, $fecha_pago, $num_cuota, $metodo_pago, $tipo_registro);
+                        if (!mysqli_stmt_execute($stmt)) {
+                            $exito = false;
+                            echo "Error al ejecutar la consulta para cuota $num_cuota: " . mysqli_error($conn);
+                            break;
+                        }
+                    }
+                } else {
+                    $exito = false;
+                    echo "<script>alert('Debe seleccionar al menos una cuota.'); window.history.back();</script>";
+                    exit();
+                }
+            } else {
+                // Pago Inicial o Cuota Normal
+                mysqli_stmt_bind_param($stmt, "idsiss", $id_contrato, $monto_cuota, $fecha_pago, $numero_cuota, $metodo_pago, $tipo_pago);
+                if (!mysqli_stmt_execute($stmt)) {
+                    $exito = false;
+                    echo "Error al ejecutar la consulta: " . mysqli_error($conn);
+                }
+            }
 
-            // 5. Ejecutamos la consulta
-            if (mysqli_stmt_execute($stmt)) {
+            // 5. Redireccionar si todo fue exitoso
+            if ($exito) {
                 $_SESSION['flash_msg'] = "Pago registrado con éxito";
                 $_SESSION['flash_type'] = "success";
                 header("Location: /IPSPUPTM/home.php?vista=gestionpagoscontrato");
                 exit();
-            } else {
-                echo "Error al ejecutar la consulta: " . mysqli_error($conn);
             }
 
             mysqli_stmt_close($stmt);

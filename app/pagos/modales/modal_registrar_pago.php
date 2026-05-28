@@ -58,12 +58,14 @@ include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
                         <small class="text-muted mt-1 d-block" id="mensaje_inicial"></small>
                     </div>
 
-                    <!-- Selector de Tipo de Pago -->
-                    <div class="mb-3">
+                    <!-- Formulario de Pago -->
+                    <div id="contenedor_formulario_pago">
+                        <!-- Selector de Tipo de Pago -->
+                        <div class="mb-3">
                         <label class="form-label">Tipo de Pago</label>
                         <select name="tipo_pago" id="tipo_pago_select" class="form-select" required onchange="cambiarTipoPago()">
                             <option value="Pago Inicial">Pago Inicial (30%)</option>
-                            <option value="Cuota">Cuota Normal</option>
+                            <option value="Abonos">Abonos (Cuotas)</option>
                         </select>
                     </div>
 
@@ -87,12 +89,7 @@ include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6 mb-3" id="contenedor_cuota">
-                            <label class="form-label">Número de Cuota</label>
-                            <input type="number" name="numero_cuota" id="input_cuota" class="form-control bg-light"
-                                placeholder="Seleccione un contrato..." readonly required>
-                        </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-12 mb-3" id="contenedor_metodo">
                             <label class="form-label">Método de Pago</label>
                             <select name="metodo_pago" class="form-select" required>
                                 <option value="Transferencia">Transferencia</option>
@@ -103,10 +100,33 @@ include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
                         </div>
                     </div>
 
+                    <div class="row" id="contenedor_abonos" style="display: none;">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Seleccione las Cuotas a Pagar</label>
+                            <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+                                <table class="table table-sm table-bordered table-hover mb-0">
+                                    <thead class="table-light text-center" style="position: sticky; top: 0; z-index: 1;">
+                                        <tr>
+                                            <th style="width: 50px;"><input type="checkbox" id="check_all_abonos" onchange="toggleAllAbonos(this)"></th>
+                                            <th>N° Cuota</th>
+                                            <th class="text-end">Monto ($)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tabla_abonos_body">
+                                        <!-- Filas dinámicas generadas en JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <small class="text-muted d-block mt-1">Cuota fija calculada en base a los meses de duración del contrato.</small>
+                        </div>
+                    </div>
+
+                    </div> <!-- Fin contenedor_formulario_pago -->
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Guardar Pago</button>
+                    <button type="submit" class="btn btn-primary" id="btn_guardar_pago">Guardar Pago</button>
                 </div>
             </form>
         </div>
@@ -155,17 +175,85 @@ function calcularBolivares() {
 
 function cambiarTipoPago() {
     const tipoPago = document.getElementById('tipo_pago_select').value;
-    const inputCuota = document.getElementById('input_cuota');
-    const contenedorCuota = document.getElementById('contenedor_cuota');
+    const contenedorAbonos = document.getElementById('contenedor_abonos');
+    const inputMonto = document.getElementById('monto_cuota_input');
+
+    // Reiniciar inputs por defecto
+    contenedorAbonos.style.display = 'none';
+    inputMonto.readOnly = false;
 
     if (tipoPago === 'Pago Inicial') {
-        inputCuota.value = 0;
-        contenedorCuota.style.display = 'none';
-    } else {
-        contenedorCuota.style.display = '';
-        if (estadoPagoInicial.proxima_cuota) {
-            inputCuota.value = estadoPagoInicial.proxima_cuota;
+        inputMonto.value = ''; // Espera que el usuario introduzca si paga parte o todo
+    } else if (tipoPago === 'Abonos') {
+        contenedorAbonos.style.display = '';
+        inputMonto.readOnly = true;
+        calcularMontoAbonos(); // Actualizar el monto basado en los checkboxes seleccionados
+    }
+    
+    calcularBolivares();
+}
+
+function toggleAllAbonos(checkbox) {
+    const checkboxes = document.querySelectorAll('input[name="cuotas_abono[]"]:not(:disabled)');
+    checkboxes.forEach(cb => cb.checked = checkbox.checked);
+    calcularMontoAbonos();
+}
+
+function calcularMontoAbonos() {
+    const checkboxes = document.querySelectorAll('input[name="cuotas_abono[]"]:checked');
+    let total = 0;
+    const cuotaFija = parseFloat(estadoPagoInicial.cuota_fija) || 0;
+    
+    // Si la cuota elegida es la última, podría ser un monto diferente si hay decimales, 
+    // pero por ahora lo calculamos con la cuota fija x cantidad.
+    // Lo más exacto es sumar el value del checkbox o usar cuota_fija.
+    // Usaremos cuota_fija y luego nos aseguramos de no pasar del saldo pendiente.
+    total = checkboxes.length * cuotaFija;
+    
+    // Asegurarse de no exceder el saldo
+    const saldoPendiente = parseFloat(estadoPagoInicial.saldo) || 0;
+    if (total > saldoPendiente) {
+        total = saldoPendiente;
+    }
+
+    const inputMonto = document.getElementById('monto_cuota_input');
+    inputMonto.value = total > 0 ? total.toFixed(2) : '';
+    calcularBolivares();
+}
+
+function generarTablaAbonos(data) {
+    const tbody = document.getElementById('tabla_abonos_body');
+    tbody.innerHTML = '';
+    document.getElementById('check_all_abonos').checked = false;
+
+    const proximaCuota = parseInt(data.proxima_cuota) || 1;
+    const totalMeses = parseInt(data.total_meses) || 1;
+    const cuotaFija = parseFloat(data.cuota_fija) || 0;
+    let saldoRestante = parseFloat(data.saldo) || 0;
+
+    for (let i = proximaCuota; i <= totalMeses; i++) {
+        let montoFila = cuotaFija;
+        // Si es la última cuota, asignar el saldo restante exacto para evitar errores de redondeo
+        if (i === totalMeses && saldoRestante < cuotaFija && saldoRestante > 0) {
+             montoFila = saldoRestante;
+        } else if (i === totalMeses && saldoRestante > cuotaFija) {
+             // Si el saldo es mayor a la cuota, y es la última, cobramos lo que quede.
+             montoFila = saldoRestante;
         }
+        
+        saldoRestante -= montoFila;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="text-center">
+                <input class="form-check-input" type="checkbox" name="cuotas_abono[]" value="${i}" onchange="calcularMontoAbonos()">
+            </td>
+            <td class="text-center">${i}</td>
+            <td class="text-end">$ ${montoFila.toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+        
+        if(saldoRestante <= 0) break;
     }
 }
 
@@ -202,15 +290,15 @@ document.addEventListener("DOMContentLoaded", function() {
 function consultarSaldo(idContrato) {
     const contenedor = document.getElementById('info_saldo');
     const spanMonto = document.getElementById('monto_pendiente');
-    const inputCuota = document.getElementById('input_cuota');
-    const btnGuardar = document.querySelector('button[type="submit"]');
+    const btnGuardar = document.getElementById('btn_guardar_pago');
     const infoPagoInicial = document.getElementById('info_pago_inicial');
     const tipoPagoSelect = document.getElementById('tipo_pago_select');
+    const contenedorFormulario = document.getElementById('contenedor_formulario_pago');
 
     if (!idContrato) {
         contenedor.classList.add('d-none');
         infoPagoInicial.classList.add('d-none');
-        inputCuota.value = "";
+        contenedorFormulario.style.display = 'none';
         return;
     }
 
@@ -246,37 +334,44 @@ function consultarSaldo(idContrato) {
             // Plan totalmente solventado
             contenedor.className = "alert alert-success mb-3";
             spanMonto.innerText = "¡Plan Solventado!";
-            inputCuota.value = ""; 
             btnGuardar.disabled = true;
             infoPagoInicial.classList.add('d-none');
+            contenedorFormulario.style.display = 'none';
 
         } else if (data.pago_inicial_completo) {
-            // Ya completó el 30%: solo puede pagar cuotas normales
+            // Ya completó el 30%: puede pagar cuotas o abonos
+            contenedorFormulario.style.display = '';
             infoPagoInicial.className = 'alert alert-success mb-3';
-            mensajeInicial.innerText = '✅ Pago inicial completado. Puede registrar cuotas normales.';
+            mensajeInicial.innerText = '✅ Pago inicial completado.';
+            tipoPagoSelect.disabled = false;
             
-            tipoPagoSelect.value = 'Cuota';
+            const optionAbonos = tipoPagoSelect.querySelector('option[value="Abonos"]');
+            optionAbonos.disabled = false;
+            tipoPagoSelect.value = 'Abonos'; // Seleccionar Abonos por defecto para mostrar la tabla
+            generarTablaAbonos(data);
+            
             tipoPagoSelect.querySelector('option[value="Pago Inicial"]').disabled = true;
-            tipoPagoSelect.querySelector('option[value="Cuota"]').disabled = false;
             
-            inputCuota.value = data.proxima_cuota;
-            contenedorCuota.style.display = '';
             btnGuardar.disabled = false;
             contenedor.className = "alert alert-warning mb-3";
+            
+            cambiarTipoPago(); // Refrescar UI según selección
 
         } else {
             // NO ha completado el 30%: solo puede pagar "Pago Inicial"
+            contenedorFormulario.style.display = '';
             infoPagoInicial.className = 'alert alert-warning mb-3';
-            mensajeInicial.innerText = '⚠️ Debe completar el pago inicial antes de registrar cuotas.';
+            mensajeInicial.innerText = '⚠️ Debe completar el pago inicial antes de registrar abonos.';
+            tipoPagoSelect.disabled = false;
             
             tipoPagoSelect.value = 'Pago Inicial';
-            tipoPagoSelect.querySelector('option[value="Cuota"]').disabled = true;
+            tipoPagoSelect.querySelector('option[value="Abonos"]').disabled = true;
             tipoPagoSelect.querySelector('option[value="Pago Inicial"]').disabled = false;
             
-            inputCuota.value = 0;
-            contenedorCuota.style.display = 'none';
             btnGuardar.disabled = false;
             contenedor.className = "alert alert-warning mb-3";
+            
+            cambiarTipoPago();
         }
     })
     .catch(error => console.error('Error:', error));

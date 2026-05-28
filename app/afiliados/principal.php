@@ -3,6 +3,15 @@ include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
 include 'C:/xampp/htdocs/IPSPUPTM/config/alertify.php';
 
 
+$filtro = isset($_GET['filtro']) ? $_GET['filtro'] : 'activos';
+
+$whereClause = "";
+if ($filtro === 'activos') {
+    $whereClause = "WHERE EXISTS (SELECT 1 FROM contrato_plan cp WHERE cp.ID_afiliado_contrato = a.cedula AND cp.estado_contrato = 'Activo')";
+} elseif ($filtro === 'inactivos') {
+    $whereClause = "WHERE NOT EXISTS (SELECT 1 FROM contrato_plan cp WHERE cp.ID_afiliado_contrato = a.cedula AND cp.estado_contrato = 'Activo')";
+}
+
 $rowsPerPage = 15; // Número de registros por página
 $currentPage = isset($_GET['page']) ? intval($_GET['page']) : 1; // Página actual
 $offset = ($currentPage - 1) * $rowsPerPage;
@@ -14,13 +23,16 @@ $sqlAfiliados = "
         p.nombre, 
         p.apellido, 
         a.created_at, 
-        a.updated_at 
+        a.updated_at,
+        EXISTS (SELECT 1 FROM contrato_plan cp WHERE cp.ID_afiliado_contrato = a.cedula AND cp.estado_contrato = 'Activo') as tiene_activo
     FROM afiliados a
     JOIN persona p ON a.cedula = p.cedula
+    $whereClause
+    LIMIT $offset, $rowsPerPage
 ";
 $afiliados = $conn->query($sqlAfiliados);
 
-$totalRowsResult = $conn->query("SELECT COUNT(*) AS total FROM afiliados");
+$totalRowsResult = $conn->query("SELECT COUNT(*) AS total FROM afiliados a $whereClause");
 $totalRows = $totalRowsResult->fetch_assoc()['total'];
 $totalPages = ceil($totalRows / $rowsPerPage);
 
@@ -40,6 +52,12 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                 </a>
             </div>
             <div class="col text-end mt-2">
+                <!-- Select dinámico para filtrar por estado de póliza -->
+                <select id="filtro_estado" class="form-select w-auto d-inline-block me-2" onchange="let u = new URLSearchParams(window.location.search); u.set('filtro', this.value); u.delete('page'); window.location.search = u.toString();">
+                    <option value="activos" <?= ($filtro == 'activos') ? 'selected' : '' ?>>Con Contrato Activo</option>
+                    <option value="inactivos" <?= ($filtro == 'inactivos') ? 'selected' : '' ?>>Sin Contrato / Inactivos</option>    
+                    <option value="todos" <?= ($filtro == 'todos') ? 'selected' : '' ?>>Todos los Afiliados</option>
+                </select>
                 <!-- Input de búsqueda alineado a la derecha -->
                 <input type="text" id="search" class="form-control w-auto d-inline-block"
                     placeholder="Buscar afiliado...">
@@ -57,6 +75,7 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                         <th>Cédula</th>
                         <th>Nombre</th>
                         <th>Apellido</th>
+                        <th>Estado Póliza</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -66,6 +85,13 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                             <td><?php echo $row['cedula']; ?></td>
                             <td><?php echo $row['nombre']; ?></td>
                             <td><?php echo $row['apellido']; ?></td>
+                            <td>
+                                <?php if ($row['tiene_activo']) { ?>
+                                    <span class="badge bg-success">Activo</span>
+                                <?php } else { ?>
+                                    <span class="badge bg-danger">Inactivo</span>
+                                <?php } ?>
+                            </td>
                             <td class="text-center">
                                 <!-- Botón Ver Información -->
                                 <a href="#" class="btn btn-primary-custom btn-sm" data-bs-toggle="modal"
@@ -81,6 +107,12 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                                     data-bs-target="#editmodal" data-bs-cedula="<?= $row['cedula']; ?>">
                                     <i class="fas fa-edit"></i>Editar
                                 </a>
+                                <?php if (!$row['tiene_activo']) { ?>
+                                <!-- Botón Asignar Plan -->
+                                <button class="btn btn-sm btn-success text-white" title="Asignar Nuevo Plan" data-bs-toggle="modal" data-bs-target="#modalAsignarPlan" data-bs-cedula="<?= $row['cedula']; ?>">
+                                    <i class="fas fa-file-signature"></i> Asignar Plan
+                                </button>
+                                <?php } ?>
                             </td>
                         </tr>
                     <?php } ?>
@@ -88,8 +120,13 @@ $totalPages = ceil($totalRows / $rowsPerPage);
             </table>
         </div>
         <div class="d-flex justify-content mt-3">
-            <?php for ($i = 1; $i <= $totalPages; $i++) { ?>
-                <a href="?page=<?php echo $i; ?>"
+            <?php for ($i = 1; $i <= $totalPages; $i++) { 
+                $qParams = $_GET;
+                $qParams['page'] = $i;
+                $qParams['filtro'] = $filtro;
+                $qStr = http_build_query($qParams);
+            ?>
+                <a href="?<?php echo $qStr; ?>"
                     class="btn btn-sm <?php echo ($i == $currentPage) ? 'btn-secondary' : 'btn-primary'; ?> mx-1">
                     <?php echo $i; ?>
                 </a>
@@ -104,6 +141,7 @@ $totalPages = ceil($totalRows / $rowsPerPage);
 <?php include 'C:/xampp/htdocs/IPSPUPTM/app/afiliados/vermodal.php'; ?>
 <?php include 'C:/xampp/htdocs/IPSPUPTM/app/afiliados/modales/actualizar/editmodal.php'; ?>
 <?php include 'C:/xampp/htdocs/IPSPUPTM/app/afiliados/modales/modal_ver_consumo.php'; ?>
+<?php include 'C:/xampp/htdocs/IPSPUPTM/app/afiliados/modales/asignar_plan/modal_asignar.php'; ?>
 
 
 <script src="/IPSPUPTM/assets/js/accionesafiliados.js"></script>

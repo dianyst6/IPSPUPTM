@@ -102,11 +102,16 @@
                 SELECT a.id AS id_pac_val, p.cedula, CONCAT(p.nombre, ' ', p.apellido, ' - (Afiliado)') AS nombre_completo 
                 FROM afiliados a 
                 JOIN persona p ON a.cedula = p.cedula
+                JOIN contrato_plan cp ON cp.ID_afiliado_contrato = a.cedula
+                WHERE cp.estado_contrato = 'Activo'
                 UNION
                 SELECT b.id AS id_pac_val, p.cedula, CONCAT(p.nombre, ' ', p.apellido, ' - (Beneficiario)') AS nombre_completo 
                 FROM beneficiarios b 
                 JOIN persona p ON b.cedula = p.cedula
-                WHERE NOT (b.parentesco = 'Hijo' AND TIMESTAMPDIFF(YEAR, p.fechanacimiento, CURDATE()) >= 25)
+                JOIN afiliados a ON b.cedula_afil = a.ID
+                JOIN contrato_plan cp ON cp.ID_afiliado_contrato = a.cedula
+                WHERE cp.estado_contrato = 'Activo' 
+                AND NOT (b.parentesco = 'Hijo' AND TIMESTAMPDIFF(YEAR, p.fechanacimiento, CURDATE()) >= 25)
                 ORDER BY nombre_completo ASC";
                 $result_pacientes = $conn->query($sql_pacientes);
                 while ($row = $result_pacientes->fetch_assoc()) {
@@ -310,9 +315,16 @@ window.abrirModalNuevoExamen = function() {
         });
         
         const revisarSaldoPoliza = (forzarLimpieza) => {
-            if (forzarLimpieza && selectEspecialidad) { 
-                selectEspecialidad.value = ''; 
-                selectEspecialidad.dispatchEvent(new Event('change')); 
+            const labelCosto = document.getElementById('costo-total-cita');
+            const contSaldo = document.getElementById('cont-saldo-disponible-cita');
+
+            if (forzarLimpieza) {
+                if (selectEspecialidad) {
+                    selectEspecialidad.value = ''; 
+                    selectEspecialidad.dispatchEvent(new Event('change'));
+                }
+                if (labelCosto) labelCosto.innerText = "$ 0.00";
+                if (contSaldo) contSaldo.classList.add('d-none');
             }
             
             if (selector.value !== 'interno') return;
@@ -404,18 +416,12 @@ window.abrirModalNuevoExamen = function() {
             }
         };
 
-        // Escuhar el evento nativo change en caso de que jQuery caiga.
+        // Fallback: evento nativo en caso de que Select2 no esté disponible.
         iHidden.addEventListener('change', () => revisarSaldoPoliza(true));
+        // El evento select2:select se registra dentro del onload de Select2 más abajo.
 
-        if (window.jQuery) {
-            // Un chequeo de loop para pescar a Select2 después de inyectado asíncronamente
-            const interSelect2 = setInterval(() => {
-                if (window.jQuery(iHidden).data('select2')) {
-                    clearInterval(interSelect2);
-                    window.jQuery(iHidden).on('select2:select', () => revisarSaldoPoliza(true));
-                }
-            }, 500);
-        }
+        // Exponer al scope global para que el bloque Select2 (otro <script>) pueda llamarla
+        window._revisarSaldoPolizaCitas = () => revisarSaldoPoliza(true);
  
         // --- 1.5 LÓGICA DE EXÁMENES POR ESPECIALIDAD ---
         const selectEspecialidad = document.getElementById('id_especialidad');
@@ -437,6 +443,7 @@ window.abrirModalNuevoExamen = function() {
 
                 if (!idEsp) {
                     contExamenes.style.display = 'none';
+                    if (labelCosto) labelCosto.innerText = "$ 0.00";
                     return;
                 }
     
@@ -651,6 +658,13 @@ window.abrirModalNuevoExamen = function() {
                 dropdownParent: window.jQuery('#formulariomodal'),
                 width: '100%',
                 language: 'es'
+            });
+
+            // Registrar aquí, después de que Select2 está inicializado.
+            window.jQuery('#id_paciente').on('select2:select', function() {
+                if (typeof window._revisarSaldoPolizaCitas === 'function') {
+                    window._revisarSaldoPolizaCitas();
+                }
             });
         };
         

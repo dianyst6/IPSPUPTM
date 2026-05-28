@@ -68,15 +68,29 @@ $res = mysqli_query($conn, $sql_paginado);
 ?>
 
 <div class="card shadow-lg">
-    <div class="card-body p-4">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <h1 class="fw-bold mb-0" style="color: #062974;">Cobro de Citas con Póliza</h1>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalConsumoExterno">
-                <i class="fas fa-plus-circle me-1"></i> Registrar Consumo Externo
-            </button>
+    <div class="card-body p-4"> 
+        
+        <div class="row align-items-center mb-4">
+            <!-- Botón Volver Atrás (Izquierda) -->
+            <div class="col-auto col-md-3 text-start">
+                <button onclick="window.history.back();" class="btn" style="color: white; background-color: #002750; border: none; border-radius: 8px; padding: 8px 16px;"> 
+                    <i class="fas fa-arrow-left me-1"></i> Volver atrás
+                </button>
+            </div>
+            
+            <!-- Título Centrado (Centro) -->
+            <div class="col col-md-6 text-center">
+                <h1 class="fw-bold mb-0" style="color: #062974; font-size: 2.25rem;">Cobro de Citas con Póliza</h1>
+                <hr class="mx-auto mt-2 mb-0" style="width: 50px; height: 3px; background-color: #062974; opacity: 1;">
+            </div>
+            
+            <!-- Botón Registrar Consumo (Derecha) -->
+            <div class="col-auto col-md-3 text-end">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalConsumoExterno" style="border-radius: 8px; padding: 8px 16px;">
+                    <i class="fas fa-plus-circle me-1"></i> Registrar Consumo Externo
+                </button>
+            </div>
         </div>
-        <hr class="mx-auto" style="width: 50px; height: 3px; background-color: #062974;">
-
         <h4 class="mb-3">Citas Pendientes de Cobro</h4>
         <div class="table-responsive mt-4">
             <table class="table table-striped table-hover shadow-sm">

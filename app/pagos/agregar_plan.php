@@ -1,7 +1,10 @@
 
     <div class="card shadow">
-        <div class="card-header bg-primary text-white">
-            <h4><i class="fa-solid fa-file-medical"></i> Crear Nuevo Plan de Salud</h4>
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0"><i class="fa-solid fa-file-medical me-2"></i> Crear Nuevo Plan de Salud</h4>
+            <a href="/IPSPUPTM/home.php?vista=gestionplanes" class="btn btn-sm btn-light fw-bold shadow-sm d-flex align-items-center" style="border-radius: 6px; padding: 6px 12px; color: #062974;">
+                <i class="fas fa-arrow-left me-1"></i> Volver atrás
+            </a>
         </div>
         <form action="/IPSPUPTM/app/pagos/procesar_plan_completo.php" method="POST">
             <div class="card-body">

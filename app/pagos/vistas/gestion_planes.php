@@ -1,3 +1,35 @@
+<?php
+include_once 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
+
+$rowsPerPage = 2;
+$currentPage = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$offset = ($currentPage - 1) * $rowsPerPage;
+
+// Calcular total de páginas
+$totalQuery = "SELECT COUNT(*) as total FROM planes";
+$totalResult = mysqli_query($conn, $totalQuery);
+$totalRows = mysqli_fetch_assoc($totalResult)['total'];
+$totalPages = ceil($totalRows / $rowsPerPage);
+?>
+<style>
+.pagination .page-link {
+    color: #062974;
+    border-color: #dee2e6;
+}
+.pagination .page-link:hover {
+    color: #002750;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+.pagination .page-item.active .page-link {
+    background-color: #062974;
+    border-color: #062974;
+    color: white;
+}
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+}
+</style>
 <div class="container py-5">
     <div class="row mb-4">
         <div class="col-12">
@@ -42,10 +74,15 @@
 
                 <div class="card-body p-4">
                     <?php
-                    include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
-    // 1. Consultar todos los planes registrados
-    $sql_planes = "SELECT * FROM planes ORDER BY ID_planes DESC";
-    $res_planes = mysqli_query($conn, $sql_planes);
+                    include_once 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
+                    
+                    // Conteo total absoluto para el estado del sistema al final
+                    $res_todos = mysqli_query($conn, "SELECT * FROM planes");
+                    $total_activos = mysqli_num_rows($res_todos);
+
+                    // 1. Consultar planes registrados con paginación
+                    $sql_planes = "SELECT * FROM planes ORDER BY ID_planes DESC LIMIT $rowsPerPage OFFSET $offset";
+                    $res_planes = mysqli_query($conn, $sql_planes);
 
     if (mysqli_num_rows($res_planes) > 0) {
         while ($plan = mysqli_fetch_assoc($res_planes)) {
@@ -75,12 +112,9 @@
                                  <small class="text-muted d-block"><?php echo $plan['descripcion']; ?></small>
                                  <span class="badge bg-info text-dark mt-1">Cobertura Póliza: $<?php echo number_format($plan['monto_cobertura'], 2); ?></span>
                              </div>
-                            <div class="btn-group border rounded" role="group">
-                                
-                                <a href="/IPSPUPTM/home.php?vista=editarplan&id=<?php echo $id_plan; ?>" class="btn btn-sm btn-outline-warning border-0" title="Editar"><i
-                                         class="fa-solid fa-pen"></i></a>
-                                
-                            </div>
+                            <a href="/IPSPUPTM/home.php?vista=editarplan&id=<?php echo $id_plan; ?>" class="btn btn-warning fw-bold d-flex align-items-center shadow-sm" style="border-radius: 8px; padding: 6px 14px; font-size: 0.9rem; color: #212529;">
+                                <i class="fa-solid fa-pen me-2"></i> Editar Plan
+                            </a>
                         </div>
 
                         <div class="ms-2 mt-2">
@@ -127,10 +161,29 @@
     }
     ?>
 
+                    <!-- Paginación -->
+                    <?php if ($totalPages > 1): ?>
+                    <nav aria-label="Navegación de planes" class="mt-4">
+                        <ul class="pagination justify-content-center pagination-sm">
+                            <li class="page-item <?= ($currentPage <= 1) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="?vista=gestionplanes&page=<?= $currentPage - 1 ?>">Anterior</a>
+                            </li>
+                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                            <li class="page-item <?= ($i == $currentPage) ? 'active' : '' ?>">
+                                <a class="page-link" href="?vista=gestionplanes&page=<?= $i ?>"><?= $i ?></a>
+                            </li>
+                            <?php endfor; ?>
+                            <li class="page-item <?= ($currentPage >= $totalPages) ? 'disabled' : '' ?>">
+                                <a class="page-link" href="?vista=gestionplanes&page=<?= $currentPage + 1 ?>">Siguiente</a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <?php endif; ?>
+
                     <div class="d-flex justify-content-between align-items-center mt-4 p-4 bg-light rounded border-0">
                         <h5 class="mb-0 text-secondary">Estado del Sistema:</h5>
                         <h6 class="mb-0 fw-bold" style="color: #062974;">Planes Activos:
-                            <?php echo mysqli_num_rows($res_planes); ?></h6>
+                            <?php echo $total_activos; ?></h6>
                     </div>
 
                 </div>
