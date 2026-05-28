@@ -128,6 +128,26 @@
                         </div>
                     </div>
 
+                    <!-- Reporte de Historial de Gastos del Plan -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 border-danger shadow-sm text-center">
+                            <div class="card-body d-flex flex-column">
+                                <i class="fas fa-file-medical-alt fa-3x text-danger mb-3 mt-3"></i>
+                                <h5 class="card-title fw-bold">Historial de Gastos del Plan</h5>
+                                <p class="card-text text-muted">Montos descontados de la cobertura por afiliado y su núcleo familiar.</p>
+                                <div class="mt-auto">
+                                    <div class="row px-2">
+                                        <div class="col-12 mb-3 text-start">
+                                            <label class="form-label form-label-sm mb-0">Cédula afiliado (opcional):</label>
+                                            <input type="number" id="cedula_gastos_pdf" class="form-control form-control-sm" placeholder="Dejar vacío para todos">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline-danger w-100" onclick="generarReporteGastosPlan('pdf')"><i class="fas fa-download"></i> Generar PDF</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -211,6 +231,53 @@
                         </div>
                     </div>
 
+                    <!-- Reporte de Pagos -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 border-success shadow-sm text-center">
+                            <div class="card-body d-flex flex-column">
+                                <i class="fas fa-file-invoice-dollar fa-3x text-success mb-3 mt-3"></i>
+                                <h5 class="card-title fw-bold">Pagos</h5>
+                                <p class="card-text text-muted">Registro de pagos de contratos y pagos externos por fecha.</p>
+                                <div class="mt-auto">
+                                    <div class="row px-2">
+                                        <div class="col-6 mb-2 text-start">
+                                            <label class="form-label form-label-sm mb-0">Desde:</label>
+                                            <input type="date" id="fecha_inicio_pagos_excel" class="form-control form-control-sm">
+                                        </div>
+                                        <div class="col-6 mb-3 text-start">
+                                            <label class="form-label form-label-sm mb-0">Hasta:</label>
+                                            <input type="date" id="fecha_fin_pagos_excel" class="form-control form-control-sm">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-outline-success w-50" onclick="generarReportePago('contrato', 'excel')" title="Pagos de Contratos">Contratos</button>
+                                        <button class="btn btn-outline-success w-50" onclick="generarReportePago('externo', 'excel')" title="Pagos Externos">Externos</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reporte de Historial de Gastos del Plan (Excel) -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 border-success shadow-sm text-center">
+                            <div class="card-body d-flex flex-column">
+                                <i class="fas fa-file-medical-alt fa-3x text-success mb-3 mt-3"></i>
+                                <h5 class="card-title fw-bold">Historial de Gastos del Plan</h5>
+                                <p class="card-text text-muted">Montos descontados de la cobertura por afiliado y su núcleo familiar.</p>
+                                <div class="mt-auto">
+                                    <div class="row px-2">
+                                        <div class="col-12 mb-3 text-start">
+                                            <label class="form-label form-label-sm mb-0">Cédula afiliado (opcional):</label>
+                                            <input type="number" id="cedula_gastos_excel" class="form-control form-control-sm" placeholder="Dejar vacío para todos">
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-outline-success w-100" onclick="generarReporteGastosPlan('excel')"><i class="fas fa-download"></i> Generar Excel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             
@@ -218,4 +285,4 @@
     </div>
 </div>
 
-<script src="/IPSPUPTM/assets/js/reportes.js"></script>
+<script src="/IPSPUPTM/assets/js/reportes.js?v=<?php echo time(); ?>"></script>

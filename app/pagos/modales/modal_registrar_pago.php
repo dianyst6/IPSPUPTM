@@ -12,7 +12,7 @@ include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
                 <h5 class="modal-title" id="labelPago">Nuevo Pago de Cuota</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="/IPSPUPTM/app/pagos/modales/procesar_pago.php" method="POST">
+            <form action="/IPSPUPTM/app/pagos/modales/procesar_pago.php" method="POST" onsubmit="return validarPagoInicial()">
                 <div class="modal-body">
 
                     <div class="mb-3">
@@ -255,6 +255,27 @@ function generarTablaAbonos(data) {
         
         if(saldoRestante <= 0) break;
     }
+}
+
+function validarPagoInicial() {
+    const tipoPago = document.getElementById('tipo_pago_select').value;
+    const inputMonto = document.getElementById('monto_cuota_input');
+    const montoIngresado = parseFloat(inputMonto.value) || 0;
+
+    if (tipoPago === 'Pago Inicial' && estadoPagoInicial && estadoPagoInicial.pago_inicial_pendiente !== undefined) {
+        const montoPendiente = parseFloat(estadoPagoInicial.pago_inicial_pendiente);
+        
+        if (montoIngresado > montoPendiente) {
+            if (typeof alertify !== 'undefined') {
+                alertify.error('El monto no puede superar el pago inicial pendiente ($' + montoPendiente.toFixed(2) + ').');
+            } else {
+                alert('El monto no puede superar el pago inicial pendiente ($' + montoPendiente.toFixed(2) + ').');
+            }
+            inputMonto.focus();
+            return false;
+        }
+    }
+    return true;
 }
 
 // Inicializar Select2 en el modal, asegúrate que jQuery esté cargado primero
