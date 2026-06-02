@@ -26,6 +26,10 @@
               <label for="apellido" class="form-label fw-bold">Apellido</label>
               <input type="text" id="apellido" name="apellido" class="form-control bg-light">
             </div>
+            <div class="mb-3">
+              <label for="telefono" class="form-label fw-bold">Telefono</label>
+              <input type="text" id="telefono" name="telefono" class="form-control bg-light">
+            </div>
           </div>
 
           <div class="modal-footer px-0 pb-0">

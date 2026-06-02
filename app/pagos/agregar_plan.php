@@ -316,3 +316,5 @@ include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
         }
     }
 </script>
+
+<?php include 'C:/xampp/htdocs/IPSPUPTM/app/pagos/modales_creacion.php'; ?>

@@ -57,7 +57,7 @@ if (isset($_POST['id'])) {
             throw new Exception("Error al preparar la consulta de eliminación: " . $conn->error);
         }
 
-        $usuario = "Admin"; // Debería ser dinámico si tienes autenticación
+        $usuario = $_SESSION['username'] ?? 'Admin'; // Tomado de la sesión activa
         $accion = "Eliminación de usuario";
         $descripcion = "Se eliminó al usuario: " . $info_usuario['username'] . " y sus respuestas de seguridad.";
         registrarenBitacora($conn, $usuario, $accion, $descripcion);

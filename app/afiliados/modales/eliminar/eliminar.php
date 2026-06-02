@@ -108,7 +108,7 @@ if (isset($_POST['cedula'])) {
         }
 
         // 7. Registrar en la bitácora
-        $usuario = $_SESSION['username'];
+        $usuario = $_SESSION['username'] ?? 'Sistema';
         $accion = "Eliminación de Afiliado y Citas";
         $descripcion = "Se eliminó al afiliado: " . $info_afiliado['nombre'] . " " . $info_afiliado['apellido'] . " (Cédula: $cedula) y todas las citas relacionadas.";
         registrarEnBitacora($conn, $usuario, $accion, $descripcion);

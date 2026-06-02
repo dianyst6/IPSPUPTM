@@ -1,4 +1,5 @@
-<?php  
+<?php
+session_start();
 require 'C:/xampp/htdocs/IPSPUPTM/config/database.php';  
 include 'C:/xampp/htdocs/IPSPUPTM/app/configuracion/bitacora/bitacora.php';  
 

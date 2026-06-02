@@ -6,9 +6,10 @@ function cargarDatosModal(modal, cedula) {
     let inputcedula = modal.querySelector('#cedula_ext_editar') || modal.querySelector('#cedula');
     let inputnombre = modal.querySelector('#nombre_ext_editar') || modal.querySelector('#nombre');
     let inputapellido = modal.querySelector('#apellido_ext_editar') || modal.querySelector('#apellido');
-    
+    let inputtelefono = modal.querySelector('#telefono_ext_editar') || modal.querySelector('#telefono');
+
     // CAMBIO: La ruta al PHP que creamos antes para buscar externos
-    let url = "/IPSPUPTM/app/comunidaduptm/getcomunidad.php"; 
+    let url = "/IPSPUPTM/app/comunidaduptm/getcomunidad.php";
 
     let formData = new FormData();
     formData.append('cedula', cedula);
@@ -17,19 +18,20 @@ function cargarDatosModal(modal, cedula) {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            console.error("Error: ", data.error);
-            alertify.error(data.error);
-        } else {
-            // Llenamos solo lo necesario: Nombre, Apellido y Cédula
-            if(inputcedula) inputcedula.value = data.cedula || '';
-            if(inputnombre) inputnombre.value = data.nombre || '';
-            if(inputapellido) inputapellido.value = data.apellido || '';
-        }
-    })
-    .catch(error => console.error("Error de conexión: ", error));
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error("Error: ", data.error);
+                alertify.error(data.error);
+            } else {
+                // Llenamos solo lo necesario: Nombre, Apellido y Cédula
+                if (inputcedula) inputcedula.value = data.cedula || '';
+                if (inputnombre) inputnombre.value = data.nombre || '';
+                if (inputapellido) inputapellido.value = data.apellido || '';
+                if (inputtelefono) inputtelefono.value = data.telefono || '';
+            }
+        })
+        .catch(error => console.error("Error de conexión: ", error));
 }
 
 // Evento para el Modal de Edición
@@ -44,7 +46,7 @@ if (editmodal) {
     // Manejar el envío del formulario de actualización
     const formEditar = editmodal.querySelector('form');
     if (formEditar) {
-        formEditar.addEventListener('submit', function(event) {
+        formEditar.addEventListener('submit', function (event) {
             event.preventDefault();
             const formData = new FormData(this);
 
@@ -53,17 +55,17 @@ if (editmodal) {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alertify.success(data.message);
-                    setTimeout(() => window.location.reload(), 1000);
-                } else {
-                    alertify.error(data.message);
-                }
-                bootstrap.Modal.getInstance(editmodal).hide();
-            })
-            .catch(error => alertify.error("Error al actualizar."));
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alertify.success(data.message);
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        alertify.error(data.message);
+                    }
+                    bootstrap.Modal.getInstance(editmodal).hide();
+                })
+                .catch(error => alertify.error("Error al actualizar."));
         });
     }
 }
@@ -81,7 +83,7 @@ if (eliminamodal) {
 
     const formEliminar = eliminamodal.querySelector('form');
     if (formEliminar) {
-        formEliminar.addEventListener('submit', function(event) {
+        formEliminar.addEventListener('submit', function (event) {
             event.preventDefault();
             const formData = new FormData(this);
 
@@ -90,17 +92,17 @@ if (eliminamodal) {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alertify.success(data.message);
-                    setTimeout(() => window.location.reload(), 1000);
-                } else {
-                    alertify.error(data.message);
-                }
-                bootstrap.Modal.getInstance(eliminamodal).hide();
-            })
-            .catch(error => alertify.error("Error al eliminar."));
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alertify.success(data.message);
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        alertify.error(data.message);
+                    }
+                    bootstrap.Modal.getInstance(eliminamodal).hide();
+                })
+                .catch(error => alertify.error("Error al eliminar."));
         });
     }
 }
@@ -110,7 +112,7 @@ const formulariomodal = document.getElementById('formulariomodal');
 if (formulariomodal) {
     const formAgregar = formulariomodal.querySelector('form');
     if (formAgregar) {
-        formAgregar.addEventListener('submit', function(event) {
+        formAgregar.addEventListener('submit', function (event) {
             event.preventDefault();
             const formData = new FormData(this);
 
@@ -118,17 +120,17 @@ if (formulariomodal) {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alertify.success(data.message);
-                    setTimeout(() => window.location.reload(), 1000);
-                } else {
-                    alertify.error(data.message);
-                }
-                bootstrap.Modal.getInstance(formulariomodal).hide();
-            })
-            .catch(error => alertify.error("Error al guardar."));
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alertify.success(data.message);
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        alertify.error(data.message);
+                    }
+                    bootstrap.Modal.getInstance(formulariomodal).hide();
+                })
+                .catch(error => alertify.error("Error al guardar."));
         });
     }
 }

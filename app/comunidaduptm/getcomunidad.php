@@ -7,7 +7,7 @@ if (isset($_POST['cedula'])) {
     $cedula = $_POST['cedula']; 
 
     // Consulta directa y sencilla
-    $sql = "SELECT cedula, nombre, apellido FROM comunidad_uptm WHERE cedula = ?";
+    $sql = "SELECT cedula, nombre, apellido ,telefono FROM comunidad_uptm WHERE cedula = ?";
 
     $stmt = $conn->prepare($sql);
 

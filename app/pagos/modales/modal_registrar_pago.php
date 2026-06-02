@@ -83,6 +83,7 @@ include 'C:/xampp/htdocs/IPSPUPTM/config/database.php';
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Fecha de Pago</label>
+                            <?php date_default_timezone_set('America/Caracas'); ?>
                             <input type="date" name="fecha_pago" class="form-control"
                                 value="<?php echo date('Y-m-d'); ?>" required>
                         </div>

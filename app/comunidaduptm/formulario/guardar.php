@@ -8,6 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $cedula = mysqli_real_escape_string($conn, $_POST['cedula']);
     $nombre = mysqli_real_escape_string($conn, $_POST['nombre']);
     $apellido = mysqli_real_escape_string($conn, $_POST['apellido']);
+    $telefono = mysqli_real_escape_string($conn, $_POST['telefono']);
 
     // Verificar si la cedula ya existe en la tabla
     $check_query = "SELECT COUNT(*) as count FROM comunidad_uptm WHERE cedula = '$cedula'";
@@ -19,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    $sql = "INSERT INTO comunidad_uptm (cedula, nombre, apellido) VALUES ('$cedula', '$nombre', '$apellido')";
+    $sql = "INSERT INTO comunidad_uptm (cedula, nombre, apellido, telefono) VALUES ('$cedula', '$nombre', '$apellido', '$telefono')";
 
     if (mysqli_query($conn, $sql)) {
          // Registro en bitácora

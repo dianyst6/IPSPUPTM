@@ -49,7 +49,7 @@ if (isset($_POST['cedula'], $_POST['nombre'], $_POST['apellido'],
 
                     if ($stmt_afiliados->execute()) {
                         // Registrar en bitácora
-                        $usuario = $_SESSION['username']; 
+                        $usuario = $_SESSION['username'] ?? 'Sistema';
                         $accion = "Edición de Afiliado";
                         $descripcion = "Se han actualizado los datos del afiliado con cédula: $cedula, Nombre: $nombre, Apellido: $apellido";
                         registrarEnBitacora($conn, $usuario, $accion, $descripcion);

@@ -19,6 +19,10 @@
             <label for="apellido" class="form-label">Apellido</label>
             <input type="text" name="apellido" id="apellido" class="form-control" maxlength="50" pattern="[a-zA-ZáéíóúüñÑÁÉÍÓÚÜÑ\s]+" title="Solo se permiten letras" required>
           </div>
+          <div class="mb-3">
+            <label for="telefono" class="form-label">Telefono</label>
+            <input type="text" name="telefono" id="telefono" class="form-control" maxlength="11" pattern="[0-9]+" title="Solo se permiten números" required>
+          </div>
           <div class="modal-footer px-0 pb-0">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
             <button type="submit" class="btn btn-primary">Guardar</button>

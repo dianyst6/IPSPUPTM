@@ -15,7 +15,8 @@ $sqlComunidad = "
     SELECT 
         cedula, 
         nombre, 
-        apellido 
+        apellido, 
+        telefono    
     FROM comunidad_uptm 
     LIMIT $offset, $rowsPerPage
 ";
@@ -53,6 +54,7 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                         <th>Cédula</th>
                         <th>Nombre</th>
                         <th>Apellido</th>
+                        <th>Telefono</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -62,6 +64,7 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                         <td class="text-center"><?php echo $row['cedula']; ?></td>
                         <td><?php echo $row['nombre']; ?></td>
                         <td><?php echo $row['apellido']; ?></td>
+                        <td><?php echo $row['telefono']; ?></td>
                         <td class="text-center">
                             <a href="#" class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#editmodal" data-bs-cedula="<?= $row['cedula']; ?>">

@@ -12,18 +12,18 @@ if (isset($_POST['cedula'], $_POST['nombre'], $_POST['apellido'])) {
     $cedula   = htmlspecialchars($_POST['cedula']);
     $nombre   = htmlspecialchars($_POST['nombre']);
     $apellido = htmlspecialchars($_POST['apellido']);
-
+    $telefono = htmlspecialchars($_POST['telefono']);
     try {
         $conn->begin_transaction();
 
         // 2. Consulta simplificada a la tabla comunidad_uptm
         // Nota: Si los campos son readonly, esto técnicamente reescribirá lo mismo que ya hay
-        $sql = "UPDATE comunidad_uptm SET nombre = ?, apellido = ? WHERE cedula = ?";
+        $sql = "UPDATE comunidad_uptm SET nombre = ?, apellido = ? , telefono = ? WHERE cedula = ?";
 
         $stmt = $conn->prepare($sql);
 
         if ($stmt) {
-            $stmt->bind_param("sss", $nombre, $apellido, $cedula);
+            $stmt->bind_param("ssss", $nombre, $apellido, $telefono, $cedula);
 
             if ($stmt->execute()) {
                 // 3. Registrar en bitácora

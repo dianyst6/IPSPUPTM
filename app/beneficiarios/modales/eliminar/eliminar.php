@@ -104,7 +104,7 @@ if (isset($_POST['cedula'])) {
             throw new Exception("Error al preparar la consulta para verificar beneficiarios: " . $conn->error);
         }
         // 7. Registrar en la bitácora
-        $usuario = $_SESSION['username'];
+        $usuario = $_SESSION['username'] ?? 'Sistema';
         $accion = "Eliminación de Beneficiario y Citas";
         $descripcion = "Se eliminó al beneficiario: " . $info_beneficiario['nombre'] . " " . $info_beneficiario['apellido'] . " (Cédula: $cedula) y todas las citas relacionadas.";
         registrarenBitacora($conn, $usuario, $accion, $descripcion);

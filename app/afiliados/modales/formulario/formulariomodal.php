@@ -86,6 +86,7 @@
             <div class="row mb-3">
               <div class="col-md-6 col-12">
                 <label for="fecha_inicio" class="form-label">Fecha de Inicio</label>
+                <?php date_default_timezone_set('America/Caracas'); ?>
                 <input type="date" name="fecha_inicio" id="fecha_inicio" class="form-control" required
                   min="<?php echo date('Y-m-d'); ?>" value="<?php echo date('Y-m-d'); ?>">
               </div>

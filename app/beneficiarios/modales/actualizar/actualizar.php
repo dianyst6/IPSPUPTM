@@ -89,7 +89,7 @@ $_POST['telefono'], $_POST['correo'], $_POST['ocupacion'])) {
         }
 
         // Registrar en la bitácora los cambios realizados
-        $usuario = $_SESSION['username'];
+        $usuario = $_SESSION['username'] ?? 'Sistema';
         $accion = "Actualización de Beneficiario";
         $descripcion = "Se actualizó al beneficiario con cédula $cedula y nombre $nombre $apellido";
         registrarenBitacora($conn, $usuario, $accion, $descripcion);

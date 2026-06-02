@@ -135,7 +135,7 @@ a.sidebar-link:hover {
 /* Estilo unificado para el contenedor de tablas */
 .table-responsive {
     max-width: 100%;
-    overflow: hidden; /* Importante para que los bordes redondeados funcionen */
+    overflow-x: auto; /* Permite desplazamiento horizontal en pantallas pequeñas */
     border-radius: 5px;
     border: 1px solid #dee2e6;
     margin-top: 20px; /* Espacio arriba del contenedor, no de la tabla */

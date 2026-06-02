@@ -12,7 +12,7 @@
         <form id="form-registro-historia" action="/IPSPUPTM/app/historias_medicas/modales/formulario/guardar.php"
           method="POST">
 
-          <input type="hidden" name="ci_medico" id="ci_medico_input" value="14107471">
+          <input type="hidden" name="ci_medico" id="ci_medico_input" value="<?= htmlspecialchars($ci_medico_logueado); ?>">
 
           <div class="mb-3">
             <label class="form-label fw-bold">Tipo de Paciente</label>
