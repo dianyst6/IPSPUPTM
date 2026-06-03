@@ -8,10 +8,11 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>  
         </div>  
         <div class="modal-body">  
-          <div class="mb-3">  
-            <label for="usernameModal" class="form-label">Nombre de usuario</label>  
-            <input type="text" class="form-control" id="usernameModal" name="username" required>  
-          </div>  
+         <div class="mb-3">   
+            <label for="usernameModal" class="form-label">Nombre de usuario</label>   
+            <input type="text" class="form-control" id="usernameModal" name="username" required autocomplete="off">   
+            <div id="usernameFeedback" class="form-text"></div>
+          </div>
           <div class="mb-3">  
             <label for="passwordModal" class="form-label">Contraseña</label>  
             <input type="password" class="form-control" id="passwordModal" name="password" required>  
@@ -32,4 +33,5 @@
       </form>  
     </div>  
   </div>  
-</div>  
+</div>
+

@@ -108,10 +108,11 @@ $totalPages = ceil($totalRows / $rowsPerPage);
             <h2 class="mb-3">Agregar Usuario</h2>
             <div class="card shadow p-4">
                 <form action="/IPSPUPTM/Inicio/registro.php" method="POST">
-                    <div class="mb-3">
+                   <div class="mb-3">
                         <label for="username" class="form-label">Nombre de usuario</label>
-                        <input type="text" class="form-control" id="username" name="username" required>
-                    </div>
+                        <input type="text" class="form-control" id="username" name="username" required autocomplete="off">
+                        <div id="usernameFeedback" class="form-text"></div>
+                    </div> 
                     <div class="mb-3">
                         <label for="password" class="form-label">Contraseña</label>
                         <input type="password" class="form-control" id="password" name="password" required>
@@ -195,29 +196,99 @@ $totalPages = ceil($totalRows / $rowsPerPage);
 </div>
 <?php include 'C:/xampp/htdocs/IPSPUPTM/app/configuracion/gestionusuario/eliminar/eliminarmodal.php'; ?>
 <script src="/IPSPUPTM/assets/js/usuarios.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const roleSelector = document.getElementById('role_id');
-        const camposMedico = document.getElementById('campos-medico');
 
-        // Seleccionamos los inputs y selects internos para controlar el "required"
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    // --- LÓGICA DE CAMPOS DEL MÉDICO ---
+    const roleSelector = document.getElementById('role_id');
+    const camposMedico = document.getElementById('campos-medico');
+
+    if (roleSelector && camposMedico) {
         const inputsMedico = camposMedico.querySelectorAll('input, select');
 
         roleSelector.addEventListener('change', function() {
-            if (this.value === '3') { // "3" es el ID de Médico
+            if (this.value === '3') { 
                 camposMedico.style.display = 'block';
-
-                // Hacer que los campos sean obligatorios solo si es médico
                 inputsMedico.forEach(input => input.setAttribute('required', 'required'));
             } else {
                 camposMedico.style.display = 'none';
-
-                // Quitar obligatoriedad y limpiar valores
                 inputsMedico.forEach(input => {
                     input.removeAttribute('required');
                     input.value = '';
                 });
             }
         });
-    });
+    }
+
+    // --- LÓGICA DE VALIDACIÓN DE USUARIO (OPTIMIZADA) ---
+    const usernameInput = document.getElementById("username");
+    const feedback = document.getElementById("usernameFeedback");
+    
+    if (usernameInput) {
+        const form = usernameInput.closest("form");
+        // Buscamos el botón de forma más flexible
+        const submitBtn = form ? (form.querySelector("button[type='submit']") || form.querySelector(".btn-primary")) : null;
+
+        usernameInput.addEventListener("input", function () {
+            const username = usernameInput.value.trim();
+
+            // 1. Si está vacío, limpiamos todo
+            if (username.length === 0) {
+                if (feedback) feedback.textContent = "";
+                usernameInput.classList.remove("is-valid", "is-invalid");
+                if (submitBtn) submitBtn.disabled = false;
+                return;
+            }
+
+            // 2. Si tiene menos de 3 caracteres, alertamos y bloqueamos
+            if (username.length < 3) {
+                if (feedback) {
+                    feedback.textContent = "⚠️ El usuario debe tener al menos 3 caracteres.";
+                    feedback.className = "form-text text-warning";
+                }
+                usernameInput.classList.remove("is-valid", "is-invalid");
+                if (submitBtn) submitBtn.disabled = true;
+                return; // Detiene el flujo aquí si no llega a 3
+            }
+
+            // 3. SI PASA LOS 3 CARACTERES: Hace la petición al backend
+            const formData = new FormData();
+            formData.append("username", username);
+
+            fetch("/IPSPUPTM/app/configuracion/gestionusuario/verificar_usuario.php", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                const respuesta = data.trim();
+
+                if (respuesta === "existe") {
+                    if (feedback) {
+                        feedback.textContent = "❌ Este nombre de usuario ya está registrado.";
+                        feedback.className = "form-text text-danger";
+                    }
+                    usernameInput.classList.remove("is-valid");
+                    usernameInput.classList.add("is-invalid");
+                    if (submitBtn) submitBtn.disabled = true;
+                } else {
+                    // Si responde "disponible" o cualquier otra cosa libre
+                    if (feedback) {
+                        feedback.textContent = "✔️ ¡Nombre de usuario disponible!";
+                        feedback.className = "form-text text-success";
+                    }
+                    usernameInput.classList.remove("is-invalid");
+                    usernameInput.classList.add("is-valid");
+                    if (submitBtn) submitBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error("Error en la comprobación de usuario:", error);
+            });
+        });
+    }
+});
 </script>
+
+
