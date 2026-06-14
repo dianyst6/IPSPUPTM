@@ -39,7 +39,7 @@
         'usuarios' => 'manual_usuarios.pdf'
     ];
     $archivo_ayuda = isset($manuales_pdf[$vista]) ? $manuales_pdf[$vista] : 'manual_general.pdf';
-    $ruta_ayuda = "/IPSPUPTM/recursos/manuales/" . $archivo_ayuda;
+    $ruta_ayuda = "/IPSPUPTM/ver_pdf.php?archivo=" . $archivo_ayuda;
     ?>
 
     <!-- Botón flotante de ayuda dinámica -->
@@ -232,6 +232,14 @@
             document.getElementById('custom-sidebar').classList.toggle('active');
         };
     </script>
+
+    <?php if (isset($_GET['error']) && $_GET['error'] === 'no_autorizado'): ?>
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            alertify.error('No tiene permisos para acceder a este módulo.');
+        });
+    </script>
+    <?php endif; ?>
 
 </body>
 <footer class=" bg-dark text-white footerm">

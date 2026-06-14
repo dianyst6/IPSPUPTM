@@ -5,6 +5,19 @@ include 'C:/xampp/htdocs/IPSPUPTM/config/actions.php';
 // Determinar la vista a cargar
 $vista = isset($_GET['vista']) ? $_GET['vista'] : (($_SESSION['role_id'] == 3) ? 'historiasmedicas' : 'inicial');
 
+// Validar permisos por nivel de usuario
+$permisos = require 'C:/xampp/htdocs/IPSPUPTM/config/permisos.php';
+$role_id = isset($_SESSION['role_id']) ? $_SESSION['role_id'] : null;
+
+if (!isset($permisos[$vista]) || !in_array($role_id, $permisos[$vista])) {
+    $default_vista = ($role_id == 3) ? 'historiasmedicas' : 'inicial';
+    // Evitar bucle de redirección infinita
+    if ($vista !== $default_vista) {
+        header("Location: /IPSPUPTM/home.php?vista=" . $default_vista . "&error=no_autorizado");
+        exit();
+    }
+}
+
 // Asignar el archivo de contenido correspondiente a la vista
 switch ($vista) {
     case 'afiliados':
