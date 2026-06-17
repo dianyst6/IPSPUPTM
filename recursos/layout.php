@@ -240,11 +240,10 @@
         });
     </script>
     <?php endif; ?>
-
-</body>
-<footer class=" bg-dark text-white footerm">
+<footer class="footerm">
     <div class="container text-center">
         <p>&copy; <?php echo date("Y"); ?> IPSPUPTM. Todos los derechos reservados.</p>
-        <p>Diseñado Gabriela, Gregory, Dianys, Alondra.</p>
+        <p>Diseñado por: Gabriela, Gregory, Dianys, Alondra.</p>
     </div>
 </footer>
+</body>

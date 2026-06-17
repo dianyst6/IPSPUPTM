@@ -13,7 +13,7 @@ html, body {
     overflow-x: hidden; /* Previene márgenes blancos horizontales */
     width: 100%;
     font-family: 'Poppins', sans-serif;
-    background-color: #ffffff; /* Color de fondo claro */
+    background-color: #f1f5f9; /* Color de fondo claro */
     font-size: 14px;
 }
 
@@ -380,15 +380,29 @@ a:hover {
 
 
 .footerm {
-    background-color: #2a6aaa;
+    background-color: #0e213d; /* Azul oscuro */
     color: white;
-    text-align: center;
     padding: 20px 0;
-    position: relative;
-    bottom: 0;
-    width: 100%;
-    margin-top: 20px;
-}      
+    
+    /* Esta es la clave para que se alinee con tu formulario: */
+    margin-left: 240px; /* Igual al margen de tu sidebar */
+    width: calc(100% - 240px); /* Ajusta el ancho para que no se desborde */
+    
+    /* Opcional: Esto ayuda a que el diseño sea responsive */
+    transition: margin-left 0.35s ease-in-out, width 0.35s ease-in-out;
+}
+
+.footerm p {
+    margin-bottom: 0.5rem;
+    opacity: 0.85;            /* Texto ligeramente suavizado para no cansar la vista */
+    font-size: 0.9rem;        /* Un poco más pequeño que el cuerpo del texto */
+}
+
+.footerm p:last-child {
+    margin-bottom: 0;         /* Elimina el margen del último párrafo */
+    font-size: 0.8rem;        /* Créditos un poco más pequeños */
+    opacity: 0.6;             /* Créditos más tenues */
+}
 
 .bg-primary {
     background-color: #0e213d !important;
