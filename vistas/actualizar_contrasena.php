@@ -8,19 +8,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Validar que las contraseñas coincidan
     if ($nueva_password !== $confirmar_password) {
-        echo "<script>
-            alertify.error('Las contraseñas no coinciden.');
-            window.location.href = 'javascript:history.back()';
-          </script>";
+        header("Location: /IPSPUPTM/vistas/verificar_respuestas.php?error=no_coinciden&user_id=" . urlencode($user_id));
         exit();
     }
 
     // Validar que la nueva contraseña no esté vacía
     if (empty($nueva_password)) {
-        echo "<script>
-            alertify.error('La nueva contraseña no puede estar vacía.');
-            window.location.href = 'javascript:history.back()';
-          </script>";
+        header("Location: /IPSPUPTM/vistas/verificar_respuestas.php?error=vacia&user_id=" . urlencode($user_id));
         exit();
     }
 
@@ -34,25 +28,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($stmt_actualizar) {
         $stmt_actualizar->bind_param("si", $hashed_nueva_password, $user_id);
         if ($stmt_actualizar->execute()) {
-            // Redirigir a login.php con un parámetro en la URL
+            // Éxito: Redirigir al login principal
             header("Location: /IPSPUPTM/index.php?contrasena_restablecida=1");
             exit();
         } else {
-            echo "<script>
-              alertify.error('Error al actualizar la contraseña.');
-              window.location.href = 'javascript:history.back()';
-            </script>";
+            header("Location: /IPSPUPTM/vistas/verificar_respuestas.php?error=db_error&user_id=" . urlencode($user_id));
+            exit();
         }
         $stmt_actualizar->close();
     } else {
-        echo "<script>
-            alertify.error('Error al preparar la consulta de actualización.');
-            window.location.href = 'javascript:history.back()';
-          </script>";
+        header("Location: /IPSPUPTM/vistas/verificar_respuestas.php?error=prepare_error&user_id=" . urlencode($user_id));
+        exit();
     }
 } else {
-    // Si se accede a este script directamente sin POST
     header("Location: recuperar_contrasena_form.php");
     exit();
 }
+$conn->close();
 ?>

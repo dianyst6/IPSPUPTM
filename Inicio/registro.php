@@ -80,12 +80,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // SI LLEGAMOS AQUÍ, TODO ESTÁ BIEN
         $conn->commit();
-        header('Location: /IPSPUPTM/home.php?vista=usuarios');
+        header('Location: /IPSPUPTM/home.php?vista=usuarios&mensaje=usuario_agregado');
         exit();
 
     } catch (Exception $e) {
         // SI ALGO FALLA, DESHACER TODO
         $conn->rollback();
+        // Puedes dejarlo así o luego pasarlo también por URL si prefieres quitar este alert nativo
         echo "<script>alert('Error al registrar el usuario: " . $e->getMessage() . "'); window.history.back();</script>";
     }
 }

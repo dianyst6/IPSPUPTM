@@ -6,12 +6,23 @@
                 <form action="/IPSPUPTM/vistas/actualizar_contrasena.php" method="POST">
                     <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
                     <div class="mb-3">
-                        <label>Nueva Contraseña</label>
-                        <input type="password" class="form-control" name="nueva_password" required>
+                        <label class="form-label">Nueva Contraseña</label>
+                        <div class="input-group">
+                            <input type="password" name="nueva_password" id="reset_password" class="form-control" placeholder="Escribe la nueva contraseña" required>
+                            <button class="btn btn-outline-secondary" type="button" id="toggleResetPassword">
+                                <i class="fas fa-eye" id="resetEyeIcon"></i>
+                            </button>
+                        </div>
                     </div>
+
                     <div class="mb-3">
-                        <label>Confirmar Nueva Contraseña</label>
-                        <input type="password" class="form-control" name="confirmar_password" required>
+                        <label class="form-label">Confirmar Nueva Contraseña</label>
+                        <div class="input-group">
+                            <input type="password" name="confirmar_password" id="reset_confirm_password" class="form-control" placeholder="Repite la contraseña" required>
+                            <button class="btn btn-outline-secondary" type="button" id="toggleResetConfirmPassword">
+                                <i class="fas fa-eye" id="resetConfirmEyeIcon"></i>
+                            </button>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Restablecer</button>
                 </form>

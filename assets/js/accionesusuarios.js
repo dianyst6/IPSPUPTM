@@ -102,8 +102,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 icon.classList.toggle('fa-eye-slash');
             });
         }
+        // Ojitos del Formulario de Registro
         toggleVisibility('togglePassword', 'password', 'eyeIcon');
         toggleVisibility('toggleConfirmPassword', 'confirm_password', 'confirmEyeIcon');
+
+        // Ojitos del Modal de Edición
+        toggleVisibility('toggleEditPassword', 'edit_password', 'editEyeIcon');
+        toggleVisibility('toggleEditConfirmPassword', 'edit_confirm_password', 'editConfirmEyeIcon')
 
         // Deshabilitar preguntas duplicadas
         const q1 = document.getElementById('pregunta_seguridad_id1');
@@ -179,11 +184,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- LÓGICA FETCH (AÑADIDA) ---
+   // --- LÓGICA FETCH (CON ALERTIFY) ---
+    // --- LÓGICA FETCH (CON VALIDACIÓN DE CONTRASEÑA) ---
     if (formEditar) {
         formEditar.addEventListener('submit', function(e) {
             e.preventDefault(); // Evita que la página recargue
             
+            // 1. CAPTURAMOS LOS VALORES DE LAS CONTRASEÑAS
+            const pass = document.getElementById('edit_password').value;
+            const confirmPass = document.getElementById('edit_confirm_password').value;
+
+            // 2. VALIDACIÓN: Solo si el usuario escribió algo en el campo de contraseña
+            if (pass !== "" || confirmPass !== "") {
+                if (pass !== confirmPass) {
+                    alertify.error(' Las contraseñas nuevas no coinciden.');
+                    return; // 🛑 Detiene el flujo por completo, impidiendo el Fetch
+                }
+            }
+            
+            // Si las contraseñas coinciden (o están vacías), el código continúa normalmente:
             const formData = new FormData(this);
 
             fetch('/IPSPUPTM/app/configuracion/gestionusuario/actualizar/actualizar.php', {
@@ -193,16 +212,53 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert(data.message);
-                    location.reload(); // Recarga para ver cambios
+                    const modalInstance = bootstrap.Modal.getInstance(editModal);
+                    if (modalInstance) modalInstance.hide();
+
+                    alertify.success(data.message);
+
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
                 } else {
-                    alert("Error: " + data.message);
+                    alertify.error("Error: " + data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert("Ocurrió un error inesperado.");
+                alertify.error("Ocurrió un error inesperado en el servidor.");
             });
         });
+    }
+    
+    // =========================================================
+    // --- DETECTOR DE ALERTAS EN LA URL (ALERTIFY) ---
+    // =========================================================
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // 1. Si viene un mensaje de éxito
+    if (urlParams.has('mensaje')) {
+        const mensaje = urlParams.get('mensaje');
+        
+        if (mensaje === 'usuario_eliminado') {
+            alertify.success('¡Usuario eliminado correctamente!');
+        } else if (mensaje === 'usuario_agregado') {
+            alertify.success('¡Usuario registrado con éxito!'); // <-- NUEVA ALERTA
+        }
+        
+        // Limpiamos la URL para evitar bucles con F5
+        window.history.replaceState({}, document.title, "home.php?vista=usuarios");
+    }
+
+    // 2. Si viene un mensaje de error
+    if (urlParams.has('error')) {
+        let errorMsg = urlParams.get('error');
+        
+        if (errorMsg === 'id_no_proporcionado') {
+            errorMsg = 'No se proporcionó el ID del usuario.';
+        }
+        
+        alertify.error('❌ ' + errorMsg);
+        window.history.replaceState({}, document.title, "home.php?vista=usuarios");
     }
 });

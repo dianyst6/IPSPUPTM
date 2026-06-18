@@ -26,10 +26,20 @@
           <h6>Cambiar Contraseña (Dejar vacío para no cambiar)</h6>
           <div class="row">
               <div class="col-md-6 mb-3">
-                  <input type="password" name="password" class="form-control" placeholder="Nueva contraseña">
+                  <div class="input-group">
+                      <input type="password" name="password" id="edit_password" class="form-control" placeholder="Nueva contraseña">
+                      <button class="btn btn-outline-secondary" type="button" id="toggleEditPassword">
+                          <i class="fas fa-eye" id="editEyeIcon"></i>
+                      </button>
+                  </div>
               </div>
               <div class="col-md-6 mb-3">
-                  <input type="password" name="confirm_password" class="form-control" placeholder="Confirmar nueva">
+                  <div class="input-group">
+                      <input type="password" name="confirm_password" id="edit_confirm_password" class="form-control" placeholder="Confirmar nueva">
+                      <button class="btn btn-outline-secondary" type="button" id="toggleEditConfirmPassword">
+                          <i class="fas fa-eye" id="editConfirmEyeIcon"></i>
+                      </button>
+                  </div>
               </div>
           </div>
 

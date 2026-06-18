@@ -15,8 +15,8 @@ session_start();
 </head>
 <body>
 
-    <div class="container mt-5">
-        <div class="row justify-content-center">
+    <div class="container min-vh-100 d-flex align-items-center justify-content-center">
+        <div class="row justify-content-center w-100">
             <div class="col-md-6">
                 <div class="card shadow p-4">
                     <div class="logo-container">
@@ -46,7 +46,7 @@ session_start();
     <?php
     if (isset($_SESSION['mensaje_alertify'])) {
         $msg = $_SESSION['mensaje_alertify'];
-        $type = $_SESSION['tipo_alertify']; // 'error', 'success', 'warning'
+        $type = $_SESSION['tipo_alertify']; 
         
         echo "<script>
                 document.addEventListener('DOMContentLoaded', function() {
@@ -54,7 +54,6 @@ session_start();
                 });
               </script>";
               
-        // Limpiamos los mensajes para que no vuelvan a salir al refrescar la página
         unset($_SESSION['mensaje_alertify']);
         unset($_SESSION['tipo_alertify']);
     }
