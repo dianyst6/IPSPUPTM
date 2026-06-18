@@ -140,16 +140,35 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                         </select>
                     </div>
 
-                    <div id="campos-medico" style="display: none;" class="border p-3 mb-3 bg-light rounded">
+                  <div id="campos-medico" style="display: none;" class="border p-3 mb-3 bg-light rounded">
                         <h5 class="text-primary">Datos del Médico</h5>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="ci_medico" class="form-label">Cédula</label>
-                                <input type="text" name="ci_medico" id="ci_medico" class="form-control" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                <label for="ci_medico" class="form-label">Cédula del Médico</label>
+                                <input type="text"
+                                    name="ci_medico"
+                                    id="ci_medico"
+                                    class="form-control"
+                                    inputmode="numeric"
+                                    pattern="[0-9]*"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="telefono_personal" class="form-label">Teléfono</label>
+                                <label for="telefono_personal" class="form-label">Teléfono Personal</label>
                                 <input type="text" class="form-control" id="telefono_personal" name="telefono_personal">
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label for="id_especialidad" class="form-label">Especialidad</label>
+                                <select name="especialidad" id="especialidad" class="form-select" required>
+                                    <option value="" selected disabled>Seleccionar...</option>
+                                    <?php
+                                    $sql_especialidades = "SELECT id_especialidad, nombre_especialidad FROM especialidades ORDER BY nombre_especialidad ASC";
+                                    $result_espe = $conn->query($sql_especialidades);
+                                    while ($row_e = $result_espe->fetch_assoc()) {
+                                        echo '<option value="' . $row_e['id_especialidad'] . '">' . $row_e['nombre_especialidad'] . '</option>';
+                                    }
+                                    ?>
+                                </select>
                             </div>
                         </div>
                     </div>
