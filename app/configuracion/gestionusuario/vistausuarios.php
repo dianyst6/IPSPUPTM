@@ -1,6 +1,7 @@
 <?php
-include '../IPSPUPTM/config/database.php';
-include '../IPSPUPTM/config/alertify.php';
+// Esto busca desde la carpeta htdocs hacia abajo, siempre funciona igual
+include $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/config/database.php';
+include $_SERVER['DOCUMENT_ROOT'] . '/IPSPUPTM/config/alertify.php';
 
 $rowsPerPage = 15;
 $currentPage = isset($_GET['page']) ? intval($_GET['page']) : 1;
@@ -8,7 +9,7 @@ $offset = ($currentPage - 1) * $rowsPerPage;
 
 // 1. Ocultar administrador (ID 7) en la consulta
 $sqlUsuarios = "
-    SELECT id, username
+    SELECT id, username, role_id
     FROM usuarios
     WHERE id != 7
     LIMIT $offset, $rowsPerPage
@@ -42,9 +43,14 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                     <?php
                     while ($row = $Usuarios->fetch_assoc()) {
                         $userId = $row['id'];
-                        $sql_respuestas = "SELECT ps.pregunta, rs.respuesta FROM respuestas_seguridad rs 
-                                           JOIN preguntas_seguridad ps ON rs.pregunta_seguridad_id = ps.ID 
-                                           WHERE rs.usuario_id = $userId ORDER BY rs.pregunta_seguridad_id ASC LIMIT 2";
+                        
+                        // --- CAMBIO AQUÍ: Agregamos 'rs.pregunta_seguridad_id' ---
+                        $sql_respuestas = "SELECT ps.pregunta, rs.respuesta, rs.pregunta_seguridad_id 
+                                        FROM respuestas_seguridad rs 
+                                        JOIN preguntas_seguridad ps ON rs.pregunta_seguridad_id = ps.ID 
+                                        WHERE rs.usuario_id = $userId 
+                                        ORDER BY rs.pregunta_seguridad_id ASC LIMIT 2";
+                                        
                         $result_respuestas = $conn->query($sql_respuestas);
                         $respuestas = $result_respuestas->fetch_all(MYSQLI_ASSOC);
 
@@ -59,6 +65,18 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                             <td><?= $respuestas[1]['pregunta'] ?? 'N/A'; ?></td>
                             <td><?= $respuestas[1]['respuesta'] ?? 'N/A'; ?></td>
                             <td class="text-center">
+                                <button class="btn btn-warning btn-sm" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#editModal" 
+                                    data-id="<?= $row['id']; ?>" 
+                                    data-username="<?= htmlspecialchars($row['username']); ?>" 
+                                    data-role="<?= $row['role_id']; ?>"
+                                    data-p1="<?= $respuestas[0]['pregunta_seguridad_id'] ?? ''; ?>" 
+                                    data-r1="<?= $respuestas[0]['respuesta'] ?? ''; ?>"
+                                    data-p2="<?= $respuestas[1]['pregunta_seguridad_id'] ?? ''; ?>" 
+                                    data-r2="<?= $respuestas[1]['respuesta'] ?? ''; ?>"> 
+                                    <i class="fas fa-edit"></i>
+                                </button>
                                 <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminamodal" data-bs-id="<?= $row['id']; ?>">
                                     <i class="fas fa-trash"></i>
                                 </button>
@@ -165,142 +183,7 @@ $totalPages = ceil($totalRows / $rowsPerPage);
         </div>
     </div>
 </div>
-
-<script>
-   document.addEventListener('DOMContentLoaded', function() {
-
-    // --- 1. Elementos del DOM ---
-    const form = document.querySelector('form');
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const allRequiredInputs = form.querySelectorAll('input[required], select[required]');
-    
-    const pass1 = document.getElementById('password');
-    const pass2 = document.getElementById('confirm_password');
-    const passFeedback = document.getElementById('passwordFeedback');
-    
-    const usernameInput = document.getElementById("username");
-    const usernameFeedback = document.getElementById("usernameFeedback");
-
-    // --- 2. Función Maestra de Validación ---
-    function checkFormValidity() {
-        let isFormValid = true;
-
-        // A. Validar campos vacíos (obligatorios)
-        allRequiredInputs.forEach(input => {
-            if (input.value.trim() === '') {
-                isFormValid = false;
-            }
-        });
-
-        // B. Validar contraseñas
-        if (pass2.value !== '') { // Solo validamos si hay algo escrito
-            if (pass1.value !== pass2.value) {
-                passFeedback.textContent = '❌ Las contraseñas no coinciden';
-                passFeedback.className = 'form-text text-danger';
-                pass2.classList.add('is-invalid');
-                isFormValid = false;
-            } else {
-                passFeedback.textContent = '✔️ Las contraseñas coinciden';
-                passFeedback.className = 'form-text text-success';
-                pass2.classList.remove('is-invalid');
-                pass2.classList.add('is-valid');
-            }
-        } else {
-            passFeedback.textContent = '';
-            pass2.classList.remove('is-invalid', 'is-valid');
-        }
-
-        // C. Validar disponibilidad de usuario (check de la clase CSS)
-        if (usernameInput.classList.contains('is-invalid')) {
-            isFormValid = false;
-        }
-
-        // D. Aplicar estado al botón
-        submitBtn.disabled = !isFormValid;
-    }
-
-    // --- 3. Inicialización de Eventos ---
-    
-    // Escuchar cambios en todos los campos obligatorios
-    allRequiredInputs.forEach(input => {
-        input.addEventListener('input', checkFormValidity);
-        input.addEventListener('change', checkFormValidity);
-    });
-
-    // Lógica específica para el check del usuario (debido al fetch)
-    usernameInput.addEventListener("input", function () {
-        const username = usernameInput.value.trim();
-        if (username.length < 3) return; // Esperar a que escriba algo
-
-        const formData = new FormData();
-        formData.append("username", username);
-
-        fetch("/IPSPUPTM/app/configuracion/gestionusuario/verificar_usuario.php", {
-            method: "POST",
-            body: formData
-        })
-        .then(res => res.text())
-        .then(data => {
-            if (data.trim() === "existe") {
-                usernameFeedback.textContent = "❌ Usuario no disponible.";
-                usernameFeedback.className = "form-text text-danger";
-                usernameInput.classList.add("is-invalid");
-            } else {
-                usernameFeedback.textContent = "✔️ Usuario disponible.";
-                usernameFeedback.className = "form-text text-success";
-                usernameInput.classList.remove("is-invalid");
-            }
-            checkFormValidity(); // Re-validar todo el formulario tras el fetch
-        });
-    });
-
-    // --- 4. Funcionalidades Extras ---
-    
-    // Toggle Contraseñas
-    function toggleVisibility(buttonId, inputId, iconId) {
-        const toggleBtn = document.getElementById(buttonId);
-        const inputField = document.getElementById(inputId);
-        const icon = document.getElementById(iconId);
-        if (!toggleBtn) return;
-        toggleBtn.addEventListener('click', () => {
-            const type = inputField.getAttribute('type') === 'password' ? 'text' : 'password';
-            inputField.setAttribute('type', type);
-            icon.classList.toggle('fa-eye');
-            icon.classList.toggle('fa-eye-slash');
-        });
-    }
-    toggleVisibility('togglePassword', 'password', 'eyeIcon');
-    toggleVisibility('toggleConfirmPassword', 'confirm_password', 'confirmEyeIcon');
-
-    // Deshabilitar preguntas duplicadas
-    const q1 = document.getElementById('pregunta_seguridad_id1');
-    const q2 = document.getElementById('pregunta_seguridad_id2');
-    function actualizarOpciones() {
-        for (let option of q2.options) option.disabled = (option.value === q1.value && q1.value !== "");
-        for (let option of q1.options) option.disabled = (option.value === q2.value && q2.value !== "");
-        checkFormValidity(); // Validar formulario al cambiar select
-    }
-    q1.addEventListener('change', actualizarOpciones);
-    q2.addEventListener('change', actualizarOpciones);
-
-    // Lógica Médico
-    const roleSelector = document.getElementById('role_id');
-    const camposMedico = document.getElementById('campos-medico');
-    roleSelector.addEventListener('change', function() {
-        const inputsMedico = camposMedico.querySelectorAll('input, select');
-        if (this.value === '3') {
-            camposMedico.style.display = 'block';
-            inputsMedico.forEach(i => i.setAttribute('required', 'required'));
-        } else {
-            camposMedico.style.display = 'none';
-            inputsMedico.forEach(i => i.removeAttribute('required'));
-        }
-        checkFormValidity(); // Re-validar porque cambiaron los campos obligatorios
-    });
-
-    // --- Estado Inicial ---
-    submitBtn.disabled = true; // Empieza deshabilitado
-}); 
-</script>
-
-
+<?php include 'eliminar/eliminarmodal.php'; ?>
+<?php include 'actualizar/editmodal.php'; ?>
+<script src="/IPSPUPTM/assets/js/accionesusuarios.js"></script>
+  
