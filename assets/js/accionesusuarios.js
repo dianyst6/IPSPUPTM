@@ -1,21 +1,21 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
 
     // =========================================================
     // --- LÓGICA DEL FORMULARIO DE REGISTRO ---
     // =========================================================
     // Nota: Es mejor buscar por ID específico para no confundirse con el form del modal
-    const registerForm = document.querySelector('form'); 
-    
+    const registerForm = document.querySelector('form');
+
     // Verificamos si existe el formulario de registro antes de ejecutar esta lógica
-    if (registerForm && !registerForm.id.includes('edit')) { 
-        
+    if (registerForm && !registerForm.id.includes('edit')) {
+
         const submitBtn = registerForm.querySelector('button[type="submit"]');
         const allRequiredInputs = registerForm.querySelectorAll('input[required], select[required]');
-        
+
         const pass1 = document.getElementById('password');
         const pass2 = document.getElementById('confirm_password');
         const passFeedback = document.getElementById('passwordFeedback');
-        
+
         const usernameInput = document.getElementById("username");
         const usernameFeedback = document.getElementById("usernameFeedback");
 
@@ -73,19 +73,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     method: "POST",
                     body: formData
                 })
-                .then(res => res.text())
-                .then(data => {
-                    if (data.trim() === "existe") {
-                        usernameFeedback.textContent = "❌ Usuario no disponible.";
-                        usernameFeedback.className = "form-text text-danger";
-                        usernameInput.classList.add("is-invalid");
-                    } else {
-                        usernameFeedback.textContent = "✔️ Usuario disponible.";
-                        usernameFeedback.className = "form-text text-success";
-                        usernameInput.classList.remove("is-invalid");
-                    }
-                    checkFormValidity();
-                });
+                    .then(res => res.text())
+                    .then(data => {
+                        if (data.trim() === "existe") {
+                            usernameFeedback.textContent = "❌ Usuario no disponible.";
+                            usernameFeedback.className = "form-text text-danger";
+                            usernameInput.classList.add("is-invalid");
+                        } else {
+                            usernameFeedback.textContent = "✔️ Usuario disponible.";
+                            usernameFeedback.className = "form-text text-success";
+                            usernameInput.classList.remove("is-invalid");
+                        }
+                        checkFormValidity();
+                    });
             });
         }
 
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Deshabilitar preguntas duplicadas
         const q1 = document.getElementById('pregunta_seguridad_id1');
         const q2 = document.getElementById('pregunta_seguridad_id2');
-        if(q1 && q2) {
+        if (q1 && q2) {
             function actualizarOpciones() {
                 for (let option of q2.options) option.disabled = (option.value === q1.value && q1.value !== "");
                 for (let option of q1.options) option.disabled = (option.value === q2.value && q2.value !== "");
@@ -126,8 +126,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Lógica Médico
         const roleSelector = document.getElementById('role_id');
         const camposMedico = document.getElementById('campos-medico');
-        if(roleSelector && camposMedico) {
-            roleSelector.addEventListener('change', function() {
+        if (roleSelector && camposMedico) {
+            roleSelector.addEventListener('change', function () {
                 const inputsMedico = camposMedico.querySelectorAll('input, select');
                 if (this.value === '3') {
                     camposMedico.style.display = 'block';
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        if(submitBtn) submitBtn.disabled = true;
+        if (submitBtn) submitBtn.disabled = true;
     }
 
     // =========================================================
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (editModal) {
         editModal.addEventListener('show.bs.modal', function (event) {
             const button = event.relatedTarget;
-            
+
             // 1. Seleccionamos inputs
             const p1Input = document.getElementById('edit_p1');
             const p2Input = document.getElementById('edit_p2');
@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('edit_username').value = button.getAttribute('data-username');
             document.getElementById('edit_r1').value = button.getAttribute('data-r1');
             document.getElementById('edit_r2').value = button.getAttribute('data-r2');
-            
+
             if (roleInput) roleInput.value = button.getAttribute('data-role');
             if (p1Input) p1Input.value = button.getAttribute('data-p1');
             if (p2Input) p2Input.value = button.getAttribute('data-p2');
@@ -179,17 +179,17 @@ document.addEventListener('DOMContentLoaded', function() {
             if (roleInput) roleInput.dispatchEvent(new Event('change'));
             if (p1Input) p1Input.dispatchEvent(new Event('change'));
             if (p2Input) p2Input.dispatchEvent(new Event('change'));
-            
+
             console.log("Carga exitosa para ID:", button.getAttribute('data-id'));
         });
     }
 
-   // --- LÓGICA FETCH (CON ALERTIFY) ---
+    // --- LÓGICA FETCH (CON ALERTIFY) ---
     // --- LÓGICA FETCH (CON VALIDACIÓN DE CONTRASEÑA) ---
     if (formEditar) {
-        formEditar.addEventListener('submit', function(e) {
+        formEditar.addEventListener('submit', function (e) {
             e.preventDefault(); // Evita que la página recargue
-            
+
             // 1. CAPTURAMOS LOS VALORES DE LAS CONTRASEÑAS
             const pass = document.getElementById('edit_password').value;
             const confirmPass = document.getElementById('edit_confirm_password').value;
@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     return; // 🛑 Detiene el flujo por completo, impidiendo el Fetch
                 }
             }
-            
+
             // Si las contraseñas coinciden (o están vacías), el código continúa normalmente:
             const formData = new FormData(this);
 
@@ -209,28 +209,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const modalInstance = bootstrap.Modal.getInstance(editModal);
-                    if (modalInstance) modalInstance.hide();
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const modalInstance = bootstrap.Modal.getInstance(editModal);
+                        if (modalInstance) modalInstance.hide();
 
-                    alertify.success(data.message);
+                        alertify.success(data.message);
 
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1500);
-                } else {
-                    alertify.error("Error: " + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alertify.error("Ocurrió un error inesperado en el servidor.");
-            });
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        alertify.error("Error: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alertify.error("Ocurrió un error inesperado en el servidor.");
+                });
         });
     }
-    
+
     // =========================================================
     // --- DETECTOR DE ALERTAS EN LA URL (ALERTIFY) ---
     // =========================================================
@@ -239,13 +239,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // 1. Si viene un mensaje de éxito
     if (urlParams.has('mensaje')) {
         const mensaje = urlParams.get('mensaje');
-        
+
         if (mensaje === 'usuario_eliminado') {
             alertify.success('¡Usuario eliminado correctamente!');
         } else if (mensaje === 'usuario_agregado') {
             alertify.success('¡Usuario registrado con éxito!'); // <-- NUEVA ALERTA
         }
-        
+
         // Limpiamos la URL para evitar bucles con F5
         window.history.replaceState({}, document.title, "home.php?vista=usuarios");
     }
@@ -253,11 +253,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // 2. Si viene un mensaje de error
     if (urlParams.has('error')) {
         let errorMsg = urlParams.get('error');
-        
+
         if (errorMsg === 'id_no_proporcionado') {
             errorMsg = 'No se proporcionó el ID del usuario.';
         }
-        
+
         alertify.error('❌ ' + errorMsg);
         window.history.replaceState({}, document.title, "home.php?vista=usuarios");
     }

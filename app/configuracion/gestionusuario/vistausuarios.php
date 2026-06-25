@@ -108,15 +108,15 @@ $totalPages = ceil($totalRows / $rowsPerPage);
             <div class="card shadow p-4 mb-5">
                 <form action="/IPSPUPTM/Inicio/registro.php" method="POST">
                     <div class="mb-3">
-                        <label for="username" class="form-label">Nombre de usuario</label>
-                        <input type="text" class="form-control" id="username" name="username" required autocomplete="off">
+                        <label for="username" class="form-label">Nombre de usuario (debe tener entre 5 y 20 caracteres y contener solo letras, números y guiones bajos.)</label>
+                        <input type="text" class="form-control" id="username" name="username" required autocomplete="off" maxlength="20" minlength="5" pattern="[A-Za-z0-9_]+" title="El nombre de usuario debe tener entre 5 y 20 caracteres y contener solo letras, números y guiones bajos.">
                         <div id="usernameFeedback" class="form-text"></div>
                     </div> 
                     
                     <div class="mb-3">
-                        <label for="password" class="form-label">Contraseña</label>
+                        <label for="password" class="form-label">Contraseña (debe tener al menos 8 caracteres y como máximo 20)</label>
                         <div class="input-group">
-                            <input type="password" class="form-control" id="password" name="password" required>
+                            <input type="password" class="form-control" id="password" name="password" required maxlength="20" minlength="8"  title="La contraseña debe tener al menos 8 caracteres">
                             <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                 <i class="fas fa-eye" id="eyeIcon"></i>
                             </button>
@@ -124,7 +124,7 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                     </div><div class="mb-3">
                     <label for="confirm_password" class="form-label">Confirmar Contraseña</label>
                     <div class="input-group">
-                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required maxlength="20" minlength="8" title="La contraseña debe tener al menos 8 caracteres">
                         <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
                             <i class="fas fa-eye" id="confirmEyeIcon"></i>
                         </button>
@@ -150,16 +150,20 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                                     id="ci_medico"
                                     class="form-control"
                                     inputmode="numeric"
-                                    pattern="[0-9]*"
-                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                    pattern="[0-9]{6,8}"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                    minlength="6" 
+                                    maxlength="8"
+                                    title="La cédula debe tener entre 6 y 8 números"
+                                    placeholder="Ej: 27945123">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="telefono_personal" class="form-label">Teléfono Personal</label>
-                                <input type="text" class="form-control" id="telefono_personal" name="telefono_personal">
+                                <input type="text" class="form-control" id="telefono_personal" name="telefono_personal" minlength="11" maxlength="11" placeholder="Ej: 04141234567" inputmode="numeric" pattern="[0-9]{11}" title="El teléfono debe tener 11 números" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label for="id_especialidad" class="form-label">Especialidad</label>
-                                <select name="especialidad" id="especialidad" class="form-select" required>
+                                <select name="especialidad" id="especialidad" class="form-select">
                                     <option value="" selected disabled>Seleccionar...</option>
                                     <?php
                                     $sql_especialidades = "SELECT id_especialidad, nombre_especialidad FROM especialidades ORDER BY nombre_especialidad ASC";
@@ -182,7 +186,7 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                     </div>
                     <div class="mb-3">
                         <label for="respuesta_seguridad1" class="form-label">Respuesta 1</label>
-                        <input type="text" class="form-control" id="respuesta_seguridad1" name="respuesta_seguridad1" required>
+                        <input type="text" class="form-control" id="respuesta_seguridad1" name="respuesta_seguridad1" required maxlength="20" minlength="3">
                     </div>
 
                     <div class="mb-3">
@@ -194,7 +198,7 @@ $totalPages = ceil($totalRows / $rowsPerPage);
                     </div>
                     <div class="mb-3">
                         <label for="respuesta_seguridad2" class="form-label">Respuesta 2</label>
-                        <input type="text" class="form-control" id="respuesta_seguridad2" name="respuesta_seguridad2" required>
+                        <input type="text" class="form-control" id="respuesta_seguridad2" name="respuesta_seguridad2" required maxlength="20" minlength="3">
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Registrar</button>
                 </form>

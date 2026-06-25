@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 03-06-2026 a las 05:51:15
+-- Tiempo de generación: 25-06-2026 a las 02:04:44
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -44,7 +44,8 @@ INSERT INTO `afiliados` (`ID`, `cedula`, `created_at`, `updated_at`) VALUES
 (52, 30270492, '2026-03-28 00:58:32', '2026-03-28 00:58:32'),
 (54, 3771659, '2026-05-14 23:17:52', '2026-05-14 23:17:52'),
 (55, 28296254, '2026-06-02 02:42:38', '2026-06-02 02:42:38'),
-(56, 12345678, '2026-06-02 12:28:58', '2026-06-02 12:28:58');
+(56, 12345678, '2026-06-02 12:28:58', '2026-06-02 12:28:58'),
+(57, 30492270, '2026-06-24 22:53:10', '2026-06-24 22:53:10');
 
 -- --------------------------------------------------------
 
@@ -127,7 +128,8 @@ INSERT INTO `bitacora` (`idbitacora`, `usuario`, `accion`, `descripcion`, `fecha
 (40, 'grego', 'Registro Integral', 'Afiliado y Plan creados: 28296254', '2026-06-02 02:42:38'),
 (41, 'admin', 'Registro de Cita', 'Se ha registrado una cita de tipo Afiliado para la fecha: 2026-06-21T14:02', '2026-06-02 02:58:32'),
 (42, 'admin', 'Pago Cita con Póliza', 'Cita #70 pagada mediante descuento de póliza. Monto original: 20.00 $, Monto descontado: 12.00 $.', '2026-06-02 02:58:53'),
-(43, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 12345678', '2026-06-02 12:28:58');
+(43, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 12345678', '2026-06-02 12:28:58'),
+(44, 'admin', 'Registro Integral', 'Afiliado y Plan creados: 30492270', '2026-06-24 22:53:10');
 
 -- --------------------------------------------------------
 
@@ -373,7 +375,8 @@ INSERT INTO `contrato_plan` (`ID_contrato`, `ID_planes_contrato`, `ID_afiliado_c
 (16, 7, 3771659, '2026-02-10', '2026-12-31', 140.00, 'Mensual', 31, 'Activo'),
 (17, 7, 30270492, '2026-06-01', '2026-12-31', 140.00, 'Mensual', 30, 'Activo'),
 (18, 6, 28296254, '2026-06-01', '2026-12-31', 180.00, 'Mensual', 28, 'Activo'),
-(19, 6, 12345678, '2026-06-02', '2026-12-31', 180.00, 'Mensual', 30, 'Activo');
+(19, 6, 12345678, '2026-06-02', '2026-12-31', 180.00, 'Mensual', 30, 'Activo'),
+(20, 6, 30492270, '2026-06-24', '2026-12-31', 180.00, 'Mensual', 30, 'Activo');
 
 -- --------------------------------------------------------
 
@@ -607,7 +610,7 @@ CREATE TABLE `persona` (
   `apellido` varchar(50) NOT NULL,
   `fechanacimiento` date NOT NULL,
   `genero` enum('Masculino','Femenino','','') NOT NULL,
-  `telefono` int(20) NOT NULL,
+  `telefono` varchar(20) NOT NULL,
   `correo` varchar(100) NOT NULL,
   `ocupacion` varchar(50) NOT NULL,
   `estado` text NOT NULL
@@ -618,13 +621,14 @@ CREATE TABLE `persona` (
 --
 
 INSERT INTO `persona` (`cedula`, `nombre`, `apellido`, `fechanacimiento`, `genero`, `telefono`, `correo`, `ocupacion`, `estado`) VALUES
-(3771659, 'Ana ', 'Salazar', '1984-08-30', 'Femenino', 446466654, 'asdda@asdasdaa', 'ama de casa', ''),
-(10505948, 'Teresa', 'Pérez', '1974-03-21', 'Femenino', 2147483647, 'tere_34_11_3@gmail.com', 'Nada', ''),
-(12345678, 'alana', 'perez', '2000-02-08', 'Femenino', 46564654, 'asdasd@asdasd', 'asdasd', ''),
-(22657594, 'Luis ', 'Mendoza', '2015-04-02', 'Masculino', 2147483647, 'asdasd@asdasdadad', 'asdads', ''),
-(28296254, 'genesis', 'contreras', '2002-09-14', 'Femenino', 5545664, 'asdasd@asddas', 'comerciante', ''),
-(30270492, 'Gregory', 'Pérez', '2002-08-31', 'Masculino', 46544, 'gps.3108@gmail.com', 'asdasd', ''),
-(34234140, 'Sebastian', 'Pérez', '2011-10-23', 'Masculino', 2147483647, 'asddas@asdasdsda', 'estudiante', '');
+(3771659, 'Ana ', 'Salazar', '1984-08-30', 'Femenino', '446466654', 'asdda@asdasdaa', 'ama de casa', ''),
+(10505948, 'Teresa', 'Pérez', '1974-03-21', 'Femenino', '2147483647', 'tere_34_11_3@gmail.com', 'Nada', ''),
+(12345678, 'alana', 'perez', '2000-02-08', 'Femenino', '46564654', 'asdasd@asdasd', 'asdasd', ''),
+(22657594, 'Luis ', 'Mendoza', '2015-04-02', 'Masculino', '2147483647', 'asdasd@asdasdadad', 'asdads', ''),
+(28296254, 'genesis', 'contreras', '2002-09-14', 'Femenino', '5545664', 'asdasd@asddas', 'comerciante', ''),
+(30270492, 'Gregory', 'Pérez', '2002-08-31', 'Masculino', '46544', 'gps.3108@gmail.com', 'asdasd', ''),
+(30492270, 'luis', 'balbo', '1994-05-08', 'Masculino', '04147175394', 'gps.3109@gmail.com', 'futbolista', ''),
+(34234140, 'Sebastian', 'Pérez', '2011-10-23', 'Masculino', '2147483647', 'asddas@asdasdsda', 'estudiante', '');
 
 -- --------------------------------------------------------
 
@@ -696,8 +700,7 @@ INSERT INTO `respuestas_seguridad` (`id`, `usuario_id`, `pregunta_seguridad_id`,
 (42, 31, 3, 'verde'),
 (47, 34, 1, 'merida'),
 (48, 34, 3, 'marron'),
-(49, 35, 1, 'merida'),
-(50, 35, 4, 'perro');
+(49, 35, 1, 'merida');
 
 -- --------------------------------------------------------
 
@@ -763,7 +766,15 @@ INSERT INTO `usuarios` (`id`, `username`, `password`, `role_id`) VALUES
 (27, 'usuario', '$2y$10$/1OPBwmDoMLB6KKeMXGxMejHfMviGhH7FkkBc7ams3niG/fmfY3TK', 2),
 (31, 'secretaria', '$2y$10$6c9yiRlxmWalX4aP6vCAOORlE5MKmdLmPOMzdIh1vaLbsaPajkEJK', 2),
 (34, 'odontologo', '$2y$10$28X4uDnKDqr8Ua.NOBpZG.vz./KuqYiOS26a6F4MCaz8mszcmeTWa', 3),
-(35, 'oftalmologo', '$2y$10$.1.njb8YeEJiFCYvfJVtmugeDJWujRXkIRbTQ62tPoK9oBZt5h4wu', 3);
+(35, 'oftalmologo', '$2y$10$.1.njb8YeEJiFCYvfJVtmugeDJWujRXkIRbTQ62tPoK9oBZt5h4wu', 3),
+(36, 'grexz', '$2y$10$6YttKJ0sp/OC.4NtrVgtc.m052..r6weKOXURLOcQw0FWQLbXO9GW', 1),
+(37, 'medico', '$2y$10$0wXEDosoVQj1hlrZjSr.dO8iCI2o7RsQSKYzTAw7Dz5qI3rwqGlYu', 3),
+(38, 'grexzs', '$2y$10$adab5VclY4PM5gyXIQwOluIBEtUSe5bukMBKYWc5o9gCICh4PIw0i', 3),
+(39, 'calco', '$2y$10$UYt.UyQ9NMspCVCjhY5abeK6qgo7eObsYJar6K20utNDxukFejc2y', 3),
+(40, 'calco2', '$2y$10$dGdHkvDGBhJOD41q0OiNA.bUdXF5BzzcXtvpIjRqnbz/CVvgPbgeS', 3),
+(41, 'asdfs', '$2y$10$IyG1GJoi5FXCczztrtwXc.Qw.RvPiVE32yuzdfO0nLmmQnnjQMISS', 1),
+(42, 'calco01', '$2y$10$GwAE46HyCCsle8Cbe4vRbOpAxERZY4YSzHwXftng8BvU3MmH/KxG.', 1),
+(43, 'medicoso', '$2y$10$VpWArcocblUCsUnhPMCQH.V8Y1aSb.Vaa/WKyLaAapQvwgWv/inRy', 3);
 
 --
 -- Índices para tablas volcadas
@@ -975,7 +986,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `afiliados`
 --
 ALTER TABLE `afiliados`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
 --
 -- AUTO_INCREMENT de la tabla `beneficiarios`
@@ -987,7 +998,7 @@ ALTER TABLE `beneficiarios`
 -- AUTO_INCREMENT de la tabla `bitacora`
 --
 ALTER TABLE `bitacora`
-  MODIFY `idbitacora` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `idbitacora` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT de la tabla `categorias_examenes`
@@ -1047,7 +1058,7 @@ ALTER TABLE `consumo_plan`
 -- AUTO_INCREMENT de la tabla `contrato_plan`
 --
 ALTER TABLE `contrato_plan`
-  MODIFY `ID_contrato` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `ID_contrato` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `especialidades`
@@ -1107,7 +1118,7 @@ ALTER TABLE `preguntas_seguridad`
 -- AUTO_INCREMENT de la tabla `respuestas_seguridad`
 --
 ALTER TABLE `respuestas_seguridad`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
 --
 -- AUTO_INCREMENT de la tabla `roles`
@@ -1125,7 +1136,7 @@ ALTER TABLE `tipos_externos`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- Restricciones para tablas volcadas
